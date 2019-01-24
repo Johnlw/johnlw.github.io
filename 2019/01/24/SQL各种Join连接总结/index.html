@@ -96,20 +96,24 @@
 
 
 
-  <meta property="og:type" content="website">
+  <meta name="description" content="直接上代码1234567891011121314151617181920212223242526272829303132package cn.john.cal;/** *  * @ClassName: Operators *  * @Description: 操作符枚举 *  * @author: John *  * @date: 2017年5月9日 下午22:05:16 *  *  */publ">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/01/24/SQL各种Join连接总结/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="直接上代码1234567891011121314151617181920212223242526272829303132package cn.john.cal;/** *  * @ClassName: Operators *  * @Description: 操作符枚举 *  * @author: John *  * @date: 2017年5月9日 下午22:05:16 *  *  */publ">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-24T05:48:31.763Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="直接上代码1234567891011121314151617181920212223242526272829303132package cn.john.cal;/** *  * @ClassName: Operators *  * @Description: 操作符枚举 *  * @author: John *  * @date: 2017年5月9日 下午22:05:16 *  *  */publ">
 
 
 
 
 
 
-  <link rel="canonical" href="http://yoursite.com/">
+  <link rel="canonical" href="http://yoursite.com/2019/01/24/SQL各种Join连接总结/">
 
 
 
@@ -119,7 +123,7 @@
   };
 </script>
 
-  <title>Hexo</title>
+  <title> | Hexo</title>
   
 
 
@@ -167,8 +171,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -206,7 +209,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
 
     
     
@@ -268,9 +271,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -303,9 +306,7 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/01/24/SQL各种Join连接总结/" class="post-title-link" itemprop="url">Unbenannt</a>
+
               
             
           </h1>
@@ -368,12 +369,8 @@
       
 
       
-        
-          
-            <p>直接上代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">package cn.john.cal;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * </span><br><span class="line"> * @ClassName: Operators</span><br><span class="line"> * </span><br><span class="line"> * @Description: 操作符枚举</span><br><span class="line"> * </span><br><span class="line"> * @author: John</span><br><span class="line"> * </span><br><span class="line"> * @date: 2017年5月9日 下午22:05:16</span><br><span class="line"> * </span><br><span class="line"> * </span><br><span class="line"> */</span><br><span class="line">public enum OperatorsEnum &#123;</span><br><span class="line"></span><br><span class="line">	PLUS(0, &apos;+&apos;), MINUS(0, &apos;-&apos;), MULTIPLY(1, &apos;*&apos;), DIVIDE(1, &apos;/&apos;), MODULAR(1, &apos;%&apos;), LEFT_BRACKET(2,</span><br><span class="line">			&apos;(&apos;), RIGHT_BRACKET(2, &apos;)&apos;);</span><br><span class="line"></span><br><span class="line">	public Integer prior;// 优先级</span><br><span class="line">	public Character operator;// 操作符</span><br><span class="line"></span><br><span class="line">	private OperatorsEnum(int prior, char operator) &#123;</span><br><span class="line">		this.prior = prior;</span><br><span class="line">		this.operator = operator;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return String.valueOf(operator);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+        <p>直接上代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">package cn.john.cal;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * </span><br><span class="line"> * @ClassName: Operators</span><br><span class="line"> * </span><br><span class="line"> * @Description: 操作符枚举</span><br><span class="line"> * </span><br><span class="line"> * @author: John</span><br><span class="line"> * </span><br><span class="line"> * @date: 2017年5月9日 下午22:05:16</span><br><span class="line"> * </span><br><span class="line"> * </span><br><span class="line"> */</span><br><span class="line">public enum OperatorsEnum &#123;</span><br><span class="line"></span><br><span class="line">	PLUS(0, &apos;+&apos;), MINUS(0, &apos;-&apos;), MULTIPLY(1, &apos;*&apos;), DIVIDE(1, &apos;/&apos;), MODULAR(1, &apos;%&apos;), LEFT_BRACKET(2,</span><br><span class="line">			&apos;(&apos;), RIGHT_BRACKET(2, &apos;)&apos;);</span><br><span class="line"></span><br><span class="line">	public Integer prior;// 优先级</span><br><span class="line">	public Character operator;// 操作符</span><br><span class="line"></span><br><span class="line">	private OperatorsEnum(int prior, char operator) &#123;</span><br><span class="line">		this.prior = prior;</span><br><span class="line">		this.operator = operator;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public String toString() &#123;</span><br><span class="line">		return String.valueOf(operator);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br></pre></td><td class="code"><pre><span class="line">package cn.john.cal;</span><br><span class="line"></span><br><span class="line">import java.util.LinkedList;</span><br><span class="line">import java.util.Scanner;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * </span><br><span class="line"> * @ClassName: Cal</span><br><span class="line"> * </span><br><span class="line"> * @Description:</span><br><span class="line"> *               &lt;p&gt;</span><br><span class="line"> *               基于后缀表达式的简易计算器，目前支持个位数加、减、乘、除、模和括号六种运算。</span><br><span class="line"> *               &lt;p&gt;</span><br><span class="line"> *               中缀表达式-&gt;后缀表达式 操作符入栈</span><br><span class="line"> *               &lt;p&gt;</span><br><span class="line"> *               后缀表达式-&gt;计算值 操作数入栈</span><br><span class="line"> * </span><br><span class="line"> * @author: John</span><br><span class="line"> * </span><br><span class="line"> * @date: 2017年5月9日 下午7:55:58</span><br><span class="line"> * </span><br><span class="line"> */</span><br><span class="line">public class Cal &#123;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	</span><br><span class="line">	 * @Title: toPostFix</span><br><span class="line">	</span><br><span class="line">	 * @Description: 将中缀表达式转换为后缀表达式</span><br><span class="line">	</span><br><span class="line">	 * @param infix</span><br><span class="line">	 * @return</span><br><span class="line">	</span><br><span class="line">	 * @return: String</span><br><span class="line">	</span><br><span class="line">	 */</span><br><span class="line">	public String toPostFix(String infix) &#123;</span><br><span class="line">		// 算式字符数组</span><br><span class="line">		char[] ch = infix.trim().toCharArray();</span><br><span class="line">		LinkedList&lt;OperatorsEnum&gt; stack = new LinkedList&lt;OperatorsEnum&gt;();</span><br><span class="line">		StringBuilder sb = new StringBuilder();</span><br><span class="line"></span><br><span class="line">		OperatorsEnum op = null;</span><br><span class="line"></span><br><span class="line">		for (int i = 0; i &lt; ch.length; i++) &#123;</span><br><span class="line">			// 对每个算式字符，检查它是不是操作符</span><br><span class="line">			if ((op = isOperator(ch[i])) == null) &#123;</span><br><span class="line">				sb.append(ch[i]);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				// 右括号</span><br><span class="line">				// 持续弹出栈顶元素直到遇到左括号，但是不输出左括号</span><br><span class="line">				if (op.equals(OperatorsEnum.RIGHT_BRACKET)) &#123;</span><br><span class="line">					// 如果不是左括号，持续弹出并输出</span><br><span class="line">					while (!stack.peek().equals(OperatorsEnum.LEFT_BRACKET)) &#123;</span><br><span class="line">						sb.append(stack.pop());</span><br><span class="line">					&#125;</span><br><span class="line">					// 此时栈顶元素为左括号，直接弹出，不输出</span><br><span class="line">					stack.pop();</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					// 非右括号</span><br><span class="line">					// 1、弹出并输出所有高优先级或者同等优先级，直到遇到低优先级或者左括号为止</span><br><span class="line">					// 上面的弹出语句有可能将栈弹空，检查stack的size避免NPE</span><br><span class="line">					while (stack.size() &gt; 0 &amp;&amp; stack.peek().prior &gt;= op.prior</span><br><span class="line">							&amp;&amp; !stack.peek().equals(OperatorsEnum.LEFT_BRACKET)) &#123;</span><br><span class="line">						sb.append(stack.pop());</span><br><span class="line">					&#125;</span><br><span class="line">					// 2、将当前操作符入栈</span><br><span class="line">					stack.push(op);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		// 弹出所有栈中剩余操作符</span><br><span class="line">		while (stack.size() &gt; 0) &#123;</span><br><span class="line">			sb.append(stack.pop());</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		return sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	</span><br><span class="line">	 * @Title: calc</span><br><span class="line">	</span><br><span class="line">	 * @Description: 计算后缀表达式的值</span><br><span class="line">	</span><br><span class="line">	 * @param postfix</span><br><span class="line">	 * @return</span><br><span class="line">	</span><br><span class="line">	 * @return: double</span><br><span class="line">	</span><br><span class="line">	 */</span><br><span class="line">	public double calc(String postfix) &#123;</span><br><span class="line">		char[] ch = postfix.toCharArray();</span><br><span class="line">		LinkedList&lt;Double&gt; stack = new LinkedList&lt;Double&gt;();</span><br><span class="line">		OperatorsEnum op = null;</span><br><span class="line">		for (int i = 0; i &lt; ch.length; i++) &#123;</span><br><span class="line">			if ((op = isOperator(ch[i])) == null) &#123;</span><br><span class="line">				// 不是操作符，将当前数值入栈</span><br><span class="line">				stack.push(Double.parseDouble(String.valueOf(ch[i])));</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				// 是操作符，进行计算</span><br><span class="line">				double b = stack.pop();</span><br><span class="line">				double a = stack.pop();</span><br><span class="line">				switch (op) &#123;</span><br><span class="line">				case PLUS:</span><br><span class="line">					stack.push(a + b);</span><br><span class="line">					break;</span><br><span class="line">				case MINUS:</span><br><span class="line">					stack.push(a - b);</span><br><span class="line">					break;</span><br><span class="line">				case MULTIPLY:</span><br><span class="line">					stack.push(a * b);</span><br><span class="line">					break;</span><br><span class="line">				case DIVIDE:</span><br><span class="line">					stack.push(a / b);</span><br><span class="line">					break;</span><br><span class="line">				case MODULAR:</span><br><span class="line">					stack.push(a % b);</span><br><span class="line">					break;</span><br><span class="line">				default:</span><br><span class="line">					break;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return stack.pop();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	</span><br><span class="line">	 * @Title: isOperator</span><br><span class="line">	</span><br><span class="line">	 * @Description: 判断字符是否为操作符</span><br><span class="line">	</span><br><span class="line">	 * @param ch</span><br><span class="line">	 * @return</span><br><span class="line">	</span><br><span class="line">	 * @return: OperatorsEnum</span><br><span class="line">	</span><br><span class="line">	 */</span><br><span class="line">	private OperatorsEnum isOperator(char ch) &#123;</span><br><span class="line">		for (OperatorsEnum op : OperatorsEnum.values()) &#123;</span><br><span class="line">			if (ch == op.operator) &#123;</span><br><span class="line">				return op;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return null;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	// test</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	</span><br><span class="line">	 * @Title: readEquation</span><br><span class="line">	</span><br><span class="line">	 * @Description: 终端输入算式</span><br><span class="line">	</span><br><span class="line">	 * @return</span><br><span class="line">	</span><br><span class="line">	 * @return: String</span><br><span class="line">	</span><br><span class="line">	 */</span><br><span class="line">	public String readEquation() &#123;</span><br><span class="line">		Scanner sc = new Scanner(System.in);</span><br><span class="line">		String equation = sc.nextLine();</span><br><span class="line">		sc.close();</span><br><span class="line">		return equation;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Cal c = new Cal();</span><br><span class="line">		System.out.println(&quot;Please input an equation,press ENTER to submit!&quot;);</span><br><span class="line">		String infix = c.readEquation();</span><br><span class="line">		String s = c.toPostFix(infix);</span><br><span class="line">		System.out.println(&quot;postfix: &quot; + s);</span><br><span class="line">		System.out.println(&quot;Result: &quot;+infix + &quot;=&quot; + c.calc(s));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          
-        
       
     </div>
 
@@ -396,158 +393,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/11/hello-world/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/01/11/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-              
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
+              <a href="/2019/01/11/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
             
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Veröffentlicht am</span>
-              
-
-              
-                
-              
-
-              <time title="Post created: 2019-01-11 16:26:16" itemprop="dateCreated datePublished" datetime="2019-01-11T16:26:16+08:00">2019-01-11</time>
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -557,14 +424,15 @@
   </article>
 
 
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -760,6 +628,10 @@
 
 
   
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
 
   
 
@@ -769,6 +641,8 @@
 
 
   
+  
+
 
 
 
