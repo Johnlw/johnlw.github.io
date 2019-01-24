@@ -302,6 +302,527 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/31/Java并发机制（2）--volatile关键字/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Old John">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2017/10/31/Java并发机制（2）--volatile关键字/" class="post-title-link" itemprop="url">Java并发机制（2）--volatile关键字</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-10-31 11:04:47" itemprop="dateCreated datePublished" datetime="2017-10-31T11:04:47+08:00">2017-10-31</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-24 17:25:51" itemprop="dateModified" datetime="2019-01-24T17:25:51+08:00">2019-01-24</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>关键字volatile提供了轻量级的同步机制，在理解volatile关键字之前先来看几个支撑技术。</p>
+<h1 id="有序性的一种保证方式：内存屏障"><a href="#有序性的一种保证方式：内存屏障" class="headerlink" title="有序性的一种保证方式：内存屏障"></a>有序性的一种保证方式：内存屏障</h1><p>内存屏障是一组指令，分4类，这些指令指定了其前后指令的排序规则。</p>
+<table>
+<thead>
+<tr>
+<th>屏障类型</th>
+<th>指令示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LoadLoad Barrier</td>
+<td>Load1;LoadLoad;Load2</td>
+<td>确保load1数据的装载先于load2及其后续所有load指令</td>
+</tr>
+<tr>
+<td>StoreStore Barrier</td>
+<td>Store1;StoreStore;Store2</td>
+<td>确保Store1数据刷新到内存先于Store2及其后续所有store指令</td>
+</tr>
+<tr>
+<td>LoadStore Barrier</td>
+<td>Load1;LoadStore;Store2</td>
+<td>确保load1数据的装载先于Store2及其后续所有store指令</td>
+</tr>
+<tr>
+<td>StoreLoad Barrier</td>
+<td>Store1;StoreLoad;Load2</td>
+<td>确保Store1数据刷新到内存先于load2及其后续所有load指令 。<strong>注意</strong>：StoreLoad Barriers会使该屏障之前的所有内存访问指令（包括load和store指令）都执行完了之后，再执行屏障之后的内存访问指令。</td>
+</tr>
+</tbody>
+</table>
+<p>也就是说，在一个指令序列中插入了内存屏障，这些内存屏障会限制其前后指令的排序，而在两个内存屏障之间代码序列的重排序则没有约束。就好像屏障一样，被限制的指令无法越过。<br>同时也可以看出内存屏障将缓存值刷新到内存也起到了提供可见性的作用。</p>
+<h1 id="强大的汇编指令前缀：Lock"><a href="#强大的汇编指令前缀：Lock" class="headerlink" title="强大的汇编指令前缀：Lock"></a>强大的汇编指令前缀：Lock</h1><p>lock前缀有三方面的功能：</p>
+<ol>
+<li>确保对内存的读-改-写操作原子执行。</li>
+<li>禁止该指令，与之前和之后的读写指令重排序。</li>
+<li>将写缓冲区的所有数据刷新到内存中，并且这个写操作会使其他CPU里缓存了该内存地址的数据无效。</li>
+</ol>
+<p>其中第2条和第3条共同起到了内存屏障的效果，并且是一并禁止了load和store指令。<br>可以看出，单单一个lock前缀就提供了原子性、有序性和可见性的三方面的可靠保证。</p>
+<h1 id="volatile修饰变量"><a href="#volatile修饰变量" class="headerlink" title="volatile修饰变量"></a>volatile修饰变量</h1><p>被volatile修饰的变量有三个特性：</p>
+<ol>
+<li>原子性。对任意单个volatile变量的读、写具有原子性，但类似于volatile++这种<strong>复合操作</strong>没有原子性。</li>
+<li>可见性。对一个volatile的读，总是能看到任意线程对这个变量的最后一次写入。</li>
+<li>有序性。volatile禁止指令重排序。</li>
+</ol>
+<p>之所以volatile具有这三个特性，在于对volatile变量的操作有lock prefix支持。lock prefix提供了三方面的特性保证。</p>
+<h1 id="锁与volatile"><a href="#锁与volatile" class="headerlink" title="锁与volatile"></a>锁与volatile</h1><p>锁的释放与volatile写具有同样的内存语义：释放锁和对volatile变量的写，JMM都会把线程对应的本地内存中的共享变量刷新到主内存中。<br>锁的获取与volatile读具有同样的内存语义：获取锁和对volatile变量的读，JMM都会将线程对应的本地内存置为无效，而是从主内存中重新读取。</p>
+<h1 id="CAS与volatile"><a href="#CAS与volatile" class="headerlink" title="CAS与volatile"></a>CAS与volatile</h1><p>CAS操作具有volatile读和写的内存语义。该操作在执行cmpxchg指令之前，如果是多处理器，将会插入lock前缀。lock前缀提供了与volatile一致的内存语义。</p>
+<h1 id="volatile重排序例子"><a href="#volatile重排序例子" class="headerlink" title="volatile重排序例子"></a>volatile重排序例子</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//线程1:</span><br><span class="line">context = loadContext();   //语句1</span><br><span class="line">inited = true;             //语句2</span><br><span class="line"> </span><br><span class="line">//线程2:</span><br><span class="line">while(!inited )&#123;</span><br><span class="line">  sleep()</span><br><span class="line">&#125;</span><br><span class="line">doSomethingwithconfig(context);</span><br></pre></td></tr></table></figure>
+<p>有可能语句2会在语句1之前执行，那么就可能导致context还没被初始化，而线程2中就使用未初始化的context去进行操作，导致程序出错。</p>
+<p>这里如果用volatile关键字对inited变量进行修饰，就不会出现这种问题了，因为当执行到语句2时，必定能保证context已经初始化完毕。</p>
+<blockquote>
+<p>现代操作系统<br>Java并发编程的艺术<br>深入理解Java虚拟机<br>Java并发编程实战<br>JSR-133<br>并发编程网<br>Intel IA-32</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/25/Java并发机制（1）--理论基础/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="The Old John">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2017/10/25/Java并发机制（1）--理论基础/" class="post-title-link" itemprop="url">Java并发机制（1）--理论基础</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2017-10-25 14:16:14" itemprop="dateCreated datePublished" datetime="2017-10-25T14:16:14+08:00">2017-10-25</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-24 17:24:16" itemprop="dateModified" datetime="2019-01-24T17:24:16+08:00">2019-01-24</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="进程与线程概念"><a href="#进程与线程概念" class="headerlink" title="进程与线程概念"></a>进程与线程概念</h1><p>在现代操作系统中，进程支持多线程。</p>
+<ul>
+<li>进程是<strong>资源管理</strong>的最小单元，</li>
+<li>线程是<strong>程序执行</strong>的最小单元。</li>
+</ul>
+<p>线程作为调度和分配的基本单位，进程作为资源分配的基本单位。</p>
+<p>一个进程的组成实体可以分为两大部分：线程集和资源集。进程中的线程是动态的对象；代表了进程指令的执行。资源，包括地址空间、打开的文件、用户信息等等，由进程内的线程共享。</p>
+<h1 id="多道程序设计模型"><a href="#多道程序设计模型" class="headerlink" title="多道程序设计模型"></a>多道程序设计模型</h1><p>计算机采用多道程序设计模型可以显著提高CPU的利用率。</p>
+<h1 id="多进程与多线程"><a href="#多进程与多线程" class="headerlink" title="多进程与多线程"></a>多进程与多线程</h1><p>多进程：并行实体之间<strong>不共享</strong>同一个地址空间和所有可用数据。<br>多线程：并行实体之间<strong>共享</strong>同一个地址空间和所有可用数据。<br>1、线程比进程更加轻量级，线程的创建、切换等过程比进程开销小，线程的通信比进程间的通信简单。<br>2、进程的安全性高于线程，因为不共享。</p>
+<h1 id="多线程的实现方式"><a href="#多线程的实现方式" class="headerlink" title="多线程的实现方式"></a>多线程的实现方式</h1><ul>
+<li>内核线程实现</li>
+<li>用户线程实现</li>
+<li>用户线程加轻量级进程混合实现</li>
+</ul>
+<p><strong>Java线程实现</strong>在linux和windows平台上均采用的是内核线程实现，Java线程与内核线程为一比一的对应关系，也就是说Java线程由内核直接调度。</p>
+<h1 id="多线程面临的挑战"><a href="#多线程面临的挑战" class="headerlink" title="多线程面临的挑战"></a>多线程面临的挑战</h1><ul>
+<li>线程通信</li>
+<li>上下文切换</li>
+<li>死锁</li>
+<li>资源限制</li>
+<li>线程安全<h2 id="线程通信"><a href="#线程通信" class="headerlink" title="线程通信"></a>线程通信</h2>多线程相当于是多个线程为了完成<strong>一件</strong>“大事”而<strong>协同</strong>工作，那这多个线程之间如何协同就是线程通信的问题了。<br>线程间的通信是多线程编程的基础，线程间通信方式有两种：共享内存和消息传递。Java线程间的通信机制为共享内存方式。<br>线程间通信就要保证通信的可靠性，确保信息的可靠传递。这就涉及到线程安全的问题。<h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2>线程安全最核心的概念是<strong>正确性</strong>。</li>
+</ul>
+<p><strong>在操作系统中</strong>，正确性是指多个线/进程读写共享数据，最后的结果与线/进程运行的精准时序无关，亦即<strong>不存在竞争条件</strong>。<br><strong>在Java中</strong>，正确性是指：某个类的行为与其规范完全一致。当多个线程访问某个类时，不管运行时环境采用何种调度方式或者这些线程将如何交替执行，并且在主调代码中不需要任何额外的同步或协同，这个类都能表现出正确的行为，那么就称这个类是线程安全的。</p>
+<p>可以将Java线程安全按由强到弱分为5类，同时也可以看到线程安全的责任由对象本身向调用者的转移：</p>
+<ol>
+<li>不可变<br>不可变对象一定是线程安全的，无论是对象的方法还是方法的调用者，都不需要再采取任何的线程安全保障措施。（final关键字的使用）</li>
+<li>绝对线程安全<br>不管运行时环境如何，调用者都不需要任何额外的同步措施。这个要求非常严格，Java API中大多数都不是绝对线程安全的类。</li>
+<li>相对线程安全<br>保证对某个对象的单独操作是线程安全的，在调用的时候不需要做额外的同步措施。但是对于同一个对象的特定顺序的连续调用，可能需要在调用端做额外的同步手段（多为扩大同步范围）来保证调用的正确性。Java中大部分线程安全类属于相对线程安全。</li>
+<li>线程兼容<br>对象本身不是线程安全的，但是可以通过在调用端正确地使用同步手段来保证对象在并发环境下的线程安全性。Java中的普通类。</li>
+<li>线程对立<br>无论调用端是否采取了同步措施，都无法在并发环境中使用。</li>
+</ol>
+<h1 id="多线程编程的出发点"><a href="#多线程编程的出发点" class="headerlink" title="多线程编程的出发点"></a>多线程编程的出发点</h1><p>并发编程的基本出发点：<strong>先保证正确性，再提高效率</strong>。</p>
+<p>保证正确性有三种方式：</p>
+<ul>
+<li>互斥同步</li>
+<li>非阻塞同步</li>
+<li>无同步方案</li>
+</ul>
+<p>互斥同步由互斥量（操作系统级或者Java语言级）支持，非阻塞同步由CAS指令支持，无同步方案为可重入代码和Java中的ThreadLocal变量。</p>
+<p>提高效率中很重要的方式有重排序和减少上下文切换等。</p>
+<hr>
+<h2 id="互斥同步"><a href="#互斥同步" class="headerlink" title="互斥同步"></a>互斥同步</h2><p>先来看一个最基础的支撑技术。</p>
+<h3 id="原子操作"><a href="#原子操作" class="headerlink" title="原子操作"></a>原子操作</h3><p>原子（atom）本意是“不能被进一步分割的最小粒子”，而原子操作（atomic operation）意为”不可被中断的一个或一系列操作” 。如有些场景下需要将读取变量值，再修改其值，再写入内存合并为一个原子操作完成。</p>
+<p>intel处理器使用基于对缓存加锁和总线加锁的方式来实现多处理器之间的原子操作。<br>总线加锁：使用处理器提供的lock# 信号，当一个处理器在总线上输出此信号时，其他处理器的请求将被阻塞，该处理器可以独占共享内存。<br>缓存加锁：内存区域如果被缓存在处理器的缓存行中，并且在lock操作期间被锁定，那么当处理器执行锁操作回写到内存时，处理器修改内部的内存地址，通过缓存一致性协议来保证操作的原子性和可见性。缓存一致性协议会阻止同时修改由两个一上处理器缓存的内存数据，当处理器回写被锁定的缓存行的数据时，会使其他处理器的缓存行失效，其他处理器在下次读取时将重新从共享内存中读取。<br>可以看出原子操作的同时也提供了可见性。</p>
+<p>再看操作系统如何保证正确性。</p>
+<h3 id="临界区"><a href="#临界区" class="headerlink" title="临界区"></a>临界区</h3><p>对共享内存进行访问的程序片段成为临界区。<br>如果可以协调多线/进程不可能同时处于临界区，就能避免竞争条件（即互斥），从而保证正确性。同时在协调机制中也尽可能要求高效，一个好的协调方案，要满足以下4个条件：</p>
+<ul>
+<li>任何两个进/线程不能同时处于临界区</li>
+<li>不应对CPU的速度和数量做任何假设（单核、多核、超线程） </li>
+<li>临界区外运行的进/线程不得阻塞其他进/线程</li>
+<li>不得使进/线程无限期等待进入临界区</li>
+</ul>
+<p>其中前两个条件是对正确性的保证，后两个条件是对效率的保证。</p>
+<h3 id="互斥"><a href="#互斥" class="headerlink" title="互斥"></a>互斥</h3><p>在原子操作的支撑下，有多种方案可以实现互斥。大体分为两类：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>原理</th>
+<th>优点</th>
+<th>缺点</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>忙等待</td>
+<td>定义共享变量，设定某个值表示是否有线程进入临界区。如果已有线程进入，则各线程对该变量进行轮询，自旋等待，直到进入临界区</td>
+<td>CPU自旋等待，如果短期内能进入临界区，避免了线程阻塞和上下文切换带来的开销</td>
+<td>CPU空转，同时存在优先级反转问题</td>
+<td>在有理由认为等待时间是非常短的情况下使用</td>
+</tr>
+<tr>
+<td>等待/通知机制</td>
+<td>一样定义共享变量，但是如果已有线程进入，则后面的线程将阻塞，当之前的线程出临界区时通知等待的线程进入临界区执行。</td>
+<td>不会出现CPU空转，CPU占用极高的情况</td>
+<td>线程阻塞将带来线程切换上下文的开销</td>
+<td>临界区竞争激烈，且执行时间较长的情况下使用</td>
+</tr>
+</tbody>
+</table>
+<p>表格中的共享变量既可以使用信号量也可以使用互斥量，一般使用互斥量。</p>
+<h3 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h3><p>当仅有互斥量时且有线程在临界区时，其他线程将在互斥量上等待，然而很多情况下线程的执行不仅需要进入临界区，而且还需要满足一些其他的条件，当条件不满足时进入临界区线程不能继续执行也没有什么意义。这时候就需要条件变量了。</p>
+<p>这时，一个线程运行需要条件变量满足，并且能锁住互斥量。如果锁住了互斥量，然而需要在某个条件变量上等待，线程将释放互斥量（给别的线程机会），进入阻塞态，等待其他线程在条件变量上唤醒自己，转入就绪态继续竞争互斥量。</p>
+<h3 id="管程（Monitor）"><a href="#管程（Monitor）" class="headerlink" title="管程（Monitor）"></a>管程（Monitor）</h3><p>通过互斥量、条件变量以及相关的原子操作即可保证多线程通信的正确性，不过在多线程中，存在发送给变量的信号可能会丢失的情况，还有可能会出现死锁的情况，如果直接面向这些量编写多线程程序，会不可避免的出现各种奇奇怪怪的问题。为了简化多线程程序的编写，管程出现了。</p>
+<p>管程实际上可以理解为是对互斥量、条件变量、以及组织协调多线程进入临界区算法的一个封装。高层代码只需要临界区交给管程管理就好了，管程会保证正确性。</p>
+<p>JVM中管程与经典管程有本质区别：Java没有内嵌的条件变量。Java将等待/通知机制提出来作为wait()/notify()供程序员自定义使用，自定义条件变量（如某个对象）。</p>
+<h2 id="非阻塞方案"><a href="#非阻塞方案" class="headerlink" title="非阻塞方案"></a>非阻塞方案</h2><p>互斥同步最主要的问题就是进行线程阻塞和唤醒带来的性能问题。是一种悲观的同步方案：不管有没有竞争，都要加解锁。<br>非阻塞方案是一种基于冲突检测的乐观方案：先进行操作，如果没有竞争，则操作就成功了；如果有竞争，产生了冲突，则采取补偿措施（一般即为不断尝试直到成功），这种方案并不需要阻塞线程。</p>
+<p>CMPXCHG指令，该指令是原子操作。简单理解，cmpxchg指令接受两个参数，一个是将要修改的变量的预期值，一个是修改值，指令比较预期值与变量的实际值是否一致，如果一致则将修改值赋值给变量。否则不做修改。<br>由于这个指令是主动比较，一般会放到自旋中，适用于冲突比较少的场景。</p>
+<h2 id="无同步方案"><a href="#无同步方案" class="headerlink" title="无同步方案"></a>无同步方案</h2><p>如果方法中不涉及共享数据，那么该方法不需要做任何同步。</p>
+<ol>
+<li>可重入代码<br> 可重入代码的特征如不依赖公共数据，不调用非可重入代码等，可重入代码中多为局部变量，不与其他代码共享，也就不存在数据竞争了。</li>
+<li>线程本地存储–ThreadLocal</li>
+</ol>
+<hr>
+<h2 id="重排序"><a href="#重排序" class="headerlink" title="重排序"></a>重排序</h2><p>再看提高执行效率的方式：指令重排序。<br>重排序分三种：1.编译器优化的重排序。2.指令级并行的重排序。3.内存系统的重排序</p>
+<h3 id="单线程重排序"><a href="#单线程重排序" class="headerlink" title="单线程重排序"></a>单线程重排序</h3><h4 id="数据依赖"><a href="#数据依赖" class="headerlink" title="数据依赖"></a>数据依赖</h4><p>如果两个操作访问同一个变量，且两个操作中有一个为写操作（读写/写读/写写），此时这两个操作之间存在数据依赖性。如果对存在数据依赖性的操作重排序，程序执行结果将会改变。因此，编译器和处理器不会改变存在数据依赖性的操作的执行顺序。</p>
+<h4 id="as-if-serial模型"><a href="#as-if-serial模型" class="headerlink" title="as-if-serial模型"></a>as-if-serial模型</h4><p>as-if-serial：不管怎么重排序，单线程执行的结果不能被改变。<br>1、对存在数据依赖性的操作重排序非法。<br>2、对不存在数据依赖性的操作是否重排序不做要求。<br>as-if-serial为单线程提供了顺序执行的保证。</p>
+<h3 id="多线程重排序"><a href="#多线程重排序" class="headerlink" title="多线程重排序"></a>多线程重排序</h3><h4 id="冲突访问"><a href="#冲突访问" class="headerlink" title="冲突访问"></a>冲突访问</h4><p>多线程中，对同一个共享字段或者数组元素存在两个访问（读或写），且至少有一个访问为写操作，称之为有冲突。</p>
+<h4 id="数据竞争"><a href="#数据竞争" class="headerlink" title="数据竞争"></a>数据竞争</h4><ul>
+<li>冲突访问</li>
+<li>读写操作没有通过同步来排序</li>
+</ul>
+<p>当上述情况发生时，就存在数据竞争。代码中出现数据竞争时，常有可能会出现有违直觉的结果。<br>那么如何判断程序有没有正确的同步呢？<br>一个程序是<strong>正确同步</strong>的：<strong>当且仅当所有顺序一致的执行过程中都不存在数据竞争。</strong>不论调度系统如何调度，所有可能的执行顺序序列下，都不存在数据竞争。</p>
+<p>那么应该如何来组织多线程程序的同步排序呢？</p>
+<h1 id="内存模型"><a href="#内存模型" class="headerlink" title="内存模型"></a>内存模型</h1><p>给定一个程序和该程序的一串执行轨迹，内存模型描述了该执行轨迹是否是该程序的一次合法执行。内存模型检查执行轨迹中的每次读操作，然后根据特定规则，检验该读操作观察到的写是否合法。<br>内存模型的一个高级、非正式的概述显示其是一组规则，规定了一个线程的写操作何时会对另一个线程可见。</p>
+<h2 id="顺序一致性模型"><a href="#顺序一致性模型" class="headerlink" title="顺序一致性模型"></a>顺序一致性模型</h2><p>顺序一致性是程序执行过程中    可见性和顺序的强有力保证。</p>
+<ul>
+<li>有序性</li>
+<li>原子性</li>
+<li>可见性</li>
+</ul>
+<p>有序性：在顺序一致的执行过程中，所有动作（如读和写）间存在一个全序关系，与程序的顺序一致。<br>原子性和可见性：每个动作都是原子的并且立即对所有线程可见。</p>
+<p>顺序一致性模型是一个理论参考模型，它在提供了极强的操作有序性、原子性和可见性的同时，使编译器和处理器优化（比如重排序）不再合法。</p>
+<h2 id="happens-before规则"><a href="#happens-before规则" class="headerlink" title="happens-before规则"></a>happens-before规则</h2><p>JSR-133中对happens-before的定义：</p>
+<ol>
+<li>如果一个操作happens-before另一个操作，那么第一个操作的执行结果将对第二个操作可见，并且第一个操作的执行顺序排在第二个操作之前。<strong>（有序性和可见性）</strong></li>
+<li><p>两个操作之间存在happens-before关系，并不意味着java平台的具体实现必须要按照happens-before关系指定的顺序来执行。只要结果与按照happens-before关系来执行的一致，编译器和处理器的重排序是合法的。（最大限度的减少对编译器和处理器优化的约束）</p>
+</li>
+<li><p>程序顺序规则<br> 在一个线程内，按照程序代码顺序，书写在前面的操作happens-before书写在后面的操作。</p>
+</li>
+<li>管程锁规则<br> 一个unlock操作happens-before后面对同一个锁的lock操作。</li>
+<li>volatile变量规则<br> 对一个volatile变量的写操作happens-before后面对这个变量的读操作。</li>
+<li>线程启动规则<br> Thread对象的start()方法happens-before此线程的每一个动作。</li>
+<li>线程终止规则<br> 线程中所有操作都happens-before对此线程的终止检测。</li>
+<li>线程中断规则<br> 对线程interrupt()方法的调用happens-before被中断线程的代码检测到中断事件的发生。</li>
+<li>对象终结规则<br> 一个对象的初始化完成（构造函数执行完毕）happens-before它的finalize()方法。</li>
+<li>传递性<br> A happens-before B,B happens-before C,s.t. A happens-before C.</li>
+</ol>
+<p><strong>注意</strong>：</p>
+<ul>
+<li>happens-before首先强调了前一个操作对后一个操作的顺序和可见性，但是同时又没有限定具体实现，只要求执行结果要与happens-before一致。那么在实际的代码执行中，happens-before和代码时间上的先行发生并没有直接关系。</li>
+<li>happens-before允许违反因果关系的事情发生。（比如：out of thin air）</li>
+</ul>
+<h2 id="happens-before和as-if-serial"><a href="#happens-before和as-if-serial" class="headerlink" title="happens-before和as-if-serial"></a>happens-before和as-if-serial</h2><ul>
+<li>as-if-serial保证单线程内程序的执行结果不被改变。向上向程序员保证程序执行顺序，向下约束编译器和处理器重排序的规则。</li>
+<li>happens-before关系保证正确同步的多线程程序的执行结果不被改变。向上向程序员保证正确同步的多线程程序的执行结果正确性，向下约束编译器和处理器重排序的规则。</li>
+</ul>
+<hr>
+<p>顺序一致性模型不允许重排序-过于严格，happens-before允许违反因果关系的事情发生-过于宽松，都不适合作为Java内存模型。</p>
+<h2 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a>Java内存模型</h2><ol>
+<li>Java线程间的通信机制，JMM决定一个线程对共享变量的写入何时对另外一个线程可见。</li>
+<li>屏蔽各种硬件和操作系统的内存访问差异，实现java跨平台的一致的内存访问效果</li>
+<li>向上向程序员保证正确同步的程序具有顺序一致性</li>
+<li>向下向编译器和处理器提供尽可能宽松的重排序约束规则</li>
+<li>在happens-before的基础上提供了对因果关系的充分保证</li>
+</ol>
+<p>从<strong>抽象</strong>的角度来看，JMM定义了线程和主内存之间的抽象关系：线程之间的共享变量存储在主内存中，每个线程都有一个私有的本地内存，本地内存中存储了该线程读写共享变量的副本。本地内存是JMM的一个抽象概念，实际并不存在，它涵盖了缓存、寄存器以及其他的硬件和编译器优化。<br>同时定义了工作内存与主内存的交互操作协议：lock、unlock、read、load、use、assign、store、write共8种原子性操作以及它们之间的操作规则。</p>
+<h2 id="Java内存模型的特征"><a href="#Java内存模型的特征" class="headerlink" title="Java内存模型的特征"></a>Java内存模型的特征</h2><p>Java内存模型建立在解决三个并发问题的基础上。</p>
+<ul>
+<li>原子性</li>
+<li>可见性</li>
+<li>有序性</li>
+</ul>
+<p>对于原子性的保证：有read、load、use、assign、store、write这类数据访问的基本原子性操作，更大范围的可以用lock和unlock操作来保证。<br>对于可见性的保证：Java内存模型通过主内存作为可见性实现的媒介。写操作刷新回主内存，读操作重新读主内存实现前一个操作对后一个操作的可见性。<br>对于有序性的保证：happens-before规则保证基本操作的有序性，通过同步来保证其他操作的有序性。</p>
+<p>下一篇讲解Java内存模型的具体实现，看Java如何在允许指令重排序的情况下保证正确同步。</p>
+<blockquote>
+<p>现代操作系统<br>Java并发编程的艺术<br>深入理解Java虚拟机<br>Java并发编程实战<br>JSR-133<br>并发编程网</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/数据结构与算法基础概念总结/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1044,159 +1565,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/25/SQL各种Join连接总结 - Copy/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="The Old John">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/04/25/SQL各种Join连接总结 - Copy/" class="post-title-link" itemprop="url">SQL各种Join总结</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-04-25 10:20:28" itemprop="dateCreated datePublished" datetime="2017-04-25T10:20:28+08:00">2017-04-25</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-01-24 16:55:37" itemprop="dateModified" datetime="2019-01-24T16:55:37+08:00">2019-01-24</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1240,7 +1608,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-count">6</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
