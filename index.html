@@ -302,6 +302,403 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/15/Java String类相关/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/03/15/Java String类相关/" class="post-title-link" itemprop="url">Java String类相关</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-03-15 16:46:23" itemprop="dateCreated datePublished" datetime="2018-03-15T16:46:23+08:00">2018-03-15</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-24 20:44:20" itemprop="dateModified" datetime="2019-01-24T20:44:20+08:00">2019-01-24</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="cookie技术"><a href="#cookie技术" class="headerlink" title="cookie技术"></a>cookie技术</h3><p>http协议是无状态的，服务器无法判断某一个简单http请求来自于谁。这里我们可以利用cookie技术，当一个用户第一次登录服务器时，http request中不带有cookie字段，服务器通过http response中set-cookie字段设置浏览器访问该网站的cookie，然后该用户第二次访问服务器时，由于服务器设置了cookie，浏览器会自动将关联该服务器的cookie中的内容添加在http request请求头中一并发给服务器，这时服务器通过cookie的内容就知道了这个请求来自于该用户。</p>
+<p>cookie本质上是一些键值对组成的表，它还包括了过期时间，路径和域。</p>
+<h3 id="session技术"><a href="#session技术" class="headerlink" title="session技术"></a>session技术</h3><p>服务器虽然可以简单的通过cookie技术识别用户，但是cookie本身安全性不好，容易被其他人读取。session技术是在服务端保存用户信息，而再向用户浏览器set-cookie时，设置一个sessionId，再次访问服务器时，通过sessionId来识别用户。</p>
+<h3 id="session与cookie的关系"><a href="#session与cookie的关系" class="headerlink" title="session与cookie的关系"></a>session与cookie的关系</h3><p>两者都用于解决http协议无状态的问题，cookie基于客户端，session基于服务端，同时session依赖于cookie。因此，当浏览器禁用cookie的时候，session也将随之失效。</p>
+<h3 id="session与cookie的生命周期"><a href="#session与cookie的生命周期" class="headerlink" title="session与cookie的生命周期"></a>session与cookie的生命周期</h3><h4 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h4><ul>
+<li>cookie在服务端返回http响应时可以设置有效时间，cookie在该时间范围内有效，过期即失效。cookie会持久化在硬盘上，即使浏览器关闭也可以再次读取，直至失效。</li>
+<li>服务端返回时未设置有效时间，则cookie在浏览器关闭后即失效。<h4 id="session"><a href="#session" class="headerlink" title="session"></a>session</h4></li>
+<li>创建：在服务端调用HttpServletRequest.getSession(true)时为该用户创建session（ps:java服务端）</li>
+<li>有效期：默认有效期30分钟，可以自行调整。</li>
+<li>失效：1、session超时失效。2、调用invalidate()方法。3、服务器关闭或重启，这里如果session做了持久化，服务器重启之后依然可以从持久化的记录中重建session。<h3 id="session原理简述（tomcat）"><a href="#session原理简述（tomcat）" class="headerlink" title="session原理简述（tomcat）"></a>session原理简述（tomcat）</h3>这是tomcat下session包源码结构：<br><img src="http://johnlw.cn/blog_tomcat_session.png" alt="这里写图片描述"><br>session本身是一个接口，是servlet中HttpSession接口的外观模式，阅读session的标准实现类StandardSession源码，我们可以发现本质上其通过ConcurrentHashMap来保存存在其中的各属性值，记录了创建时间和上次访问时间用于表征生命周期状态等<br><img src="http://johnlw.cn/blog_session_code1.png" alt="这里写图片描述"></li>
+</ul>
+<p>对于整个web服务器来说，需要一个session容器来对session进行管理，这个容器对应的接口就是Manager接口，其抽象实现类ManagerBase中实现了对session生命周期的管理（创建、计时、销毁），其容器也是ConcurrentHashMap，其key值通常为jsessionId<br><img src="http://johnlw.cn/blog_session_code2.png" alt="这里写图片描述"></p>
+<h3 id="负载均衡下session共享问题"><a href="#负载均衡下session共享问题" class="headerlink" title="负载均衡下session共享问题"></a>负载均衡下session共享问题</h3><ul>
+<li>session保持：通过session保持，LB进行请求转发的时候保证每个客户端固定地访问到集群的同一台服务器。显然，session保持并不能保证真正的负载均衡</li>
+<li>session复制：将每台服务器上的session信息复制给其他服务器，使得每台服务器都有一份session信息</li>
+<li>session共享：将session信息放在统一的地方统一访问，将session信息放在redis或Memcached这类KV数据库里</li>
+</ul>
+<h3 id="cookie禁用问题"><a href="#cookie禁用问题" class="headerlink" title="cookie禁用问题"></a>cookie禁用问题</h3><p>可以用时URL重写，将sessionId附在url之后</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/15/JDK动态代理与CGLIB动态代理应用及源码解析/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/03/15/JDK动态代理与CGLIB动态代理应用及源码解析/" class="post-title-link" itemprop="url">JDK动态代理与CGLIB动态代理应用及源码解析</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-03-15 13:40:44" itemprop="dateCreated datePublished" datetime="2018-03-15T13:40:44+08:00">2018-03-15</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-24 20:44:58" itemprop="dateModified" datetime="2019-01-24T20:44:58+08:00">2019-01-24</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="代理模式"><a href="#代理模式" class="headerlink" title="代理模式"></a>代理模式</h3><p>代理模式：为其他对象提供一种代理以控制对这个对象的访问。</p>
+<p>代理模式中有三种角色：Subject抽象主题角色、RealSubject真实主题角色、Proxy代理主题角色。Subject描述了业务行为，RealSubject执行具体的业务逻辑，Proxy代理会拦截对RealSubject对象方法的调用，并在方法调用前后做预处理以及一些善后工作。</p>
+<p>代理模式可以很好地在不侵入原代码的情况下，拓展原来的功能。</p>
+<p>下图为Proxy模式的静态类图：<br><img src="http://johnlw.cn/blog_proxy_pattern.png" alt="这里写图片描述"><br>下图为Proxy模式的调用关系：<br><img src="http://johnlw.cn/blog_proxy_call.png" alt="这里写图片描述"></p>
+<h3 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h3><p>静态代理由于硬编码，难以应对真实对象和调用方法灵活多变的情况，动态代理则对这些场景应付自如。</p>
+<p>动态代理主要有两种实现方式：1、JDK自带的Proxy 2、CGLIB字节码生成库</p>
+<h3 id="基于JDK的动态代理"><a href="#基于JDK的动态代理" class="headerlink" title="基于JDK的动态代理"></a>基于JDK的动态代理</h3><p>基于JDK的动态代理关键在于两个类：InvocationHandler和Proxy。<br>其主要实现逻辑是，由InvocationHandler定义方法执行前后的增强逻辑，由Proxy类去生成一个继承自Proxy并且实现了真实对象接口的新对象–代理对象，对该代理对象的方法调用经由InvocationHandler拦截，执行增强逻辑和调用真实对象执行业务逻辑。</p>
+<p>下面我们先看一个例子：<br>定义接口：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public interface UserService &#123;</span><br><span class="line">	public String getName(int id);</span><br><span class="line"></span><br><span class="line">	public Integer getAge(int id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义真实对象：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public class UserServiceImpl implements UserService &#123;</span><br><span class="line"></span><br><span class="line">	public UserServiceImpl() &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public String getName(int id) &#123;</span><br><span class="line">		System.out.println(&quot;---getName---&quot;);</span><br><span class="line">		return &quot;John&quot;;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public Integer getAge(int id) &#123;</span><br><span class="line">		System.out.println(&quot;---getAge---&quot;);</span><br><span class="line">		return 10;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义InvocationHandler：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class MyInvocationHandler implements InvocationHandler &#123;</span><br><span class="line">	private Object target;</span><br><span class="line"></span><br><span class="line">	public MyInvocationHandler(Object target) &#123;</span><br><span class="line">		this.target = target;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">		if (method.getName().equals(&quot;getName&quot;)) &#123;</span><br><span class="line">			System.out.println(&quot;+++before get name+++&quot;);</span><br><span class="line">			Object res = method.invoke(target, args);</span><br><span class="line">			System.out.println(&quot;+++after get name+++&quot;);</span><br><span class="line">			return res;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			Object res = method.invoke(target, args);</span><br><span class="line">			return res;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		System.getProperties().put(&quot;sun.misc.ProxyGenerator.saveGeneratedFiles&quot;, &quot;true&quot;);</span><br><span class="line">		UserService us = new UserServiceImpl();</span><br><span class="line">		InvocationHandler ih = new MyInvocationHandler(us);</span><br><span class="line">		UserService usProxy = (UserService) Proxy.newProxyInstance(us.getClass().getClassLoader(),</span><br><span class="line">				us.getClass().getInterfaces(), ih);</span><br><span class="line">		System.out.println(usProxy.getName(1));</span><br><span class="line">		System.out.println(usProxy.getAge(1));</span><br><span class="line">		System.out.println(usProxy.getClass());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试结果：<br><img src="http://johnlw.cn/blog_proxy_test_result.png" alt="这里写图片描述"></p>
+<p>可以看到，对于getName方法的增强逻辑执行了。</p>
+<p>下面我们从源码角度分析一下这个过程的实现原理，先看InvocationHandler：<br>InvocationHandler是一个接口，只有一个方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public Object invoke(Object proxy, Method method, Object[] args)</span><br><span class="line">       throws Throwable;</span><br></pre></td></tr></table></figure>
+<p>在定义增强逻辑类时，需要实现该接口，并在invoke方法里实现增强逻辑和对真实对象方法的调用。对于invoke方法的三个参数，proxy表示代理对象，method表示真实对象的方法，args表示真实对象方法的参数，这里也可以看出对真实对象方法的调用是通过反射来实现的。</p>
+<p>增强逻辑定义好了以后，我们需要一个代理对象来执行，先看如何产生这个代理对象。代理对象的产生是通过调用Proxy类的静态方法：newProxyInstance，以下源码分析部分篇幅原因仅截取部分代码片段。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">public static Object newProxyInstance(ClassLoader loader,</span><br><span class="line">                                          Class&lt;?&gt;[] interfaces,</span><br><span class="line">                                          InvocationHandler h)</span><br><span class="line">        throws IllegalArgumentException</span><br><span class="line">        //该方法需要三个参数：ClassLoader确保返回的代理对象和真实对象由同一个类</span><br><span class="line">       </span><br><span class="line">        加载器加载，interfaces用于定义代理类应该实现的方法，</span><br><span class="line">        invocationHandler用于定义代理类的增强逻辑</span><br><span class="line">    &#123;</span><br><span class="line">        if (h == null) &#123;</span><br><span class="line">            throw new NullPointerException();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        final Class&lt;?&gt;[] intfs = interfaces.clone();</span><br><span class="line">        final SecurityManager sm = System.getSecurityManager();</span><br><span class="line">        if (sm != null) &#123;</span><br><span class="line">            checkProxyAccess(Reflection.getCallerClass(), loader, intfs);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /*</span><br><span class="line">         * Look up or generate the designated proxy class.</span><br><span class="line">         */</span><br><span class="line">         //这一行代码很关键，这里是获取代理对象Class对象，Proxy类内部维护了代理</span><br><span class="line">         //对象的缓存，如果缓存里有则直接返回，如果没有，则生成它</span><br><span class="line">        Class&lt;?&gt; cl = getProxyClass0(loader, intfs);</span><br><span class="line"></span><br><span class="line">        /*</span><br><span class="line">         * Invoke its constructor with the designated invocation handler.</span><br><span class="line">         */</span><br><span class="line">        try &#123;</span><br><span class="line">	        //由Class对象获取构造器</span><br><span class="line">            final Constructor&lt;?&gt; cons = cl.getConstructor(constructorParams);</span><br><span class="line">            final InvocationHandler ih = h;</span><br><span class="line">            if (sm != null &amp;&amp; ProxyAccessHelper.needsNewInstanceCheck(cl)) &#123;</span><br><span class="line">                // create proxy instance with doPrivilege as the proxy class may</span><br><span class="line">                // implement non-public interfaces that requires a special permission</span><br><span class="line">                return AccessController.doPrivileged(new PrivilegedAction&lt;Object&gt;() &#123;</span><br><span class="line">                    public Object run() &#123;</span><br><span class="line">                        return newInstance(cons, ih);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">	            //最后由构造器返回新的代理对象实例</span><br><span class="line">                return newInstance(cons, ih);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (NoSuchMethodException e) &#123;</span><br><span class="line">            throw new InternalError(e.toString());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>接下来我们看代理对象的Class对象是如何生成的，缓存逻辑略去不表，直接看没有缓存的情况，代理类Class对象由ProxyClassFactory工厂生成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">private static final class ProxyClassFactory</span><br><span class="line">        implements BiFunction&lt;ClassLoader, Class&lt;?&gt;[], Class&lt;?&gt;&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        // prefix for all proxy class names</span><br><span class="line">        private static final String proxyClassNamePrefix = &quot;$Proxy&quot;;</span><br><span class="line"></span><br><span class="line">        // next number to use for generation of unique proxy class names</span><br><span class="line">        private static final AtomicLong nextUniqueNumber = new AtomicLong();</span><br><span class="line">       //验证代码略去</span><br><span class="line">            /*</span><br><span class="line">             * Generate the specified proxy class.</span><br><span class="line">             */</span><br><span class="line">             //这里生成了代理对象二进制字节码流</span><br><span class="line">            byte[] proxyClassFile = ProxyGenerator.generateProxyClass(</span><br><span class="line">                proxyName, interfaces);</span><br><span class="line">            try &#123;</span><br><span class="line">	            //通过二进制字节码流加载代理类</span><br><span class="line">                return defineClass0(loader, proxyName,</span><br><span class="line">                                    proxyClassFile, 0, proxyClassFile.length);</span><br><span class="line">            &#125; catch (ClassFormatError e) &#123;</span><br><span class="line">                throw new IllegalArgumentException(e.toString());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>最终生成二进制字节码流用到了Sun的ProxyGenerator类，反编译：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public static byte[] generateProxyClass(String s, Class aclass[])</span><br><span class="line">    &#123;</span><br><span class="line">        ProxyGenerator proxygenerator = new ProxyGenerator(s, aclass);</span><br><span class="line">        //该方法生成代理对象的二进制字节码流</span><br><span class="line">        byte abyte0[] = proxygenerator.generateClassFile();</span><br><span class="line">        //如果要保存该字节码文件，可以将其写到硬盘上，我们稍后分析</span><br><span class="line">        if(saveGeneratedFiles)</span><br><span class="line">            //保存文件部分略去</span><br><span class="line">        return abyte0;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>具体生成源码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">private byte[] generateClassFile() &#123;</span><br><span class="line">		addProxyMethod(hashCodeMethod, java / lang / Object);</span><br><span class="line">		addProxyMethod(equalsMethod, java / lang / Object);</span><br><span class="line">		addProxyMethod(toStringMethod, java / lang / Object);</span><br><span class="line">		for (int i = 0; i &lt; interfaces.length; i++) &#123;</span><br><span class="line">			Method amethod[] = interfaces[i].getMethods();</span><br><span class="line">			for (int k = 0; k &lt; amethod.length; k++)</span><br><span class="line">				addProxyMethod(amethod[k], interfaces[i]);</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		List list;</span><br><span class="line">		for (Iterator iterator = proxyMethods.values().iterator(); iterator.hasNext(); checkReturnTypes(list))</span><br><span class="line">			list = (List) iterator.next();</span><br><span class="line"></span><br><span class="line">		try &#123;</span><br><span class="line">			methods.add(generateConstructor());</span><br><span class="line">			for (Iterator iterator1 = proxyMethods.values().iterator(); iterator1.hasNext();) &#123;</span><br><span class="line">				List list1 = (List) iterator1.next();</span><br><span class="line">				Iterator iterator2 = list1.iterator();</span><br><span class="line">				while (iterator2.hasNext()) &#123;</span><br><span class="line">					ProxyMethod proxymethod = (ProxyMethod) iterator2.next();</span><br><span class="line">					fields.add(new FieldInfo(proxymethod.methodFieldName, &quot;Ljava/lang/reflect/Method;&quot;, 10));</span><br><span class="line">					methods.add(proxymethod.generateMethod());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			methods.add(generateStaticInitializer());</span><br><span class="line">		&#125; catch (IOException ioexception) &#123;</span><br><span class="line">			throw new InternalError(&quot;unexpected I/O Exception&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">		if (methods.size() &gt; 65535)</span><br><span class="line">			throw new IllegalArgumentException(&quot;method limit exceeded&quot;);</span><br><span class="line">		if (fields.size() &gt; 65535)</span><br><span class="line">			throw new IllegalArgumentException(&quot;field limit exceeded&quot;);</span><br><span class="line">		cp.getClass(dotToSlash(className));</span><br><span class="line">		cp.getClass(&quot;java/lang/reflect/Proxy&quot;);</span><br><span class="line">		for (int j = 0; j &lt; interfaces.length; j++)</span><br><span class="line">			cp.getClass(dotToSlash(interfaces[j].getName()));</span><br><span class="line"></span><br><span class="line">		cp.setReadOnly();</span><br><span class="line">		ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();</span><br><span class="line">		DataOutputStream dataoutputstream = new DataOutputStream(bytearrayoutputstream);</span><br><span class="line">		try &#123;</span><br><span class="line">			dataoutputstream.writeInt(-889275714);</span><br><span class="line">			dataoutputstream.writeShort(0);</span><br><span class="line">			dataoutputstream.writeShort(49);</span><br><span class="line">			cp.write(dataoutputstream);</span><br><span class="line">			dataoutputstream.writeShort(49);</span><br><span class="line">			dataoutputstream.writeShort(cp.getClass(dotToSlash(className)));</span><br><span class="line">			dataoutputstream.writeShort(cp.getClass(&quot;java/lang/reflect/Proxy&quot;));</span><br><span class="line">			dataoutputstream.writeShort(interfaces.length);</span><br><span class="line">			for (int l = 0; l &lt; interfaces.length; l++)</span><br><span class="line">				dataoutputstream.writeShort(cp.getClass(dotToSlash(interfaces[l].getName())));</span><br><span class="line"></span><br><span class="line">			dataoutputstream.writeShort(fields.size());</span><br><span class="line">			FieldInfo fieldinfo;</span><br><span class="line">			for (Iterator iterator3 = fields.iterator(); iterator3.hasNext(); fieldinfo.write(dataoutputstream))</span><br><span class="line">				fieldinfo = (FieldInfo) iterator3.next();</span><br><span class="line"></span><br><span class="line">			dataoutputstream.writeShort(methods.size());</span><br><span class="line">			MethodInfo methodinfo;</span><br><span class="line">			for (Iterator iterator4 = methods.iterator(); iterator4.hasNext(); methodinfo.write(dataoutputstream))</span><br><span class="line">				methodinfo = (MethodInfo) iterator4.next();</span><br><span class="line"></span><br><span class="line">			dataoutputstream.writeShort(0);</span><br><span class="line">		&#125; catch (IOException ioexception1) &#123;</span><br><span class="line">			throw new InternalError(&quot;unexpected I/O Exception&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">		return bytearrayoutputstream.toByteArray();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>至此，总结一下，Proxy类通过ProxyClassFactory生成了继承Proxy类并实现了真实对象接口的 $ProxyX代理对象的二进制字节码流，并加载该字节码返回代理对象Class对象，由该Class对象经反射得到构造器构造了代理对象的实例。<br>在源码中我们可以通过saveGeneratedFiles变量保存生成的class文件，我们反编译上面的示例生成的class文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">public final class $Proxy0 extends Proxy implements UserService &#123;</span><br><span class="line"></span><br><span class="line">	private static Method m1;</span><br><span class="line">	private static Method m4;</span><br><span class="line">	private static Method m0;</span><br><span class="line">	private static Method m3;</span><br><span class="line">	private static Method m2;</span><br><span class="line"></span><br><span class="line">	public $Proxy0(InvocationHandler invocationhandler) &#123;</span><br><span class="line">		super(invocationhandler);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public final boolean equals(Object obj) &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			return ((Boolean) super.h.invoke(this, m1, new Object[]&#123;obj&#125;)).booleanValue();</span><br><span class="line">		&#125; catch (Error _ex) &#123;</span><br><span class="line">		&#125; catch (Throwable throwable) &#123;</span><br><span class="line">			throw new UndeclaredThrowableException(throwable);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">//这里是UserService接口的getAge方法，在代理对象$Proxy0上的调用被invocationHandler拦截，</span><br><span class="line">//经由其invoke方法调用（即我们之前定义的MyinvocationHandler的invoke方法），</span><br><span class="line">//留意invoke方法的参数，我们在MyinvocationHandler里定义invoke方法时并没有使用proxy参数，</span><br><span class="line">//这里proxy参数的位置传入了this变量，即代理对象本身。</span><br><span class="line">	public final Integer getAge(int i) &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			return (Integer) super.h.invoke(this, m4, new Object[]&#123;Integer.valueOf(i)&#125;);</span><br><span class="line">		&#125; catch (Error _ex) &#123;</span><br><span class="line">		&#125; catch (Throwable throwable) &#123;</span><br><span class="line">			throw new UndeclaredThrowableException(throwable);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public final int hashCode() &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			return ((Integer) super.h.invoke(this, m0, null)).intValue();</span><br><span class="line">		&#125; catch (Error _ex) &#123;</span><br><span class="line">		&#125; catch (Throwable throwable) &#123;</span><br><span class="line">			throw new UndeclaredThrowableException(throwable);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public final String getName(int i) &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			return (String) super.h.invoke(this, m3, new Object[]&#123;Integer.valueOf(i)&#125;);</span><br><span class="line">		&#125; catch (Error _ex) &#123;</span><br><span class="line">		&#125; catch (Throwable throwable) &#123;</span><br><span class="line">			throw new UndeclaredThrowableException(throwable);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public final String toString() &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			return (String) super.h.invoke(this, m2, null);</span><br><span class="line">		&#125; catch (Error _ex) &#123;</span><br><span class="line">		&#125; catch (Throwable throwable) &#123;</span><br><span class="line">			throw new UndeclaredThrowableException(throwable);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	static &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			m1 = Class.forName(&quot;java.lang.Object&quot;).getMethod(&quot;equals&quot;, new Class[]&#123;Class.forName(&quot;java.lang.Object&quot;)&#125;);</span><br><span class="line">			m4 = Class.forName(&quot;cn.john.test.dynamicProxy.UserService&quot;).getMethod(&quot;getAge&quot;, new Class[]&#123;Integer.TYPE&#125;);</span><br><span class="line">			m0 = Class.forName(&quot;java.lang.Object&quot;).getMethod(&quot;hashCode&quot;, new Class[0]);</span><br><span class="line">			m3 = Class.forName(&quot;cn.john.test.dynamicProxy.UserService&quot;).getMethod(&quot;getName&quot;, new Class[]&#123;Integer.TYPE&#125;);</span><br><span class="line">			m2 = Class.forName(&quot;java.lang.Object&quot;).getMethod(&quot;toString&quot;, new Class[0]);</span><br><span class="line">		&#125; catch (NoSuchMethodException nosuchmethodexception) &#123;</span><br><span class="line">			throw new NoSuchMethodError(nosuchmethodexception.getMessage());</span><br><span class="line">		&#125; catch (ClassNotFoundException classnotfoundexception) &#123;</span><br><span class="line">			throw new NoClassDefFoundError(classnotfoundexception.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="基于CGLIB的动态代理"><a href="#基于CGLIB的动态代理" class="headerlink" title="基于CGLIB的动态代理"></a>基于CGLIB的动态代理</h3><h4 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">public class UserServiceB &#123;</span><br><span class="line">	public String getName(int id) &#123;</span><br><span class="line">		System.out.println(&quot;---getName---&quot;);</span><br><span class="line">		return &quot;John&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">	public Integer getAge(int id) &#123;</span><br><span class="line">		System.out.println(&quot;---getAge---&quot;);</span><br><span class="line">		return 10;</span><br><span class="line">	&#125;</span><br><span class="line">	public static void main(String[] args) throws InterruptedException, IOException &#123;</span><br><span class="line">	//将cglib生成的Class对象写成文件存入硬盘，后面反编译出来用以分析</span><br><span class="line">		System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, &quot;D:\\class&quot;);</span><br><span class="line">		UserServiceB us = new UserServiceB();</span><br><span class="line">		// 定义增强器</span><br><span class="line">		Enhancer en = new Enhancer();</span><br><span class="line">		// 定义要代理的对象</span><br><span class="line">		en.setSuperclass(us.getClass());</span><br><span class="line">		// 定义回调函数</span><br><span class="line">		en.setCallback(new MethodInterceptor() &#123;</span><br><span class="line">			//这里要理解intercept方法的几个参数代表的意思</span><br><span class="line">			//obj指的是代理类对象</span><br><span class="line">			//Method指的是 目标类中被拦截的方法</span><br><span class="line">			//args指的是 调用拦截方法所需的参数</span><br><span class="line">			//MethodProxy指的是用来调用目标类被拦截方法的方法，这个方法比反射更快</span><br><span class="line">			@Override</span><br><span class="line">			public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy)</span><br><span class="line">					throws Throwable &#123;</span><br><span class="line">				System.out.println(&quot;-----before-------&quot;);</span><br><span class="line">				//这里只能用invokeSuper，原因稍后解释</span><br><span class="line">				methodProxy.invokeSuper(obj, args);</span><br><span class="line">				System.out.println(&quot;-----after--------&quot;);</span><br><span class="line">				return null;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		&#125;);</span><br><span class="line">		// 生成代理对象</span><br><span class="line">		UserServiceB usb = (UserServiceB) en.create();</span><br><span class="line">		// 在代理对象上调用方法</span><br><span class="line">		usb.getName(1);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：<br><img src="http://johnlw.cn/blog_cglib_test.png" alt="这里写图片描述"></p>
+<p>同时生成了三个class文件：一个是代理类，一个是代理类的FastClass，一个是目标类的FastClass<br><img src="http://johnlw.cn/blog_cglib_classes.png" alt="这里写图片描述"></p>
+<h4 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h4><h6 id="代理类源码概览"><a href="#代理类源码概览" class="headerlink" title="代理类源码概览"></a>代理类源码概览</h6><p>从上面的示例代码中，我们知道通过cglib生成代理类只需要一个目标类和一个回调函数（增强逻辑），下面我们从在代理对象上调用getName()方法出发，一步一步分析cglib动态代理的实现原理。</p>
+<p>先来看生成的代理对象Class文件反编译后的源码（代码很长，代理了Object中的finalize,equals, toString,hashCode,clone方法，这里仅留下getName()方法）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">public class UserServiceB$$EnhancerByCGLIB$$a33459ad extends UserServiceB implements Factory &#123;</span><br><span class="line">	//cglib基于继承，可以看到代理类继承了目标类，并实现了Factory接口，Factory接口可以简化回调函数的变更</span><br><span class="line">	private boolean CGLIB$BOUND;</span><br><span class="line">	private static final ThreadLocal CGLIB$THREAD_CALLBACKS;</span><br><span class="line">	private static final Callback[] CGLIB$STATIC_CALLBACKS;</span><br><span class="line">	private MethodInterceptor CGLIB$CALLBACK_0;//回调函数</span><br><span class="line">	private static final Method CGLIB$getName$0$Method;//目标类的getName方法</span><br><span class="line">	private static final MethodProxy CGLIB$getName$0$Proxy;//getName方法的代理方法</span><br><span class="line">	//初始化变量</span><br><span class="line">	static void CGLIB$STATICHOOK1() &#123;</span><br><span class="line">		CGLIB$THREAD_CALLBACKS = new ThreadLocal();</span><br><span class="line">		CGLIB$emptyArgs = new Object[0];</span><br><span class="line">		//代理类</span><br><span class="line">		Class class_ = Class.forName(&quot;cn.john.test.dynamicProxy.UserServiceB$$EnhancerByCGLIB$$a33459ad&quot;);</span><br><span class="line">		//目标类</span><br><span class="line">		Class class_2 = Class.forName(&quot;cn.john.test.dynamicProxy.UserServiceB&quot;);</span><br><span class="line">		Method[] arrmethod = ReflectUtils.findMethods(</span><br><span class="line">				(String[]) new String[]&#123;&quot;getName&quot;, &quot;(I)Ljava/lang/String;&quot;, &quot;getAge&quot;, &quot;(I)Ljava/lang/Integer;&quot;&#125;,</span><br><span class="line">				(Method[]) class_2.getDeclaredMethods());</span><br><span class="line">		//getName方法</span><br><span class="line">		CGLIB$getName$0$Method = arrmethod[0];</span><br><span class="line">		//建立更快的方法索引访问方式，这里通过目标类和代理类的Class对象和方法签名为这两个对象</span><br><span class="line">		//的所有方法都建立了索引，并提供了通过索引调用的方法。</span><br><span class="line">		//这里CGLIB$getName$0$Proxy提供在目标类（或者兼容类）上快速调用getName和在代理类上</span><br><span class="line">		//快速调用CGLIB$getName$0的功能</span><br><span class="line">		CGLIB$getName$0$Proxy = MethodProxy.create(class_2, class_, (String) &quot;(I)Ljava/lang/String;&quot;,</span><br><span class="line">				(String) &quot;getName&quot;, (String) &quot;CGLIB$getName$0&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//直接调用了目标类的方法，这个方法即用来执行目标类真实逻辑，通过索引调用来快速访问该方法</span><br><span class="line">	final String CGLIB$getName$0(int n) &#123;</span><br><span class="line">		return super.getName(n);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//代理方法getName入口</span><br><span class="line">	public final String getName(int n) &#123;</span><br><span class="line">	//先获取回调函数</span><br><span class="line">		MethodInterceptor methodInterceptor = this.CGLIB$CALLBACK_0;</span><br><span class="line">		if (methodInterceptor == null) &#123;</span><br><span class="line">			UserServiceB$$EnhancerByCGLIB$$a33459ad.CGLIB$BIND_CALLBACKS((Object) this);</span><br><span class="line">			methodInterceptor = this.CGLIB$CALLBACK_0;</span><br><span class="line">		&#125;</span><br><span class="line">		//获取了回调函数之后</span><br><span class="line">		if (methodInterceptor != null) &#123;</span><br><span class="line">		//调用回调函数的拦截方法。</span><br><span class="line">		//注意这里传入的参数，代理类传入的this，被拦截的方法传入的是目标类对象的</span><br><span class="line">		//被拦截的方法，methodProxy传入的是getName方法的快速访问代理</span><br><span class="line">			return (String) methodInterceptor.intercept((Object) this, CGLIB$getName$0$Method,</span><br><span class="line">					new Object[]&#123;new Integer(n)&#125;, CGLIB$getName$0$Proxy);</span><br><span class="line">		&#125;</span><br><span class="line">		return super.getName(n);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public UserServiceB$$EnhancerByCGLIB$$a33459ad() &#123;</span><br><span class="line">		UserServiceB$$EnhancerByCGLIB$$a33459ad userServiceB$$EnhancerByCGLIB$$a33459ad = this;</span><br><span class="line">		UserServiceB$$EnhancerByCGLIB$$a33459ad.CGLIB$BIND_CALLBACKS((Object) userServiceB$$EnhancerByCGLIB$$a33459ad);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void CGLIB$SET_THREAD_CALLBACKS(Callback[] arrcallback) &#123;</span><br><span class="line">		CGLIB$THREAD_CALLBACKS.set(arrcallback);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void CGLIB$SET_STATIC_CALLBACKS(Callback[] arrcallback) &#123;</span><br><span class="line">		CGLIB$STATIC_CALLBACKS = arrcallback;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private static final void CGLIB$BIND_CALLBACKS(Object object) &#123;</span><br><span class="line">		UserServiceB$$EnhancerByCGLIB$$a33459ad userServiceB$$EnhancerByCGLIB$$a33459ad = (UserServiceB$$EnhancerByCGLIB$$a33459ad) ((Object) object);</span><br><span class="line">		if (!userServiceB$$EnhancerByCGLIB$$a33459ad.CGLIB$BOUND) &#123;</span><br><span class="line">			userServiceB$$EnhancerByCGLIB$$a33459ad.CGLIB$BOUND = true;</span><br><span class="line">			Object t = CGLIB$THREAD_CALLBACKS.get();</span><br><span class="line">			if (t != null || (v13465 = CGLIB$STATIC_CALLBACKS) != null) &#123;</span><br><span class="line">				userServiceB$$EnhancerByCGLIB$$a33459ad.CGLIB$CALLBACK_0 = (MethodInterceptor) ((Callback[]) t)[0];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	static &#123;</span><br><span class="line">		UserServiceB$$EnhancerByCGLIB$$a33459ad.CGLIB$STATICHOOK1();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入回调函数后，跟JDK动态代理InvocationHandler一样，先执行前置增强逻辑，然后将目标类的真实逻辑。注意此处目标类的真实逻辑执行cglib的实现方式与JDK实现方式不同：JDK使用的是反射技术，而cglib则使用了FastClass构建方法索引+继承的方式访问目标类的方法。</p>
+<h6 id="建立getName方法和CGLIB-getName0的索引"><a href="#建立getName方法和CGLIB-getName0的索引" class="headerlink" title="建立getName方法和CGLIB$getName0的索引"></a>建立getName方法和CGLIB$getName0的索引</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CGLIB$getName$0$Proxy = MethodProxy.create(class_2, class_, (String) &quot;(I)Ljava/lang/String;&quot;,</span><br><span class="line">				(String) &quot;getName&quot;, (String) &quot;CGLIB$getName$0&quot;);</span><br><span class="line">				//注意这里class_2是目标类，class_是代理类</span><br></pre></td></tr></table></figure>
+<p>我们截取MethodProxy类的部分代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">	private static class CreateInfo &#123;</span><br><span class="line">		Class c1;</span><br><span class="line">		Class c2;</span><br><span class="line">		NamingPolicy namingPolicy;</span><br><span class="line">		GeneratorStrategy strategy;</span><br><span class="line">		boolean attemptLoad;</span><br><span class="line"></span><br><span class="line">		public CreateInfo(Class c1, Class c2) &#123;</span><br><span class="line">			this.c1 = c1;</span><br><span class="line">			this.c2 = c2;</span><br><span class="line">			AbstractClassGenerator fromEnhancer = AbstractClassGenerator.getCurrent();</span><br><span class="line">			if (fromEnhancer != null) &#123;</span><br><span class="line">				this.namingPolicy = fromEnhancer.getNamingPolicy();</span><br><span class="line">				this.strategy = fromEnhancer.getStrategy();</span><br><span class="line">				this.attemptLoad = fromEnhancer.getAttemptLoad();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">//注意在MethodProxy类内部变量命名：这里目标类为1，而代理类变为了2</span><br><span class="line">	public static MethodProxy create(Class c1, Class c2, String desc, String name1, String name2) &#123;</span><br><span class="line">	//准备数据阶段，目标类和代理类的Class对象，需要映射的方法签名，这里并不会</span><br><span class="line">	//触发实际上的建立方法索引</span><br><span class="line">		MethodProxy proxy = new MethodProxy();</span><br><span class="line">		proxy.sig1 = new Signature(name1, desc);</span><br><span class="line">		proxy.sig2 = new Signature(name2, desc);</span><br><span class="line">		proxy.createInfo = new CreateInfo(c1, c2);</span><br><span class="line">		return proxy;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实际建立方法索引发生在回调函数中方法调用时（Lazyinit）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">//MethodProxy类中的InvokeSuper</span><br><span class="line">public Object invokeSuper(Object obj, Object[] args) throws Throwable &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			this.init();//实际的方法索引在此时建立</span><br><span class="line">			FastClassInfo fci = this.fastClassInfo;</span><br><span class="line">			//在代理类FastClass对象上调用索引为i2的方法</span><br><span class="line">			return fci.f2.invoke(fci.i2, obj, args);</span><br><span class="line">		&#125; catch (InvocationTargetException e) &#123;</span><br><span class="line">			throw e.getTargetException();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">//内部类FastClassInfo</span><br><span class="line">private static class FastClassInfo &#123;</span><br><span class="line">		FastClass f1;//目标类fc</span><br><span class="line">		FastClass f2;//代理类fc</span><br><span class="line">		int i1;//目标类getName方法索引</span><br><span class="line">		int i2;//代理类CGLIB$getName$0方法索引</span><br><span class="line"></span><br><span class="line">		private FastClassInfo() &#123;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void init() &#123;</span><br><span class="line">		if (this.fastClassInfo == null) &#123;</span><br><span class="line">			Object object = this.initLock;</span><br><span class="line">			synchronized (object) &#123;</span><br><span class="line">				if (this.fastClassInfo == null) &#123;</span><br><span class="line">					CreateInfo ci = this.createInfo;</span><br><span class="line">					FastClassInfo fci = new FastClassInfo();</span><br><span class="line">					//这里通过字节码技术生成目标类和代理类的FastClass类的实例</span><br><span class="line">					//FastClass关键有两类方法：</span><br><span class="line">					//一类是getIndex方法，通过方法签名获取某方法的索引</span><br><span class="line">					//一类是invoke方法，通过方法的索引来找到方法并调用</span><br><span class="line">					fci.f1 = MethodProxy.helper(ci, ci.c1);//生成目标类的FastClass对象</span><br><span class="line">					fci.f2 = MethodProxy.helper(ci, ci.c2);//生成代理类的FastClass对象</span><br><span class="line">					//获取目标类和代理类的方法索引</span><br><span class="line">					fci.i1 = fci.f1.getIndex(this.sig1);</span><br><span class="line">					fci.i2 = fci.f2.getIndex(this.sig2);</span><br><span class="line">					this.fastClassInfo = fci;//至此，getName方法的索引建立、获取完毕</span><br><span class="line">					this.createInfo = null;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>回到示例上层代码：<code>methodProxy.invokeSuper(obj, args);</code>这里obj是代理对象，再看invokeSuper:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public Object invokeSuper(Object obj, Object[] args) throws Throwable &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            init();//建立和获取索引</span><br><span class="line">            FastClassInfo fci = fastClassInfo;</span><br><span class="line">            //在obj即代理对象上调用索引为i2的方法</span><br><span class="line">            return fci.f2.invoke(fci.i2, obj, args);</span><br><span class="line">        &#125; catch (InvocationTargetException e) &#123;</span><br><span class="line">            throw e.getTargetException();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>现在我们反编译代理类的FastClass类看一下，<code>fci.f2.invoke(fci.i2, obj, args);</code>到底意味着什么。<br>代理类FastClass（部分代码）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public class UserServiceB$$EnhancerByCGLIB$$a33459ad$$FastClassByCGLIB$$9e4fc4c5 extends FastClass &#123;</span><br><span class="line">	public UserServiceB$$EnhancerByCGLIB$$a33459ad$$FastClassByCGLIB$$9e4fc4c5(Class class_) &#123;</span><br><span class="line">		super(class_);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public int getIndex(Signature signature) &#123;</span><br><span class="line">		String string = signature.toString();</span><br><span class="line">		switch (string.hashCode()) &#123;</span><br><span class="line">			case -2024387448 : &#123;</span><br><span class="line">			//在上面的Init方法中我们已经获取了CGLIB$getName$0的索引，值为18</span><br><span class="line">				if (!string.equals(&quot;CGLIB$getName$0(I)Ljava/lang/String;&quot;))</span><br><span class="line">					break;</span><br><span class="line">				return 18;</span><br><span class="line">			&#125;</span><br><span class="line">			case 206620625 : &#123;</span><br><span class="line">				if (!string.equals(&quot;getName(I)Ljava/lang/String;&quot;))</span><br><span class="line">					break;</span><br><span class="line">				return 3;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return -1;</span><br><span class="line">	&#125;</span><br><span class="line">//在代理对象上调用索引为18的方法</span><br><span class="line">	public Object invoke(int n, Object object, Object[] arrobject) throws InvocationTargetException &#123;</span><br><span class="line">		UserServiceB$$EnhancerByCGLIB$$a33459ad userServiceB$$EnhancerByCGLIB$$a33459ad = (UserServiceB$$EnhancerByCGLIB$$a33459ad) ((Object) object);</span><br><span class="line">		try &#123;</span><br><span class="line">			switch (n) &#123;</span><br><span class="line">				case 3 : &#123;</span><br><span class="line">					return userServiceB$$EnhancerByCGLIB$$a33459ad.getName(((Number) arrobject[0]).intValue());</span><br><span class="line">				&#125;</span><br><span class="line">				//在代理对象上调用了CGLIB$getName$0方法，回到代理类源码，它调用super.getName，即目标类的真实逻辑</span><br><span class="line">				case 18 : &#123;</span><br><span class="line">					return userServiceB$$EnhancerByCGLIB$$a33459ad.CGLIB$getName$0(((Number) arrobject[0]).intValue());</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; catch (Throwable v1) &#123;</span><br><span class="line">			throw new InvocationTargetException(v1);</span><br><span class="line">		&#125;</span><br><span class="line">		throw new IllegalArgumentException(&quot;Cannot find matching method/constructor&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在我们来回答一下为什么示例代码中不能调用invoke，而是只能调用invokeSuper。invoke代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public Object invoke(Object obj, Object[] args) throws Throwable &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            init();</span><br><span class="line">            FastClassInfo fci = fastClassInfo;</span><br><span class="line">            //因为在回调函数中obj传入的代理对象，这里实际上是在代理对象上调用</span><br><span class="line">            //getName方法，将陷入无限递归，直至栈溢出</span><br><span class="line">            return fci.f1.invoke(fci.i1, obj, args);</span><br><span class="line">        &#125; catch (InvocationTargetException e) &#123;</span><br><span class="line">            throw e.getTargetException();</span><br><span class="line">        &#125; catch (IllegalArgumentException e) &#123;</span><br><span class="line">            if (fastClassInfo.i1 &lt; 0)</span><br><span class="line">                throw new IllegalArgumentException(&quot;Protected method: &quot; + sig1);</span><br><span class="line">            throw e;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th style="text-align:center">机制</th>
+<th>回调方式</th>
+<th>适用场景</th>
+<th>效率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK动态代理</td>
+<td style="text-align:center">委托机制，代理类和目标类都实现了同样的接口，InvocationHandler持有目标类，代理类委托InvocationHandler去调用目标类的原始方法</td>
+<td>反射</td>
+<td>目标类是接口类</td>
+<td>效率瓶颈在反射调用稍慢</td>
+</tr>
+<tr>
+<td>CGLIB动态代理</td>
+<td style="text-align:center">继承机制，代理类继承了目标类并重写了目标方法，通过回调函数MethodInterceptor调用父类方法执行原始逻辑</td>
+<td>通过FastClass方法索引调用</td>
+<td>非接口类，非final类，非final方法</td>
+<td>第一次调用因为要生成多个Class对象较JDK方式慢，多次调用因为有方法索引较反射方式快，如果方法过多switch case过多其效率还需测试</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><a href="http://ifeve.com/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E4%BB%A3%E7%90%86%E4%B8%8Ecglib%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E6%8E%A2%E7%A9%B6/" target="_blank" rel="noopener">http://ifeve.com/jdk%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E4%BB%A3%E7%90%86%E4%B8%8Ecglib%E4%BB%A3%E7%90%86%E5%8E%9F%E7%90%86%E6%8E%A2%E7%A9%B6/</a><br><a href="https://www.jianshu.com/p/9a61af393e41?from=timeline&amp;isappinstalled=0" target="_blank" rel="noopener">https://www.jianshu.com/p/9a61af393e41?from=timeline&amp;isappinstalled=0</a><br><a href="https://www.jianshu.com/p/13aa63e1ac95" target="_blank" rel="noopener">https://www.jianshu.com/p/13aa63e1ac95</a><br><a href="https://www.cnblogs.com/cruze/p/3865180.html" target="_blank" rel="noopener">https://www.cnblogs.com/cruze/p/3865180.html</a><br>spring技术内幕</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/13/Session与Cookie/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -2676,375 +3073,13 @@ if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/08/Java 基础知识总结--持续更新/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="John What">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/05/08/Java 基础知识总结--持续更新/" class="post-title-link" itemprop="url">Java 基础知识总结--持续更新</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-05-08 11:02:00" itemprop="dateCreated datePublished" datetime="2017-05-08T11:02:00+08:00">2017-05-08</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-01-24 20:00:47" itemprop="dateModified" datetime="2019-01-24T20:00:47+08:00">2019-01-24</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Java是OOP语言，所有的OOP语言都有三个特性：封装、多态、继承。</p>
-<h1 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h1><p>封装是一种将代码与它所处理的数据结合起来，而不被外界干扰滥用的程序设计机制。<br>在Java中，基本封装单元是<strong>类</strong>，数据即字段，代码即方法。</p>
-<h1 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h1><p>多态是一种允许使用一个接口来访问一类动作的特性。<br>在Java中，多态的表现形式为：1、接口的实现；2、继承父类进行方法重写（override）；3、同一个类中进行方法的重载（overloaded）。</p>
-<h1 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h1><p>继承是一个对象获得另一个对象的属性的过程。继承之所以重要，是因为它支持层级结构类的概念。</p>
-<h1 id="类"><a href="#类" class="headerlink" title="类"></a>类</h1><p>对象的类型，决定一类对象的外观和行为。一个类中可以设置<strong>两种</strong>类型的元素：<strong>字段</strong>和<strong>方法</strong>。<br>字段可以是任意类型的对象（基本类型和引用类型/ps：注意字段的初始化和局部变量初始化的区别）；方法由名称、参数、返回值和方法体构成，其中名称和参数列表合起来称为方法签名以用来唯一的标识一个方法。<br>当创建类时，就是在描述那个类的对象的外观和行为。</p>
-<h1 id="static关键字"><a href="#static关键字" class="headerlink" title="static关键字"></a>static关键字</h1><p>一个类通过new新建了对象之后，数据存储空间才会分配，其方法和域才能被外界所使用。<br>static关键字用来解决以下两种情形：1、<strong>只想为某特定域分配单一的存储空间</strong>，而不去考虑究竟要创建多少对象，或者根本不需要创建对象。2、<strong>希望某个方法不与包含它的类任何对象关联在一起</strong>。即使没有创建对象，也可以使用该方法。</p>
-<p>static{}(即static块)，会在类被加载的时候执行且仅会被执行一次，一般用来初始化静态变量和调用静态方法。</p>
-<h1 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h1><p>抽象方法是仅有方法声明但是没有方法体的方法。包含抽象方法的类称为抽象类。抽象类是介于类和接口的中庸之道。</p>
-<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><p>接口是一个<strong>完全抽象的类</strong>。一方面，一个接口表示：所有实现了该接口的类看起来都像这样，这建立了类与类之间通信的<strong>协议</strong>；<br>另一方面，接口也是其实现类的<strong>基类</strong>，类可以被向上转型为借口类型，它允许通过创建一个能够被向上转型为多种基类的类型，来实现某种类型多重继变种的特性。（一个实现了多种接口的类，其基类可以是其中任意一种。）<br>既然接口也是类，则满足类的基本特性：具有字段和方法。由于接口的协议特性，接口的字段和方法默认都是<strong>public</strong>的。其中字段还是<strong>static final</strong>的。<br><strong>接口支持多继承</strong>。如RunnableFuture接口。</p>
-<h3 id="嵌套接口"><a href="#嵌套接口" class="headerlink" title="嵌套接口"></a>嵌套接口</h3><p>接口<strong>可以嵌套在类或者其他接口</strong>中。实际上是一种<strong>内部类</strong>。<br>由接口的协议特性，接口中的嵌套接口必须是public的。实现该外围接口无需实现嵌套接口。类中的嵌套接口可以是private的。</p>
-<h1 id="向上转型和向下转型"><a href="#向上转型和向下转型" class="headerlink" title="向上转型和向下转型"></a>向上转型和向下转型</h1><h1 id="继承-1"><a href="#继承-1" class="headerlink" title="继承"></a>继承</h1><p>1、    子类可以继承父类的非private属性和方法，不包括构造函数。属性和方法均属于类的成员，构造方法不是成员。继承描述了is-a关系，描述了两个对象的属性和行为的相似性关联性。构造函数顾名思义是用来构造一个对象的，是用来为对象的初始化服务的，并不参与对象的属性和行为的描述。<br>2、    子类不能继承父类的private成员，但是如果父类有protected或者public方法可以访问父类private成员，子类可以通过这些方法访问private成员。<br>3、    子类可以拥有自己的属性和方法。继承描述了共性，也提供了特殊性的表示方法。<br>4、    子类可以用自己的方式实现父类的方法—方法的重写<br>5、    子类可以实现父类方法的不同版本—方法的重载</p>
-<h1 id="对象初始化顺序"><a href="#对象初始化顺序" class="headerlink" title="对象初始化顺序"></a>对象初始化顺序</h1><p>父类Ｂ静态代码块-&gt;子类Ａ静态代码块-&gt;父类Ｂ非静态代码块-&gt;父类Ｂ构造函数-&gt;子类Ａ非静态代码块-&gt;子类Ａ构造函数<br>当实例化子类对象时，首先要加载父类的class文件进内存，静态代码块是随着类的创建而执行，所以父类静态代码块最先被执行，子类class文件再被加载，同理静态代码块被先执行；实例化子类对象要先调用父类的构造方法，而调用父类构造方法前会先执行父类的非静态代码块</p>
-<h1 id="重载和重写"><a href="#重载和重写" class="headerlink" title="重载和重写"></a>重载和重写</h1><p>方法的签名：指的是方法的组成结构。具体包括方法的名称和参数，涵盖参数的数量，类型以及出现的顺序，但是不包括方法的返回值类型、访问权限修饰符、抛出的异常</p>
-<p>初步理解：重载和重写都是多态性的表现。重载是指的同一个方法名称，但是有不同的方法签名，存在于继承和同一个类中。重写是指方法签名以及返回类型不变，抛出的异常应是被重写方法的子类，但是方法的执行逻辑变了—子类修改了父类的实现逻辑，是为重写。</p>
-<p>方法的重写（override）两同两小一大原则：<br>方法名相同，参数类型相同<br>子类返回类型小于等于父类方法返回类型，<br>子类抛出异常小于等于父类方法抛出异常，<br>子类访问权限大于等于父类方法访问权限。</p>
-<h1 id="try-catch-finally-return"><a href="#try-catch-finally-return" class="headerlink" title="try catch finally return"></a>try catch finally return</h1><p>1、不管有木有出现异常，finally块中代码都会执行；<br>2、当try和catch中有return时，finally仍然会执行；<br>3、finally是在return语句执行之后，返回之前执行的（此时并没有返回运算后的值，而是先把要返回的值保存起来，不管finally中的代码怎么样，返回的值都不会改变，仍然是之前保存的值），所以函数返回值是在finally执行前就已经确定了；<br>4、finally中如果包含return，那么程序将在这里返回，而不是try或catch中的return返回，返回值就不是try或catch中保存的返回值了。<br>注意：<br>finally修改的基本类型是不影响返回结果的。（传值的）<br>修改list ,map,自定义类等引用类型时，是影响返回结果的。（传址的）对象也是传址的</p>
-<h1 id="内部类"><a href="#内部类" class="headerlink" title="内部类"></a>内部类</h1><p><a href="https://www.cnblogs.com/dolphin0520/p/3811445.html" target="_blank" rel="noopener">https://www.cnblogs.com/dolphin0520/p/3811445.html</a><br>内部类在外部类中，类比外部类的成员变量<br>内部类其实和类的属性没什么区别，只是在声明的时候必须是Outer.Inner a，就像int a 一样，至于静态内部类和非静态内部类new的时候有点区别</p>
-<h1 id="Class对象"><a href="#Class对象" class="headerlink" title="Class对象"></a>Class对象</h1><p> 对应每个类的class文件，像是每个类的超级管理员。</p>
-<h1 id="动态方法分配"><a href="#动态方法分配" class="headerlink" title="动态方法分配"></a>动态方法分配</h1><p>动态方法分配机制，通过该机制，对一个被重写方法的调用会在运行时解析，而不是编译时解析。是java实现运行时多态的机制。具体如：当通过超类引用调用被重写方法时，java会根据在调用发生时引用的对象的类型来判断所要执行的方法。 </p>
-<h1 id="this关键字"><a href="#this关键字" class="headerlink" title="this关键字"></a>this关键字</h1><p>this关键字只能在方法内部使用，表示对“调用方法的那个对象”的<strong>引用</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class A&#123;</span><br><span class="line">	int i;</span><br><span class="line">	int j;</span><br><span class="line">	public A(int i)&#123;&#125;</span><br><span class="line">	public A(int i,int j)&#123;</span><br><span class="line">	this(i);//调用构造器</span><br><span class="line">	this.j = j;//引用属性</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h1 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h1><p><img src="http://johnlw.cn/blog_basic_types.png" alt="这里写图片描述"></p>
-<h1 id="equals-和"><a href="#equals-和" class="headerlink" title="equals()和=="></a>equals()和==</h1><p>equals()是Object的方法，==是关系操作符，关系操作符计算的结果是一个boolean结果。计算的是操作数的值之间的关系。<br>对于基本数据类型（不是对象），equals()无法使用，通过==直接比较值。<br>对于引用数据类型，<strong>==和Object对象</strong>的equals()方法都是比较的<strong>对象的引用</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">object 的equals()方法：</span><br><span class="line">public boolean equals(Object obj) &#123;</span><br><span class="line">        return (this == obj);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<p>如果想<strong>比较对象的内容，需要自己重写equals()方法</strong>。大部分java类库都实现了equals()方法，以便用来比较对象的内容，而不仅仅是引用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">String 的equals()方法：</span><br><span class="line">public boolean equals(Object anObject) &#123;</span><br><span class="line">		//如果引用相同则两个String对象内容相同</span><br><span class="line">        if (this == anObject) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        //如果引用不相同，则挨个比较两个字符串对象的字符（比较内容）</span><br><span class="line">        if (anObject instanceof String) &#123;</span><br><span class="line">            String anotherString = (String) anObject;</span><br><span class="line">            int n = value.length;</span><br><span class="line">            if (n == anotherString.value.length) &#123;</span><br><span class="line">                char v1[] = value;</span><br><span class="line">                char v2[] = anotherString.value;</span><br><span class="line">                int i = 0;</span><br><span class="line">                while (n-- != 0) &#123;</span><br><span class="line">                    if (v1[i] != v2[i])</span><br><span class="line">                            return false;</span><br><span class="line">                    i++;</span><br><span class="line">                &#125;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<h1 id="静态内部类和内部类"><a href="#静态内部类和内部类" class="headerlink" title="静态内部类和内部类"></a>静态内部类和内部类</h1><p> 要想直接创建内部类的对象，必须先使用外部类的对象来创建该内部类对象。在拥有外部类对象之前是不可能创建内部类对象的，因为内部类对象会暗暗连接到创建它的外部类对象上去。<br> 静态内部类则没有这个限制，可以直接创建。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class A&#123;</span><br><span class="line">	public class B&#123;&#125;</span><br><span class="line">	public static class C&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">public class Test&#123;</span><br><span class="line">	A a = new A();</span><br><span class="line">	//这里不可以直接创建内部类B的对象</span><br><span class="line">	//A.B b = new B();</span><br><span class="line">	//正确方式，通过A的实例来创建</span><br><span class="line">	A.B b = a.new B();</span><br><span class="line">	//对于C，可以直接创建</span><br><span class="line">	A.C c = new C();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h1 id="Java参数传递"><a href="#Java参数传递" class="headerlink" title="Java参数传递"></a>Java参数传递</h1><p><strong>Java中参数传递的都是值</strong>。<br>对于函数对参数的改变是否会影响原值的问题：</p>
-<ul>
-<li>值类型：传递值的拷贝，改变参数值不影响原值</li>
-<li>引用类型：传递引用的拷贝，如果参数指向了不同的实例则参数引用和原引用不相等，如果改变的是实例本身，则参数和原引用相等</li>
-</ul>
-<h1 id="equals和hashcode"><a href="#equals和hashcode" class="headerlink" title="equals和hashcode"></a>equals和hashcode</h1><p>equals方法用来定义两个对象实例（注意不是引用）是否相等的规则，可以理解为判断两个对象实例是否是一模一样的实例。</p>
-<p>hashcode方法主要用在哈希表中，对象通过hashcode方法算出对象的哈希值，再去哈希表中插入或者查找。我们知道计算hashcode时是可能存在碰撞情况的，也就是不同的对象（equals），hashcode可能是一样的；但是两个对象的hashcode不一样的话，那么这两个对象一定是不相等（equals）的。</p>
-<h1 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h1><p>List<br><strong>ArrayList</strong>  数组 与System.arrayCopy<br><strong>LinkedList</strong>  带头尾节点的双向链表，可以作为<strong>双端队列和栈</strong>。</p>
-<p>Map<br><strong>HashMap</strong><br><strong>LinkedHashMap</strong>  Entry带有前后节点的引用，带头结点的双向链表，保持插入顺序，或者在插入顺序的基础上再保持访问顺序-每次访问某个Entry，将该Entry移至链表尾部，成为最近最多使用节点（这里get方法和put方法都是如此，尤其是put方法中key已经存在了，同样会被移至链表尾部，因为recordAccess方法在HashMap中已经写在put方法里了）。启用访问顺序可以作为LRU链表使用，需要重写方法removeEldestEntry设定移除条件（如大小到了某个值），在条件达到时，即移除最近最少访问节点。</p>
-<p>插入顺序还是访问顺序，最近最少访问节点都是链表的头结点，最近最多访问节点是链表尾节点。</p>
-<p><strong>TreeMap</strong> 红黑树 二叉查找树 需要比较器<br><strong>WeakHashMap</strong><br><strong>ConcurrentHashMap</strong></p>
-<p>Set<br><strong>HashSet</strong>   由HashMap支持<br><strong>LinkedHashSet</strong>   由LinkedHashMap支持，遍历有序<br><strong>TreeSet</strong> 由TreeMap支持，遍历有序</p>
-<p>Queue<br><strong>PriorityQueue</strong>  优先队列，由数组和堆支持。堆序性质：树的根节点小于子节点。堆序性质的维护：在叶子节点插入，上滤保持堆序；在根节点删除，下滤保持堆序。<br>另外还有扩容操作，直接增加容量再复制数组即可。</p>
-<p>主要设计模式：模板方法模式、迭代器模式</p>
-<h1 id="并发包"><a href="#并发包" class="headerlink" title="并发包"></a>并发包</h1><h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><p>AQS、ReentrantLock、ReentrantReadWriteLock、Lock、Condition、LockSupport、synchronized、volatile等</p>
-<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><p>定义：Callable、Runnable、Thread、Future、FutureTask、ThreadLocal<br>执行：Executor、Executors、ExecutorService、ThreadPoolExecutor、ScheduledExecutorService<br>协同：ForkJoin、CountDownLatch、中断等</p>
-<h1 id="并发容器"><a href="#并发容器" class="headerlink" title="并发容器"></a>并发容器</h1><p>ConcurrentHashMap<br>阻塞队列：ArrayBlockingQueue  LinkedBlockingQueue PriorityQueue（等待通知模式）<br>非阻塞队列：ConcurrentLinkedQueue</p>
-<h3 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h3><p>可以将有状态的Bean转换为无状态的Bean，如spring中的DAO，数据库连接必须是线程私有的，无法共享，通过ThreadLocal Connection将连接线程私有化。<br>主要通过Thread类中的ThreadLocalMap发挥作用。每个线程都有自己的ThreadLocalMap，其key为ThreadLocal对象，value为设定的值。在调用ThreadLocal的get方法获取值时，都是去当前线程的ThreadLocalMap中获取。</p>
-<p>ThreadLocalMap中的Entry是弱引用，其弱引用是key。如果某个线程一直不死（线程池），ThreadLocalMap中的Entry将永远得不到回收。通过将key作为弱引用，帮助GC（在set和get方法中都有处理弱引用失效的Entry流程，将他它们清理出map，避免内存泄漏）。</p>
-<p>key的hashcode值时ThreadLocalMap中的static方法生成的，同一个应用中公用这一个方法生成hashcode。该map由循环数组支持，其处理hash碰撞的方法是线性探测法。</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/25/SQL各种Join连接总结/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="John What">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/04/25/SQL各种Join连接总结/" class="post-title-link" itemprop="url">SQL各种Join总结</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
-
-              <time title="Created: 2017-04-25 10:20:28" itemprop="dateCreated datePublished" datetime="2017-04-25T10:20:28+08:00">2017-04-25</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-01-24 19:25:09" itemprop="dateModified" datetime="2019-01-24T19:25:09+08:00">2019-01-24</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>连接运算是<a href="http://baike.baidu.com/link?url=wMdfpPRrn4SWrSVJzJOXY0erJQWqoff26sxs781cB7bNpucENJ1hnmOC3Zltmpd6C0JxeDy6SMlD7MyoeHfBrqhpQ_bt0EtHZHdtLhRLmk-87G-4ouqYDtvLcdkAP1SU" target="_blank" rel="noopener">8种关系运算</a>中的一种。</p>
-<p>五种JOIN方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1.INNER JOIN or JOIN</span><br><span class="line">2.OUTER JOIN</span><br><span class="line">	2.1LEFT OUTER JOIN or LEFT JOIN</span><br><span class="line">	2.2RIGHT OUTER JOIN or RIGHT JOIN</span><br><span class="line">	2.3FULL OUTER JOIN or FULL JOIN</span><br><span class="line">3.NATURAL JOIN</span><br><span class="line">4.CROSS JOIN</span><br><span class="line">5.SELF JOIN</span><br><span class="line"></span><br><span class="line">PS:JOIN中的简写为语法糖，实际中写出来方便读一点而已</span><br></pre></td></tr></table></figure></p>
-<p>两种连接条件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1.Equi JOIN</span><br><span class="line">	1.1NATURAL</span><br><span class="line">	1.2USING(a,b)</span><br><span class="line">	1.3=</span><br><span class="line">	...</span><br><span class="line">2.Theta JOIN</span><br><span class="line">	2.1&gt;=</span><br><span class="line">	2.2&lt;=</span><br><span class="line">	2.3&gt;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">PS:USING(...)指定需要哪些列相等。ON则可以指定任意的连接条件(=,&gt;=,&lt;=,!=,&gt;,&lt;...)</span><br></pre></td></tr></table></figure></p>
-<h1 id="JOIN-or-INNER-JOIN"><a href="#JOIN-or-INNER-JOIN" class="headerlink" title="JOIN or INNER JOIN"></a>JOIN or INNER JOIN</h1><p>返回两个表中同时满足条件的元组对，不满足的将被丢弃。</p>
-<h1 id="OUTER-JOIN"><a href="#OUTER-JOIN" class="headerlink" title="OUTER JOIN"></a>OUTER JOIN</h1><h2 id="LEFT-OUTER-JOIN"><a href="#LEFT-OUTER-JOIN" class="headerlink" title="LEFT OUTER JOIN"></a>LEFT OUTER JOIN</h2><p>返回左表所有行以及右表满足条件的行，左表有值右表无值填充为null</p>
-<h2 id="RIGHT-OUTER-JOIN"><a href="#RIGHT-OUTER-JOIN" class="headerlink" title="RIGHT OUTER JOIN"></a>RIGHT OUTER JOIN</h2><p>返回右表所有行以及左表满足条件的行，右表有值左表无值填充为null</p>
-<h2 id="FULL-OUTER-JOIN"><a href="#FULL-OUTER-JOIN" class="headerlink" title="FULL OUTER JOIN"></a>FULL OUTER JOIN</h2><p>返回所有表的所有行，在满足条件的行之外，左表满足右表不满足或者相反，均填充null</p>
-<h1 id="NATURAL-JOIN"><a href="#NATURAL-JOIN" class="headerlink" title="NATURAL JOIN"></a>NATURAL JOIN</h1><p>1、来自两个关系的元组对在共同属性上的值相同。（不限于一个共同属性，也可以是多个共同属性）<br>2、去掉重复的属性（列）。<br>3、列出属性的顺序：先是共同属性，然后是第一个关系的属性，最后是第二个关系的属性。</p>
-<p>为了防止两个表有多个共同属性时natural join 会忽略部分需要的元组对，应使用join…using(…)，以指定需要哪些列相等<br>join…using(…)连接只能局限在指定的属性上</p>
-<h1 id="CROSS-JOIN"><a href="#CROSS-JOIN" class="headerlink" title="CROSS JOIN"></a>CROSS JOIN</h1><p>返回笛卡儿积</p>
-<h1 id="SELF-JOIN"><a href="#SELF-JOIN" class="headerlink" title="SELF JOIN"></a>SELF JOIN</h1><p>相当于A JOIN A</p>
-<p>最后放一张图：<br><img src="http://johnlw.cn/blog_sql_join.png" alt="这里写图片描述"></p>
-<p>参考：</p>
-<blockquote>
-<p><a href="http://stackoverflow.com/questions/565620/difference-between-join-and-inner-join" target="_blank" rel="noopener">http://stackoverflow.com/questions/565620/difference-between-join-and-inner-join</a><br><a href="http://stackoverflow.com/questions/3308122/how-do-i-decide-when-to-use-right-joins-left-joins-or-inner-joins-or-how-to-dete/3308153#3308153" target="_blank" rel="noopener">http://stackoverflow.com/questions/3308122/how-do-i-decide-when-to-use-right-joins-left-joins-or-inner-joins-or-how-to-dete/3308153#3308153</a><br><a href="http://stackoverflow.com/questions/17946221/sql-join-and-different-types-of-joins/17946222#17946222" target="_blank" rel="noopener">http://stackoverflow.com/questions/17946221/sql-join-and-different-types-of-joins/17946222#17946222</a></p>
-</blockquote>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
 
 
           </div>
@@ -3085,7 +3120,7 @@ if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
