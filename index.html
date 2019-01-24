@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2017/05/11/数据结构与算法基础概念总结/" class="post-title-link" itemprop="url">数据结构与算法基础概念总结</a>
+                <a href="/2017/05/11/数据结构与算法基础概念总结/" class="post-title-link" itemprop="url">后缀表达式的计算器Java实现</a>
               
             
           </h1>
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-24 15:42:57" itemprop="dateModified" datetime="2019-01-24T15:42:57+08:00">2019-01-24</time>
+                <time title="Modified: 2019-01-24 16:25:45" itemprop="dateModified" datetime="2019-01-24T16:25:45+08:00">2019-01-24</time>
               
             
           </span>
@@ -399,65 +399,90 @@
       
         
           
-            <p>#线性结构—–线性表</p>
-<p>###定义<br>具有相同数据类型数据元素的有限序列</p>
-<p>###顺序表<br>逻辑上相邻的元素物理位置上也相邻，即数组</p>
-<p>###链式表<br>逻辑上相邻的元素物理位置上不一定相邻，节点包含数据域和指针域，指针域指向后继节点。有单向链表，双向链表，循环链表。</p>
-<p>###顺序与链式比较<br>|名称|存取方式|逻辑/物理结构|增删|查|空间分配|场景选择|<br>|-|-|-|-|-|-|-|<br>|顺序表|顺序/随机存取|逻辑物理均相邻|平均需要移动半个表的数据，O（N）|按值查找：无序O（N），有序二分查找O（logN）;按索引查找：O（1）|固定空间分配|固定空间，随机访问场景<br>|链式表|顺序存取|逻辑物理不一定相邻|修改指针域即可，O（1），不过在链表中间插入或者删除需要先查找到相应元素，算上这部分时间就是O（N）|顺序访问O（N）|按需分配|不确定空间分配，插入/删除操作较多的场景（虽然有查找的时间，但是比较操作相对顺序表的移动操作更廉价）</p>
-<p>#操作受限的线性表</p>
-<p>###栈<br>只允许在一端进行插入和删除操作的线性表，FILO，顺序栈，链式栈</p>
-<p>###队列<br>只允许在一端插入，而在另一端删除的线性表，FIFO</p>
+            <h1 id="线性结构—–线性表"><a href="#线性结构—–线性表" class="headerlink" title="线性结构—–线性表"></a>线性结构—–线性表</h1><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>具有相同数据类型数据元素的有限序列</p>
+<h3 id="顺序表"><a href="#顺序表" class="headerlink" title="顺序表"></a>顺序表</h3><p>逻辑上相邻的元素物理位置上也相邻，即数组</p>
+<h3 id="链式表"><a href="#链式表" class="headerlink" title="链式表"></a>链式表</h3><p>逻辑上相邻的元素物理位置上不一定相邻，节点包含数据域和指针域，指针域指向后继节点。有单向链表，双向链表，循环链表。</p>
+<h3 id="顺序与链式比较"><a href="#顺序与链式比较" class="headerlink" title="顺序与链式比较"></a>顺序与链式比较</h3><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>存取方式</th>
+<th>逻辑/物理结构</th>
+<th>增删</th>
+<th>查</th>
+<th>空间分配</th>
+<th>场景选择</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>顺序表</td>
+<td>顺序/随机存取</td>
+<td>逻辑物理均相邻</td>
+<td>平均需要移动半个表的数据，O（N）</td>
+<td>按值查找：无序O（N），有序二分查找O（logN）;按索引查找：O（1）</td>
+<td>固定空间分配</td>
+<td>固定空间，随机访问场景</td>
+</tr>
+<tr>
+<td>链式表</td>
+<td>顺序存取</td>
+<td>逻辑物理不一定相邻</td>
+<td>修改指针域即可，O（1），不过在链表中间插入或者删除需要先查找到相应元素，算上这部分时间就是O（N）</td>
+<td>顺序访问O（N）</td>
+<td>按需分配</td>
+<td>不确定空间分配，插入/删除操作较多的场景（虽然有查找的时间，但是比较操作相对顺序表的移动操作更廉价）</td>
+</tr>
+</tbody>
+</table>
+<h1 id="操作受限的线性表"><a href="#操作受限的线性表" class="headerlink" title="操作受限的线性表"></a>操作受限的线性表</h1><h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>只允许在一端进行插入和删除操作的线性表，FILO，顺序栈，链式栈</p>
+<h3 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h3><p>只允许在一端插入，而在另一端删除的线性表，FIFO</p>
 <ul>
 <li>顺序存储：顺序队列、循环队列</li>
 <li>链式存储：单链表队列、双端队列（双入双出，双入单出，单入双出）</li>
 </ul>
-<p>#非线性结构—–树</p>
-<p>###树的定义</p>
-<ul>
+<h1 id="非线性结构—–树"><a href="#非线性结构—–树" class="headerlink" title="非线性结构—–树"></a>非线性结构—–树</h1><h3 id="树的定义"><a href="#树的定义" class="headerlink" title="树的定义"></a>树的定义</h3><ul>
 <li>图定义：树是无简单回路的有向连通图。</li>
-<li>递归定义：树由根节点r和子树组成，每个子树的根节点都被来自r的边所连接<br>###路径、路径长、深度、高度、度<br>从节点n1到nk的路径定义为n1,n2…nk这个节点序列，路径长为节点序列中边的条数。</li>
+<li>递归定义：树由根节点r和子树组成，每个子树的根节点都被来自r的边所连接<h3 id="路径、路径长、深度、高度、度"><a href="#路径、路径长、深度、高度、度" class="headerlink" title="路径、路径长、深度、高度、度"></a>路径、路径长、深度、高度、度</h3>从节点n1到nk的路径定义为n1,n2…nk这个节点序列，路径长为节点序列中边的条数。</li>
 </ul>
 <p><strong>深度和高度是基于路径的概念来定义的</strong>：节点n的深度为从根节点到n的唯一路径的长。节点n的高度定义为从节点n到一个叶子节点的最长路径的长。</p>
 <p>节点的度：某节点孩子节点的个数</p>
-<p>###二叉树</p>
-<p>#####定义<br>二叉树是每个节点都拥有不超过两个儿子的树。</p>
-<p>#####遍历</p>
-<ul>
+<h3 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h3><h5 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h5><p>二叉树是每个节点都拥有不超过两个儿子的树。</p>
+<h5 id="遍历"><a href="#遍历" class="headerlink" title="遍历"></a>遍历</h5><ul>
 <li>先序遍历：先根后左右儿子</li>
 <li>中序遍历：先左儿子，再根，再右儿子</li>
 <li>后序遍历：先左右儿子，再根</li>
 <li>层序遍历：先根，再根的左右儿子根节点…需要借助队列</li>
 </ul>
-<p>#####复原<br>由先序序列和中序序列，后序序列和中序序列可以唯一的确定一棵二叉树，之所以都需要中序序列，是因为先序和后序只能确定根节点，而中序序列根据根节点的位置可以确定左右子树。</p>
-<p>#####满二叉树<br>树高度为h，含有2^h - 1个节点的二叉树，树中每一层都含有最多的节点。</p>
-<p>#####完全二叉树<br>从插入元素的角度来说，完全二叉树就是按层序从上到下，从左往后插满每个节点，最后一层可以不插满</p>
-<p>#####二叉查找树<br>一棵二叉树，其左子二叉树上的所有节点值都小于根节点，右子二叉树上的所有节点值都大于根节点。</p>
-<p>#####二叉平衡树<br>二叉树上任一节点的左子树和右子树的深度之差不超过1</p>
-<p>#####B树<br>多路平衡查找树，m阶B树需要满足以下特性：</p>
+<h5 id="复原"><a href="#复原" class="headerlink" title="复原"></a>复原</h5><p>由先序序列和中序序列，后序序列和中序序列可以唯一的确定一棵二叉树，之所以都需要中序序列，是因为先序和后序只能确定根节点，而中序序列根据根节点的位置可以确定左右子树。</p>
+<h5 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h5><p>树高度为h，含有2^h - 1个节点的二叉树，树中每一层都含有最多的节点。</p>
+<h5 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h5><p>从插入元素的角度来说，完全二叉树就是按层序从上到下，从左往后插满每个节点，最后一层可以不插满</p>
+<h5 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h5><p>一棵二叉树，其左子二叉树上的所有节点值都小于根节点，右子二叉树上的所有节点值都大于根节点。</p>
+<h5 id="二叉平衡树"><a href="#二叉平衡树" class="headerlink" title="二叉平衡树"></a>二叉平衡树</h5><p>二叉树上任一节点的左子树和右子树的深度之差不超过1</p>
+<h5 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h5><p>多路平衡查找树，m阶B树需要满足以下特性：</p>
 <ul>
 <li>根节点：至少有两棵子树</li>
 <li>中间节点（非根非叶节点）：子树数目要求大于等于（m/2）（向上取整），小于等于m</li>
 <li>叶结点：所有叶结点都在同一层次上</li>
 </ul>
-<p>#####表达式树相关<br>叶子节点存操作数，非叶子节点存操作符。<br>表达式树的中序遍历得中缀表达式，后序遍历得后缀表达式。</p>
+<h5 id="表达式树相关"><a href="#表达式树相关" class="headerlink" title="表达式树相关"></a>表达式树相关</h5><p>叶子节点存操作数，非叶子节点存操作符。<br>表达式树的中序遍历得中缀表达式，后序遍历得后缀表达式。</p>
 <p>中缀表达式转后缀表达式：借助栈。读取中缀表达式，遇到操作数直接输出，遇到操作符即准备入栈，入栈前先比较栈顶操作符与当前操作符的优先级，如果栈顶优先级高或者平级，输出直至低优先级，然后再入栈。对于括号：左括号具有最高优先级，括号内的操作符出入栈跟之前一样，遇到右括号将操作符依次出栈直到左括号。注：括号不输出。</p>
 <p>后缀表达式求值：借助栈。读取后缀表达式，操作数直接入栈，遇到操作符弹出两个操作数进行计算，结果入栈，继续读取…以此类推，直至结束</p>
 <p>后缀表达式构建表达式树：借助栈。操作数作为单节点入栈，遇到操作符，以操作符作为根节点，弹出两个操作数作为右、左儿子，最后将操作符节点入栈…以此类推，直至结束</p>
-<p>#散列表<br>键值对的集合，通过散列函数计算键对应的值的存放位置，之后可以通过键直接访问值。</p>
-<p>#####散列函数<br>将关键字映射到相应位置的函数。如果两个不同的key值，经散列后位置相同，这种情况称为冲突或者碰撞。</p>
+<h1 id="散列表"><a href="#散列表" class="headerlink" title="散列表"></a>散列表</h1><p>键值对的集合，通过散列函数计算键对应的值的存放位置，之后可以通过键直接访问值。</p>
+<h5 id="散列函数"><a href="#散列函数" class="headerlink" title="散列函数"></a>散列函数</h5><p>将关键字映射到相应位置的函数。如果两个不同的key值，经散列后位置相同，这种情况称为冲突或者碰撞。</p>
 <p>每次对散列表的操作，都需要经过散列函数，散列函数的选择应该简单以节省时间、散列均匀以避免碰撞。</p>
-<p>#####装填因子<br>散列表中元素的个数与该表大小的比值。</p>
-<p>#####碰撞处理</p>
-<p>######分离连接法<br>将同一个散列值的不同元素保存在同一个链表里，并将后进入的元素放在链表的前端。</p>
-<p>######开放定址法<br>出现碰撞以后，用新的函数继续找位置，直到找到空的位置为止</p>
+<h5 id="装填因子"><a href="#装填因子" class="headerlink" title="装填因子"></a>装填因子</h5><p>散列表中元素的个数与该表大小的比值。</p>
+<h5 id="碰撞处理"><a href="#碰撞处理" class="headerlink" title="碰撞处理"></a>碰撞处理</h5><h6 id="分离连接法"><a href="#分离连接法" class="headerlink" title="分离连接法"></a>分离连接法</h6><p>将同一个散列值的不同元素保存在同一个链表里，并将后进入的元素放在链表的前端。</p>
+<h6 id="开放定址法"><a href="#开放定址法" class="headerlink" title="开放定址法"></a>开放定址法</h6><p>出现碰撞以后，用新的函数继续找位置，直到找到空的位置为止</p>
 <ul>
 <li>线性探测：线性函数查找，会出现一次聚集</li>
-<li>平方探测：二次函数查找，会出现二次聚集<br>######再散列（扩容）<br>当散列表中元素的数量达到装填因子时，新建一个大的散列表，将原散列表中的元素重新计算散列值并放入新的散列表中<br>#尾递归</li>
+<li>平方探测：二次函数查找，会出现二次聚集<h6 id="再散列（扩容）"><a href="#再散列（扩容）" class="headerlink" title="再散列（扩容）"></a>再散列（扩容）</h6>当散列表中元素的数量达到装填因子时，新建一个大的散列表，将原散列表中的元素重新计算散列值并放入新的散列表中<h1 id="尾递归"><a href="#尾递归" class="headerlink" title="尾递归"></a>尾递归</h1></li>
 </ul>
 <blockquote>
 <p><a href="https://www.zhihu.com/question/20761771/answer/19996299" target="_blank" rel="noopener">https://www.zhihu.com/question/20761771/answer/19996299</a><br><a href="http://stackoverflow.com/questions/33923/what-is-tail-recursion" target="_blank" rel="noopener">http://stackoverflow.com/questions/33923/what-is-tail-recursion</a><br><a href="http://www.cnblogs.com/Anker/archive/2013/03/04/2943498.html" target="_blank" rel="noopener">http://www.cnblogs.com/Anker/archive/2013/03/04/2943498.html</a></p>
 </blockquote>
-<p>#广义表<br><a href="http://blog.csdn.net/fanzheng220112583/article/details/7719228" target="_blank" rel="noopener">http://blog.csdn.net/fanzheng220112583/article/details/7719228</a></p>
+<h1 id="广义表"><a href="#广义表" class="headerlink" title="广义表"></a>广义表</h1><p><a href="http://blog.csdn.net/fanzheng220112583/article/details/7719228" target="_blank" rel="noopener">http://blog.csdn.net/fanzheng220112583/article/details/7719228</a></p>
 
           
         
@@ -730,7 +755,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-24 15:44:40" itemprop="dateModified" datetime="2019-01-24T15:44:40+08:00">2019-01-24</time>
+                <time title="Modified: 2019-01-24 16:24:51" itemprop="dateModified" datetime="2019-01-24T16:24:51+08:00">2019-01-24</time>
               
             
           </span>
@@ -766,49 +791,47 @@
         
           
             <p>Java是OOP语言，所有的OOP语言都有三个特性：封装、多态、继承。</p>
-<p>#封装<br>封装是一种将代码与它所处理的数据结合起来，而不被外界干扰滥用的程序设计机制。<br>在Java中，基本封装单元是<strong>类</strong>，数据即字段，代码即方法。</p>
-<p>#多态<br>多态是一种允许使用一个接口来访问一类动作的特性。<br>在Java中，多态的表现形式为：1、接口的实现；2、继承父类进行方法重写（override）；3、同一个类中进行方法的重载（overloaded）。</p>
-<p>#继承<br>继承是一个对象获得另一个对象的属性的过程。继承之所以重要，是因为它支持层级结构类的概念。</p>
-<p>#类<br>对象的类型，决定一类对象的外观和行为。一个类中可以设置<strong>两种</strong>类型的元素：<strong>字段</strong>和<strong>方法</strong>。<br>字段可以是任意类型的对象（基本类型和引用类型/ps：注意字段的初始化和局部变量初始化的区别）；方法由名称、参数、返回值和方法体构成，其中名称和参数列表合起来称为方法签名以用来唯一的标识一个方法。<br>当创建类时，就是在描述那个类的对象的外观和行为。</p>
-<p>#static关键字<br>一个类通过new新建了对象之后，数据存储空间才会分配，其方法和域才能被外界所使用。<br>static关键字用来解决以下两种情形：1、<strong>只想为某特定域分配单一的存储空间</strong>，而不去考虑究竟要创建多少对象，或者根本不需要创建对象。2、<strong>希望某个方法不与包含它的类任何对象关联在一起</strong>。即使没有创建对象，也可以使用该方法。</p>
+<h1 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h1><p>封装是一种将代码与它所处理的数据结合起来，而不被外界干扰滥用的程序设计机制。<br>在Java中，基本封装单元是<strong>类</strong>，数据即字段，代码即方法。</p>
+<h1 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h1><p>多态是一种允许使用一个接口来访问一类动作的特性。<br>在Java中，多态的表现形式为：1、接口的实现；2、继承父类进行方法重写（override）；3、同一个类中进行方法的重载（overloaded）。</p>
+<h1 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h1><p>继承是一个对象获得另一个对象的属性的过程。继承之所以重要，是因为它支持层级结构类的概念。</p>
+<h1 id="类"><a href="#类" class="headerlink" title="类"></a>类</h1><p>对象的类型，决定一类对象的外观和行为。一个类中可以设置<strong>两种</strong>类型的元素：<strong>字段</strong>和<strong>方法</strong>。<br>字段可以是任意类型的对象（基本类型和引用类型/ps：注意字段的初始化和局部变量初始化的区别）；方法由名称、参数、返回值和方法体构成，其中名称和参数列表合起来称为方法签名以用来唯一的标识一个方法。<br>当创建类时，就是在描述那个类的对象的外观和行为。</p>
+<h1 id="static关键字"><a href="#static关键字" class="headerlink" title="static关键字"></a>static关键字</h1><p>一个类通过new新建了对象之后，数据存储空间才会分配，其方法和域才能被外界所使用。<br>static关键字用来解决以下两种情形：1、<strong>只想为某特定域分配单一的存储空间</strong>，而不去考虑究竟要创建多少对象，或者根本不需要创建对象。2、<strong>希望某个方法不与包含它的类任何对象关联在一起</strong>。即使没有创建对象，也可以使用该方法。</p>
 <p>static{}(即static块)，会在类被加载的时候执行且仅会被执行一次，一般用来初始化静态变量和调用静态方法。</p>
-<p>#抽象类<br>抽象方法是仅有方法声明但是没有方法体的方法。包含抽象方法的类称为抽象类。抽象类是介于类和接口的中庸之道。</p>
-<p>#接口<br>接口是一个<strong>完全抽象的类</strong>。一方面，一个接口表示：所有实现了该接口的类看起来都像这样，这建立了类与类之间通信的<strong>协议</strong>；<br>另一方面，接口也是其实现类的<strong>基类</strong>，类可以被向上转型为借口类型，它允许通过创建一个能够被向上转型为多种基类的类型，来实现某种类型多重继变种的特性。（一个实现了多种接口的类，其基类可以是其中任意一种。）<br>既然接口也是类，则满足类的基本特性：具有字段和方法。由于接口的协议特性，接口的字段和方法默认都是<strong>public</strong>的。其中字段还是<strong>static final</strong>的。<br><strong>接口支持多继承</strong>。如RunnableFuture接口。</p>
-<p>###嵌套接口<br>接口<strong>可以嵌套在类或者其他接口</strong>中。实际上是一种<strong>内部类</strong>。<br>由接口的协议特性，接口中的嵌套接口必须是public的。实现该外围接口无需实现嵌套接口。类中的嵌套接口可以是private的。</p>
-<p>#向上转型和向下转型</p>
-<p>#继承<br>1、    子类可以继承父类的非private属性和方法，不包括构造函数。属性和方法均属于类的成员，构造方法不是成员。继承描述了is-a关系，描述了两个对象的属性和行为的相似性关联性。构造函数顾名思义是用来构造一个对象的，是用来为对象的初始化服务的，并不参与对象的属性和行为的描述。<br>2、    子类不能继承父类的private成员，但是如果父类有protected或者public方法可以访问父类private成员，子类可以通过这些方法访问private成员。<br>3、    子类可以拥有自己的属性和方法。继承描述了共性，也提供了特殊性的表示方法。<br>4、    子类可以用自己的方式实现父类的方法—方法的重写<br>5、    子类可以实现父类方法的不同版本—方法的重载</p>
-<p>#对象初始化顺序<br>父类Ｂ静态代码块-&gt;子类Ａ静态代码块-&gt;父类Ｂ非静态代码块-&gt;父类Ｂ构造函数-&gt;子类Ａ非静态代码块-&gt;子类Ａ构造函数<br>当实例化子类对象时，首先要加载父类的class文件进内存，静态代码块是随着类的创建而执行，所以父类静态代码块最先被执行，子类class文件再被加载，同理静态代码块被先执行；实例化子类对象要先调用父类的构造方法，而调用父类构造方法前会先执行父类的非静态代码块</p>
-<p>#重载和重写<br>方法的签名：指的是方法的组成结构。具体包括方法的名称和参数，涵盖参数的数量，类型以及出现的顺序，但是不包括方法的返回值类型、访问权限修饰符、抛出的异常</p>
+<h1 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h1><p>抽象方法是仅有方法声明但是没有方法体的方法。包含抽象方法的类称为抽象类。抽象类是介于类和接口的中庸之道。</p>
+<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><p>接口是一个<strong>完全抽象的类</strong>。一方面，一个接口表示：所有实现了该接口的类看起来都像这样，这建立了类与类之间通信的<strong>协议</strong>；<br>另一方面，接口也是其实现类的<strong>基类</strong>，类可以被向上转型为借口类型，它允许通过创建一个能够被向上转型为多种基类的类型，来实现某种类型多重继变种的特性。（一个实现了多种接口的类，其基类可以是其中任意一种。）<br>既然接口也是类，则满足类的基本特性：具有字段和方法。由于接口的协议特性，接口的字段和方法默认都是<strong>public</strong>的。其中字段还是<strong>static final</strong>的。<br><strong>接口支持多继承</strong>。如RunnableFuture接口。</p>
+<h3 id="嵌套接口"><a href="#嵌套接口" class="headerlink" title="嵌套接口"></a>嵌套接口</h3><p>接口<strong>可以嵌套在类或者其他接口</strong>中。实际上是一种<strong>内部类</strong>。<br>由接口的协议特性，接口中的嵌套接口必须是public的。实现该外围接口无需实现嵌套接口。类中的嵌套接口可以是private的。</p>
+<h1 id="向上转型和向下转型"><a href="#向上转型和向下转型" class="headerlink" title="向上转型和向下转型"></a>向上转型和向下转型</h1><h1 id="继承-1"><a href="#继承-1" class="headerlink" title="继承"></a>继承</h1><p>1、    子类可以继承父类的非private属性和方法，不包括构造函数。属性和方法均属于类的成员，构造方法不是成员。继承描述了is-a关系，描述了两个对象的属性和行为的相似性关联性。构造函数顾名思义是用来构造一个对象的，是用来为对象的初始化服务的，并不参与对象的属性和行为的描述。<br>2、    子类不能继承父类的private成员，但是如果父类有protected或者public方法可以访问父类private成员，子类可以通过这些方法访问private成员。<br>3、    子类可以拥有自己的属性和方法。继承描述了共性，也提供了特殊性的表示方法。<br>4、    子类可以用自己的方式实现父类的方法—方法的重写<br>5、    子类可以实现父类方法的不同版本—方法的重载</p>
+<h1 id="对象初始化顺序"><a href="#对象初始化顺序" class="headerlink" title="对象初始化顺序"></a>对象初始化顺序</h1><p>父类Ｂ静态代码块-&gt;子类Ａ静态代码块-&gt;父类Ｂ非静态代码块-&gt;父类Ｂ构造函数-&gt;子类Ａ非静态代码块-&gt;子类Ａ构造函数<br>当实例化子类对象时，首先要加载父类的class文件进内存，静态代码块是随着类的创建而执行，所以父类静态代码块最先被执行，子类class文件再被加载，同理静态代码块被先执行；实例化子类对象要先调用父类的构造方法，而调用父类构造方法前会先执行父类的非静态代码块</p>
+<h1 id="重载和重写"><a href="#重载和重写" class="headerlink" title="重载和重写"></a>重载和重写</h1><p>方法的签名：指的是方法的组成结构。具体包括方法的名称和参数，涵盖参数的数量，类型以及出现的顺序，但是不包括方法的返回值类型、访问权限修饰符、抛出的异常</p>
 <p>初步理解：重载和重写都是多态性的表现。重载是指的同一个方法名称，但是有不同的方法签名，存在于继承和同一个类中。重写是指方法签名以及返回类型不变，抛出的异常应是被重写方法的子类，但是方法的执行逻辑变了—子类修改了父类的实现逻辑，是为重写。</p>
 <p>方法的重写（override）两同两小一大原则：<br>方法名相同，参数类型相同<br>子类返回类型小于等于父类方法返回类型，<br>子类抛出异常小于等于父类方法抛出异常，<br>子类访问权限大于等于父类方法访问权限。</p>
-<p>#try catch finally return<br>1、不管有木有出现异常，finally块中代码都会执行；<br>2、当try和catch中有return时，finally仍然会执行；<br>3、finally是在return语句执行之后，返回之前执行的（此时并没有返回运算后的值，而是先把要返回的值保存起来，不管finally中的代码怎么样，返回的值都不会改变，仍然是之前保存的值），所以函数返回值是在finally执行前就已经确定了；<br>4、finally中如果包含return，那么程序将在这里返回，而不是try或catch中的return返回，返回值就不是try或catch中保存的返回值了。<br>注意：<br>finally修改的基本类型是不影响返回结果的。（传值的）<br>修改list ,map,自定义类等引用类型时，是影响返回结果的。（传址的）对象也是传址的</p>
-<p>#内部类<br><a href="https://www.cnblogs.com/dolphin0520/p/3811445.html" target="_blank" rel="noopener">https://www.cnblogs.com/dolphin0520/p/3811445.html</a><br>内部类在外部类中，类比外部类的成员变量<br>内部类其实和类的属性没什么区别，只是在声明的时候必须是Outer.Inner a，就像int a 一样，至于静态内部类和非静态内部类new的时候有点区别</p>
-<p>#Class对象<br> 对应每个类的class文件，像是每个类的超级管理员。</p>
-<p>#动态方法分配<br>动态方法分配机制，通过该机制，对一个被重写方法的调用会在运行时解析，而不是编译时解析。是java实现运行时多态的机制。具体如：当通过超类引用调用被重写方法时，java会根据在调用发生时引用的对象的类型来判断所要执行的方法。 </p>
-<p>#this关键字<br>this关键字只能在方法内部使用，表示对“调用方法的那个对象”的<strong>引用</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class A&#123;</span><br><span class="line">	int i;</span><br><span class="line">	int j;</span><br><span class="line">	public A(int i)&#123;&#125;</span><br><span class="line">	public A(int i,int j)&#123;</span><br><span class="line">	this(i);//调用构造器</span><br><span class="line">	this.j = j;//引用属性</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>#基本数据类型<br><img src="http://img.blog.csdn.net/20170925153212340?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvam9obl9sdw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
-<p>#equals()和==<br>equals()是Object的方法，==是关系操作符，关系操作符计算的结果是一个boolean结果。计算的是操作数的值之间的关系。<br>对于基本数据类型（不是对象），equals()无法使用，通过==直接比较值。<br>对于引用数据类型，<strong>==和Object对象</strong>的equals()方法都是比较的<strong>对象的引用</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">object 的equals()方法：</span><br><span class="line">public boolean equals(Object obj) &#123;</span><br><span class="line">        return (this == obj);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="try-catch-finally-return"><a href="#try-catch-finally-return" class="headerlink" title="try catch finally return"></a>try catch finally return</h1><p>1、不管有木有出现异常，finally块中代码都会执行；<br>2、当try和catch中有return时，finally仍然会执行；<br>3、finally是在return语句执行之后，返回之前执行的（此时并没有返回运算后的值，而是先把要返回的值保存起来，不管finally中的代码怎么样，返回的值都不会改变，仍然是之前保存的值），所以函数返回值是在finally执行前就已经确定了；<br>4、finally中如果包含return，那么程序将在这里返回，而不是try或catch中的return返回，返回值就不是try或catch中保存的返回值了。<br>注意：<br>finally修改的基本类型是不影响返回结果的。（传值的）<br>修改list ,map,自定义类等引用类型时，是影响返回结果的。（传址的）对象也是传址的</p>
+<h1 id="内部类"><a href="#内部类" class="headerlink" title="内部类"></a>内部类</h1><p><a href="https://www.cnblogs.com/dolphin0520/p/3811445.html" target="_blank" rel="noopener">https://www.cnblogs.com/dolphin0520/p/3811445.html</a><br>内部类在外部类中，类比外部类的成员变量<br>内部类其实和类的属性没什么区别，只是在声明的时候必须是Outer.Inner a，就像int a 一样，至于静态内部类和非静态内部类new的时候有点区别</p>
+<h1 id="Class对象"><a href="#Class对象" class="headerlink" title="Class对象"></a>Class对象</h1><p> 对应每个类的class文件，像是每个类的超级管理员。</p>
+<h1 id="动态方法分配"><a href="#动态方法分配" class="headerlink" title="动态方法分配"></a>动态方法分配</h1><p>动态方法分配机制，通过该机制，对一个被重写方法的调用会在运行时解析，而不是编译时解析。是java实现运行时多态的机制。具体如：当通过超类引用调用被重写方法时，java会根据在调用发生时引用的对象的类型来判断所要执行的方法。 </p>
+<h1 id="this关键字"><a href="#this关键字" class="headerlink" title="this关键字"></a>this关键字</h1><p>this关键字只能在方法内部使用，表示对“调用方法的那个对象”的<strong>引用</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">class A&#123;</span><br><span class="line">	int i;</span><br><span class="line">	int j;</span><br><span class="line">	public A(int i)&#123;&#125;</span><br><span class="line">	public A(int i,int j)&#123;</span><br><span class="line">	this(i);//调用构造器</span><br><span class="line">	this.j = j;//引用属性</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h1><p><img src="http://img.blog.csdn.net/20170925153212340?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvam9obl9sdw==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<h1 id="equals-和"><a href="#equals-和" class="headerlink" title="equals()和=="></a>equals()和==</h1><p>equals()是Object的方法，==是关系操作符，关系操作符计算的结果是一个boolean结果。计算的是操作数的值之间的关系。<br>对于基本数据类型（不是对象），equals()无法使用，通过==直接比较值。<br>对于引用数据类型，<strong>==和Object对象</strong>的equals()方法都是比较的<strong>对象的引用</strong>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">object 的equals()方法：</span><br><span class="line">public boolean equals(Object obj) &#123;</span><br><span class="line">        return (this == obj);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
 <p>如果想<strong>比较对象的内容，需要自己重写equals()方法</strong>。大部分java类库都实现了equals()方法，以便用来比较对象的内容，而不仅仅是引用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">String 的equals()方法：</span><br><span class="line">public boolean equals(Object anObject) &#123;</span><br><span class="line">		//如果引用相同则两个String对象内容相同</span><br><span class="line">        if (this == anObject) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        //如果引用不相同，则挨个比较两个字符串对象的字符（比较内容）</span><br><span class="line">        if (anObject instanceof String) &#123;</span><br><span class="line">            String anotherString = (String) anObject;</span><br><span class="line">            int n = value.length;</span><br><span class="line">            if (n == anotherString.value.length) &#123;</span><br><span class="line">                char v1[] = value;</span><br><span class="line">                char v2[] = anotherString.value;</span><br><span class="line">                int i = 0;</span><br><span class="line">                while (n-- != 0) &#123;</span><br><span class="line">                    if (v1[i] != v2[i])</span><br><span class="line">                            return false;</span><br><span class="line">                    i++;</span><br><span class="line">                &#125;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
-<p>#静态内部类和内部类<br> 要想直接创建内部类的对象，必须先使用外部类的对象来创建该内部类对象。在拥有外部类对象之前是不可能创建内部类对象的，因为内部类对象会暗暗连接到创建它的外部类对象上去。<br> 静态内部类则没有这个限制，可以直接创建。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class A&#123;</span><br><span class="line">	public class B&#123;&#125;</span><br><span class="line">	public static class C&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">public class Test&#123;</span><br><span class="line">	A a = new A();</span><br><span class="line">	//这里不可以直接创建内部类B的对象</span><br><span class="line">	//A.B b = new B();</span><br><span class="line">	//正确方式，通过A的实例来创建</span><br><span class="line">	A.B b = a.new B();</span><br><span class="line">	//对于C，可以直接创建</span><br><span class="line">	A.C c = new C();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>#Java参数传递<br><strong>Java中参数传递的都是值</strong>。<br>对于函数对参数的改变是否会影响原值的问题：</p>
+<h1 id="静态内部类和内部类"><a href="#静态内部类和内部类" class="headerlink" title="静态内部类和内部类"></a>静态内部类和内部类</h1><p> 要想直接创建内部类的对象，必须先使用外部类的对象来创建该内部类对象。在拥有外部类对象之前是不可能创建内部类对象的，因为内部类对象会暗暗连接到创建它的外部类对象上去。<br> 静态内部类则没有这个限制，可以直接创建。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class A&#123;</span><br><span class="line">	public class B&#123;&#125;</span><br><span class="line">	public static class C&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">public class Test&#123;</span><br><span class="line">	A a = new A();</span><br><span class="line">	//这里不可以直接创建内部类B的对象</span><br><span class="line">	//A.B b = new B();</span><br><span class="line">	//正确方式，通过A的实例来创建</span><br><span class="line">	A.B b = a.new B();</span><br><span class="line">	//对于C，可以直接创建</span><br><span class="line">	A.C c = new C();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Java参数传递"><a href="#Java参数传递" class="headerlink" title="Java参数传递"></a>Java参数传递</h1><p><strong>Java中参数传递的都是值</strong>。<br>对于函数对参数的改变是否会影响原值的问题：</p>
 <ul>
 <li>值类型：传递值的拷贝，改变参数值不影响原值</li>
 <li>引用类型：传递引用的拷贝，如果参数指向了不同的实例则参数引用和原引用不相等，如果改变的是实例本身，则参数和原引用相等</li>
 </ul>
-<p>#equals和hashcode<br>equals方法用来定义两个对象实例（注意不是引用）是否相等的规则，可以理解为判断两个对象实例是否是一模一样的实例。</p>
+<h1 id="equals和hashcode"><a href="#equals和hashcode" class="headerlink" title="equals和hashcode"></a>equals和hashcode</h1><p>equals方法用来定义两个对象实例（注意不是引用）是否相等的规则，可以理解为判断两个对象实例是否是一模一样的实例。</p>
 <p>hashcode方法主要用在哈希表中，对象通过hashcode方法算出对象的哈希值，再去哈希表中插入或者查找。我们知道计算hashcode时是可能存在碰撞情况的，也就是不同的对象（equals），hashcode可能是一样的；但是两个对象的hashcode不一样的话，那么这两个对象一定是不相等（equals）的。</p>
-<p>#集合<br>List<br><strong>ArrayList</strong>  数组 与System.arrayCopy<br><strong>LinkedList</strong>  带头尾节点的双向链表，可以作为<strong>双端队列和栈</strong>。</p>
+<h1 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h1><p>List<br><strong>ArrayList</strong>  数组 与System.arrayCopy<br><strong>LinkedList</strong>  带头尾节点的双向链表，可以作为<strong>双端队列和栈</strong>。</p>
 <p>Map<br><strong>HashMap</strong><br><strong>LinkedHashMap</strong>  Entry带有前后节点的引用，带头结点的双向链表，保持插入顺序，或者在插入顺序的基础上再保持访问顺序-每次访问某个Entry，将该Entry移至链表尾部，成为最近最多使用节点（这里get方法和put方法都是如此，尤其是put方法中key已经存在了，同样会被移至链表尾部，因为recordAccess方法在HashMap中已经写在put方法里了）。启用访问顺序可以作为LRU链表使用，需要重写方法removeEldestEntry设定移除条件（如大小到了某个值），在条件达到时，即移除最近最少访问节点。</p>
 <p>插入顺序还是访问顺序，最近最少访问节点都是链表的头结点，最近最多访问节点是链表尾节点。</p>
 <p><strong>TreeMap</strong> 红黑树 二叉查找树 需要比较器<br><strong>WeakHashMap</strong><br><strong>ConcurrentHashMap</strong></p>
 <p>Set<br><strong>HashSet</strong>   由HashMap支持<br><strong>LinkedHashSet</strong>   由LinkedHashMap支持，遍历有序<br><strong>TreeSet</strong> 由TreeMap支持，遍历有序</p>
 <p>Queue<br><strong>PriorityQueue</strong>  优先队列，由数组和堆支持。堆序性质：树的根节点小于子节点。堆序性质的维护：在叶子节点插入，上滤保持堆序；在根节点删除，下滤保持堆序。<br>另外还有扩容操作，直接增加容量再复制数组即可。</p>
 <p>主要设计模式：模板方法模式、迭代器模式</p>
-<p>#并发包</p>
-<p>#锁<br>AQS、ReentrantLock、ReentrantReadWriteLock、Lock、Condition、LockSupport、synchronized、volatile等</p>
-<p>#线程<br>定义：Callable、Runnable、Thread、Future、FutureTask、ThreadLocal<br>执行：Executor、Executors、ExecutorService、ThreadPoolExecutor、ScheduledExecutorService<br>协同：ForkJoin、CountDownLatch、中断等</p>
-<p>#并发容器<br>ConcurrentHashMap<br>阻塞队列：ArrayBlockingQueue  LinkedBlockingQueue PriorityQueue（等待通知模式）<br>非阻塞队列：ConcurrentLinkedQueue</p>
-<p>###ThreadLocal<br>可以将有状态的Bean转换为无状态的Bean，如spring中的DAO，数据库连接必须是线程私有的，无法共享，通过ThreadLocal Connection将连接线程私有化。<br>主要通过Thread类中的ThreadLocalMap发挥作用。每个线程都有自己的ThreadLocalMap，其key为ThreadLocal对象，value为设定的值。在调用ThreadLocal的get方法获取值时，都是去当前线程的ThreadLocalMap中获取。</p>
+<h1 id="并发包"><a href="#并发包" class="headerlink" title="并发包"></a>并发包</h1><h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><p>AQS、ReentrantLock、ReentrantReadWriteLock、Lock、Condition、LockSupport、synchronized、volatile等</p>
+<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><p>定义：Callable、Runnable、Thread、Future、FutureTask、ThreadLocal<br>执行：Executor、Executors、ExecutorService、ThreadPoolExecutor、ScheduledExecutorService<br>协同：ForkJoin、CountDownLatch、中断等</p>
+<h1 id="并发容器"><a href="#并发容器" class="headerlink" title="并发容器"></a>并发容器</h1><p>ConcurrentHashMap<br>阻塞队列：ArrayBlockingQueue  LinkedBlockingQueue PriorityQueue（等待通知模式）<br>非阻塞队列：ConcurrentLinkedQueue</p>
+<h3 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal"></a>ThreadLocal</h3><p>可以将有状态的Bean转换为无状态的Bean，如spring中的DAO，数据库连接必须是线程私有的，无法共享，通过ThreadLocal Connection将连接线程私有化。<br>主要通过Thread类中的ThreadLocalMap发挥作用。每个线程都有自己的ThreadLocalMap，其key为ThreadLocal对象，value为设定的值。在调用ThreadLocal的get方法获取值时，都是去当前线程的ThreadLocalMap中获取。</p>
 <p>ThreadLocalMap中的Entry是弱引用，其弱引用是key。如果某个线程一直不死（线程池），ThreadLocalMap中的Entry将永远得不到回收。通过将key作为弱引用，帮助GC（在set和get方法中都有处理弱引用失效的Entry流程，将他它们清理出map，避免内存泄漏）。</p>
 <p>key的hashcode值时ThreadLocalMap中的static方法生成的，同一个应用中公用这一个方法生成hashcode。该map由循环数组支持，其处理hash碰撞的方法是线性探测法。</p>
 
