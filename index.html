@@ -302,6 +302,418 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/13/Session与Cookie/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/03/13/Session与Cookie/" class="post-title-link" itemprop="url">Session与Cookie</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-03-13 10:46:59" itemprop="dateCreated datePublished" datetime="2018-03-13T10:46:59+08:00">2018-03-13</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-24 20:32:03" itemprop="dateModified" datetime="2019-01-24T20:32:03+08:00">2019-01-24</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="cookie技术"><a href="#cookie技术" class="headerlink" title="cookie技术"></a>cookie技术</h3><p>http协议是无状态的，服务器无法判断某一个简单http请求来自于谁。这里我们可以利用cookie技术，当一个用户第一次登录服务器时，http request中不带有cookie字段，服务器通过http response中set-cookie字段设置浏览器访问该网站的cookie，然后该用户第二次访问服务器时，由于服务器设置了cookie，浏览器会自动将关联该服务器的cookie中的内容添加在http request请求头中一并发给服务器，这时服务器通过cookie的内容就知道了这个请求来自于该用户。</p>
+<p>cookie本质上是一些键值对组成的表，它还包括了过期时间，路径和域。</p>
+<h3 id="session技术"><a href="#session技术" class="headerlink" title="session技术"></a>session技术</h3><p>服务器虽然可以简单的通过cookie技术识别用户，但是cookie本身安全性不好，容易被其他人读取。session技术是在服务端保存用户信息，而再向用户浏览器set-cookie时，设置一个sessionId，再次访问服务器时，通过sessionId来识别用户。</p>
+<h3 id="session与cookie的关系"><a href="#session与cookie的关系" class="headerlink" title="session与cookie的关系"></a>session与cookie的关系</h3><p>两者都用于解决http协议无状态的问题，cookie基于客户端，session基于服务端，同时session依赖于cookie。因此，当浏览器禁用cookie的时候，session也将随之失效。</p>
+<h3 id="session与cookie的生命周期"><a href="#session与cookie的生命周期" class="headerlink" title="session与cookie的生命周期"></a>session与cookie的生命周期</h3><h4 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h4><ul>
+<li>cookie在服务端返回http响应时可以设置有效时间，cookie在该时间范围内有效，过期即失效。cookie会持久化在硬盘上，即使浏览器关闭也可以再次读取，直至失效。</li>
+<li>服务端返回时未设置有效时间，则cookie在浏览器关闭后即失效。<h4 id="session"><a href="#session" class="headerlink" title="session"></a>session</h4></li>
+<li>创建：在服务端调用HttpServletRequest.getSession(true)时为该用户创建session（ps:java服务端）</li>
+<li>有效期：默认有效期30分钟，可以自行调整。</li>
+<li>失效：1、session超时失效。2、调用invalidate()方法。3、服务器关闭或重启，这里如果session做了持久化，服务器重启之后依然可以从持久化的记录中重建session。<h3 id="session原理简述（tomcat）"><a href="#session原理简述（tomcat）" class="headerlink" title="session原理简述（tomcat）"></a>session原理简述（tomcat）</h3>这是tomcat下session包源码结构：<br><img src="http://johnlw.cn/blog_tomcat_session.png" alt="这里写图片描述"><br>session本身是一个接口，是servlet中HttpSession接口的外观模式，阅读session的标准实现类StandardSession源码，我们可以发现本质上其通过ConcurrentHashMap来保存存在其中的各属性值，记录了创建时间和上次访问时间用于表征生命周期状态等<br><img src="http://johnlw.cn/blog_session_code1.png" alt="这里写图片描述"></li>
+</ul>
+<p>对于整个web服务器来说，需要一个session容器来对session进行管理，这个容器对应的接口就是Manager接口，其抽象实现类ManagerBase中实现了对session生命周期的管理（创建、计时、销毁），其容器也是ConcurrentHashMap，其key值通常为jsessionId<br><img src="http://johnlw.cn/blog_session_code2.png" alt="这里写图片描述"></p>
+<h3 id="负载均衡下session共享问题"><a href="#负载均衡下session共享问题" class="headerlink" title="负载均衡下session共享问题"></a>负载均衡下session共享问题</h3><ul>
+<li>session保持：通过session保持，LB进行请求转发的时候保证每个客户端固定地访问到集群的同一台服务器。显然，session保持并不能保证真正的负载均衡</li>
+<li>session复制：将每台服务器上的session信息复制给其他服务器，使得每台服务器都有一份session信息</li>
+<li>session共享：将session信息放在统一的地方统一访问，将session信息放在redis或Memcached这类KV数据库里</li>
+</ul>
+<h3 id="cookie禁用问题"><a href="#cookie禁用问题" class="headerlink" title="cookie禁用问题"></a>cookie禁用问题</h3><p>可以用时URL重写，将sessionId附在url之后</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/28/单例模式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/02/28/单例模式/" class="post-title-link" itemprop="url">单例模式</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-02-28 16:03:51" itemprop="dateCreated datePublished" datetime="2018-02-28T16:03:51+08:00">2018-02-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-24 20:25:05" itemprop="dateModified" datetime="2019-01-24T20:25:05+08:00">2019-01-24</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="单例模式定义"><a href="#单例模式定义" class="headerlink" title="单例模式定义"></a>单例模式定义</h3><p>确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+<h3 id="单例模式优缺点"><a href="#单例模式优缺点" class="headerlink" title="单例模式优缺点"></a>单例模式优缺点</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>在内存中只有一个实例，节约内存，减少性能开销。当一个对象的产生需要占用较多资源时（如文件、读取配置文件等），采用单例模式可有效节约资源。</li>
+<li>单例对象可以作为全局访问点，优化和共享全局资源访问。</li>
+</ul>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>单例模式要求自行实例化，因此单例模式一般没有接口，拓展性不好。<h3 id="单例模式使用场景"><a href="#单例模式使用场景" class="headerlink" title="单例模式使用场景"></a>单例模式使用场景</h3></li>
+<li>要求生成唯一序列号的场景</li>
+<li>在整个项目中需要一个共享访问点或共享资源</li>
+<li>创建一个对象需要消耗的资源过多，如要访问IO和数据库等资源</li>
+<li>需要定义大量的静态变量和静态方法的场景</li>
+</ul>
+<h3 id="单例模式代码形式"><a href="#单例模式代码形式" class="headerlink" title="单例模式代码形式"></a>单例模式代码形式</h3><h4 id="饿汉形式"><a href="#饿汉形式" class="headerlink" title="饿汉形式"></a>饿汉形式</h4><pre><code>public class Singleton{
+      private static Singleton instance = new Singleton();//在类加载时即进行创建
+      private Singleton(){}
+      public static Singleton newInstance(){
+            return instance;
+      }
+}
+</code></pre><p>饿汉形式中该对象在类加载的时候就完成了对象的创建，不存在线程安全问题。当对象占用内存小而且初始化后很快就会被用到时，饿汉形式很适用；但是如果这个对象并不急着用或者根本没有用到，该对象还是会被创建，如果该对象占用的内存空间较大，则造成了系统资源的浪费。</p>
+<h4 id="懒汉形式"><a href="#懒汉形式" class="headerlink" title="懒汉形式"></a>懒汉形式</h4><pre><code>public class Singleton{
+      private static Singleton instance = null;
+      private Singleton(){}
+      public static Singleton newInstance(){
+             if(instance == null){
+                   instance =  new Singleton();
+             }
+             return instance;
+      }
+}
+</code></pre><p>懒汉形式中该对象时在需要的时候才去创建，即按需使用，在单例使用次数少、占用资源多的场景下比较适用。但是懒汉形式并不是线程安全的，当有多个线程同时调用newInstance方法时，可能会创建多个实例。</p>
+<h4 id="线程安全的懒汉形式"><a href="#线程安全的懒汉形式" class="headerlink" title="线程安全的懒汉形式"></a>线程安全的懒汉形式</h4><pre><code>public class Singleton{
+      private static Singleton instance = null;
+      private Singleton(){}
+      public static synchronized Singleton newInstance(){//使用synchronized关键字同步
+             if(instance == null){
+                   instance =  new Singleton();
+             }
+             return instance;
+      }
+}
+</code></pre><p>这种形式下，线程每次调用newInstance方法都会先获取对象锁，然后再执行方法体，在高并发情况下，对象锁有可能升级为重量级锁，带来一定的性能问题。</p>
+<h4 id="一种看起来可行的改进方式–双重检查锁定形式"><a href="#一种看起来可行的改进方式–双重检查锁定形式" class="headerlink" title="一种看起来可行的改进方式–双重检查锁定形式"></a>一种看起来可行的改进方式–双重检查锁定形式</h4><p>既然存在性能问题，我们将代码稍加改进：</p>
+<pre><code>public class Singleton{
+      private static Singleton instance = null;
+      private Singleton(){}
+      public static Singleton newInstance(){
+             if(instance == null){
+                  synchronized(Singleton.class){
+                        if(instance == null){
+                            instance =  new Singleton();
+                        }                  
+                  }                                 
+             }
+             return instance;
+       }
+}
+</code></pre><p>在这种形式的代码下，只要对象被线程安全的创建成功，将不会在存在性能问题。然而既然是“看起来可行的”办法，那么一定有什么隐患。</p>
+<h4 id="可靠的改进方式–volatile"><a href="#可靠的改进方式–volatile" class="headerlink" title="可靠的改进方式–volatile"></a>可靠的改进方式–volatile</h4><p>上面的双重检查锁定形式不可靠的地方在于它并不能保证线程安全，根本原因在于<code>instance = new Singleton();</code> 这一行代码可以分为如下三行伪代码：</p>
+<pre><code>memory = allocate();//1.分配内存
+initInstance(memory);//2.初始化
+instance = memory;3.设置引用指向内存地址
+</code></pre><p>我们知道在java代码的各级编译过程中都存在执行重排序的情况，如果上述代码中2和3被重排序，3先于2执行，并不违反单线程as-if-serial语义和多线程happens-before语义，再如果在2执行之前发生线程切换，另外一个线程在判断instance变量是否为Null时将返回false，并返回Instance，然而此时instance对应的内存区域并没有被初始化为Singleton对象。</p>
+<p>那么我们应该如何处理这种情况呢？很简单，禁止<code>instance = new Singleton();</code>这行代码指令重排序，为此我们给instance变量引入happens-before语义限制—-就是用<code>volatile</code>关键字修饰instance变量。可靠的改进方式：</p>
+<pre><code>public class Singleton{
+      private static volatile Singleton instance = null;
+      private Singleton(){}
+      public static Singleton newInstance(){
+             if(instance == null){
+                  synchronized(Singleton.class){
+                        if(instance == null){
+                            instance =  new Singleton();
+                        }                  
+                  }                                 
+             }
+             return instance;
+       }
+}
+</code></pre><h4 id="静态内部类形式"><a href="#静态内部类形式" class="headerlink" title="静态内部类形式"></a>静态内部类形式</h4><pre><code>public class Singleton{
+    private static class SingletonHolder{
+        public static Singleton instance = new Singleton();
+    }
+    public static Singleton newInstance(){
+        return SingletonHolder.instance;
+    }
+}
+</code></pre><p>在这种形式中，巧妙地利用的jvm的类加载机制，实现了线程安全的懒汉式实例化。<br>当线程调用newInstance方法时，会触发静态内部类SingletonHolder的加载和初始化，这里不存在线程安全问题；同时当没有线程调用newInstance方法时，静态内部类将不会被加载。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>由上面的分析可知，<strong>静态内部类形式</strong>和<strong>volatile关键字改进的双重检查锁定形式</strong>最能称得上是单例模式的最佳实践。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/24/Java并发机制（4）--AQS、ReentrantLock、ReentrantReadWriteLock源码分析/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -2673,7 +3085,7 @@ if (acquireQueued(node, savedState) &amp;&amp; interruptMode != THROW_IE)
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
