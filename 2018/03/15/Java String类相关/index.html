@@ -96,21 +96,17 @@
 
 
 
-  <meta name="description" content="cookie技术http协议是无状态的，服务器无法判断某一个简单http请求来自于谁。这里我们可以利用cookie技术，当一个用户第一次登录服务器时，http request中不带有cookie字段，服务器通过http response中set-cookie字段设置浏览器访问该网站的cookie，然后该用户第二次访问服务器时，由于服务器设置了cookie，浏览器会自动将关联该服务器的cookie中">
+  <meta name="description" content="String类简述String类是不可变类，由final关键字修饰，内部由final数组char[]保存字符。对于String类的方法，查询类方法不会导致char[]数组内容变化。其他诸如subString,replace的方法均需要原字符串内容变化，又由于String类不可变，当调用这些方法的时候实际上返回的是新建的String对象。 String类内部由char[]数组维护，String类中大">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java String类相关">
 <meta property="og:url" content="http://yoursite.com/2018/03/15/Java String类相关/index.html">
 <meta property="og:site_name" content="John What">
-<meta property="og:description" content="cookie技术http协议是无状态的，服务器无法判断某一个简单http请求来自于谁。这里我们可以利用cookie技术，当一个用户第一次登录服务器时，http request中不带有cookie字段，服务器通过http response中set-cookie字段设置浏览器访问该网站的cookie，然后该用户第二次访问服务器时，由于服务器设置了cookie，浏览器会自动将关联该服务器的cookie中">
+<meta property="og:description" content="String类简述String类是不可变类，由final关键字修饰，内部由final数组char[]保存字符。对于String类的方法，查询类方法不会导致char[]数组内容变化。其他诸如subString,replace的方法均需要原字符串内容变化，又由于String类不可变，当调用这些方法的时候实际上返回的是新建的String对象。 String类内部由char[]数组维护，String类中大">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://johnlw.cn/blog_tomcat_session.png">
-<meta property="og:image" content="http://johnlw.cn/blog_session_code1.png">
-<meta property="og:image" content="http://johnlw.cn/blog_session_code2.png">
-<meta property="og:updated_time" content="2019-01-24T12:44:20.424Z">
+<meta property="og:updated_time" content="2019-01-24T12:51:55.203Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java String类相关">
-<meta name="twitter:description" content="cookie技术http协议是无状态的，服务器无法判断某一个简单http请求来自于谁。这里我们可以利用cookie技术，当一个用户第一次登录服务器时，http request中不带有cookie字段，服务器通过http response中set-cookie字段设置浏览器访问该网站的cookie，然后该用户第二次访问服务器时，由于服务器设置了cookie，浏览器会自动将关联该服务器的cookie中">
-<meta name="twitter:image" content="http://johnlw.cn/blog_tomcat_session.png">
+<meta name="twitter:description" content="String类简述String类是不可变类，由final关键字修饰，内部由final数组char[]保存字符。对于String类的方法，查询类方法不会导致char[]数组内容变化。其他诸如subString,replace的方法均需要原字符串内容变化，又由于String类不可变，当调用这些方法的时候实际上返回的是新建的String对象。 String类内部由char[]数组维护，String类中大">
 
 
 
@@ -369,7 +365,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-24 20:44:20" itemprop="dateModified" datetime="2019-01-24T20:44:20+08:00">2019-01-24</time>
+                <time title="Modified: 2019-01-24 20:51:55" itemprop="dateModified" datetime="2019-01-24T20:51:55+08:00">2019-01-24</time>
               
             
           </span>
@@ -402,24 +398,27 @@
       
 
       
-        <h3 id="cookie技术"><a href="#cookie技术" class="headerlink" title="cookie技术"></a>cookie技术</h3><p>http协议是无状态的，服务器无法判断某一个简单http请求来自于谁。这里我们可以利用cookie技术，当一个用户第一次登录服务器时，http request中不带有cookie字段，服务器通过http response中set-cookie字段设置浏览器访问该网站的cookie，然后该用户第二次访问服务器时，由于服务器设置了cookie，浏览器会自动将关联该服务器的cookie中的内容添加在http request请求头中一并发给服务器，这时服务器通过cookie的内容就知道了这个请求来自于该用户。</p>
-<p>cookie本质上是一些键值对组成的表，它还包括了过期时间，路径和域。</p>
-<h3 id="session技术"><a href="#session技术" class="headerlink" title="session技术"></a>session技术</h3><p>服务器虽然可以简单的通过cookie技术识别用户，但是cookie本身安全性不好，容易被其他人读取。session技术是在服务端保存用户信息，而再向用户浏览器set-cookie时，设置一个sessionId，再次访问服务器时，通过sessionId来识别用户。</p>
-<h3 id="session与cookie的关系"><a href="#session与cookie的关系" class="headerlink" title="session与cookie的关系"></a>session与cookie的关系</h3><p>两者都用于解决http协议无状态的问题，cookie基于客户端，session基于服务端，同时session依赖于cookie。因此，当浏览器禁用cookie的时候，session也将随之失效。</p>
-<h3 id="session与cookie的生命周期"><a href="#session与cookie的生命周期" class="headerlink" title="session与cookie的生命周期"></a>session与cookie的生命周期</h3><h4 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h4><ul>
-<li>cookie在服务端返回http响应时可以设置有效时间，cookie在该时间范围内有效，过期即失效。cookie会持久化在硬盘上，即使浏览器关闭也可以再次读取，直至失效。</li>
-<li>服务端返回时未设置有效时间，则cookie在浏览器关闭后即失效。<h4 id="session"><a href="#session" class="headerlink" title="session"></a>session</h4></li>
-<li>创建：在服务端调用HttpServletRequest.getSession(true)时为该用户创建session（ps:java服务端）</li>
-<li>有效期：默认有效期30分钟，可以自行调整。</li>
-<li>失效：1、session超时失效。2、调用invalidate()方法。3、服务器关闭或重启，这里如果session做了持久化，服务器重启之后依然可以从持久化的记录中重建session。<h3 id="session原理简述（tomcat）"><a href="#session原理简述（tomcat）" class="headerlink" title="session原理简述（tomcat）"></a>session原理简述（tomcat）</h3>这是tomcat下session包源码结构：<br><img src="http://johnlw.cn/blog_tomcat_session.png" alt="这里写图片描述"><br>session本身是一个接口，是servlet中HttpSession接口的外观模式，阅读session的标准实现类StandardSession源码，我们可以发现本质上其通过ConcurrentHashMap来保存存在其中的各属性值，记录了创建时间和上次访问时间用于表征生命周期状态等<br><img src="http://johnlw.cn/blog_session_code1.png" alt="这里写图片描述"></li>
+        <h3 id="String类简述"><a href="#String类简述" class="headerlink" title="String类简述"></a>String类简述</h3><p>String类是不可变类，由final关键字修饰，内部由final数组char[]保存字符。对于String类的方法，查询类方法不会导致char[]数组内容变化。其他诸如subString,replace的方法均需要原字符串内容变化，又由于String类不可变，当调用这些方法的时候实际上返回的是<strong>新建的String对象</strong>。</p>
+<p>String类内部由char[]数组维护，String类中大部分方法都是<strong>对数组的操作</strong>，诸如subString、replace之类均使用了System类中的静态方法：arrayCopy。</p>
+<h3 id="String-intern-方法"><a href="#String-intern-方法" class="headerlink" title="String intern()方法"></a>String intern()方法</h3><h5 id="Java常量池"><a href="#Java常量池" class="headerlink" title="Java常量池"></a>Java常量池</h5><p>关于Java常量池：分为两类，一是Class类常量池，二是运行时常量池。</p>
+<p>运行时常量池可视为Java系统级别提供的缓存机制。<br>用的比较多的是基本数据类型的包装类常量池和String类常量池。</p>
+<p>包装类中Byte,Short,Character,Integer,Long,Boolean均提供了常量池支持，两种浮点型数据类型没有提供常量池。其中Byte,Short，Character,Integer,Long仅在[-128,127]范围内提供了常量池。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">	Integer i = new Integer(10);</span><br><span class="line">	Integer j = new Integer(10);</span><br><span class="line">	System.out.println(i == j);//false，引用比较，不同的对象</span><br><span class="line"></span><br><span class="line">	Integer i1 = 127;</span><br><span class="line">	Integer j1 = 127;</span><br><span class="line">	System.out.println(i1 == j1);//true，指向常量池中的同一个对象</span><br><span class="line"></span><br><span class="line">	Integer i2 = 128;</span><br><span class="line">	Integer j2 = 128;</span><br><span class="line">	System.out.println(i2 == j2);//false，超过常量池范围，新建对象，不同的对象</span><br><span class="line"></span><br><span class="line">	int i3 = 128;</span><br><span class="line">	int j3 = 128;</span><br><span class="line">	System.out.println(i3 == j3);//true，值比较</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="String与常量池"><a href="#String与常量池" class="headerlink" title="String与常量池"></a>String与常量池</h5><p>String常量池使用的两种方式：</p>
+<ul>
+<li>字面量，该String对象将会被直接放入常量池。</li>
+<li>String.intern()方法。调用intern方法后，String对象放入常量池。如果常量池中已经存在，则返回该常量的引用，如果不存在则放入常量池并返回引用。</li>
 </ul>
-<p>对于整个web服务器来说，需要一个session容器来对session进行管理，这个容器对应的接口就是Manager接口，其抽象实现类ManagerBase中实现了对session生命周期的管理（创建、计时、销毁），其容器也是ConcurrentHashMap，其key值通常为jsessionId<br><img src="http://johnlw.cn/blog_session_code2.png" alt="这里写图片描述"></p>
-<h3 id="负载均衡下session共享问题"><a href="#负载均衡下session共享问题" class="headerlink" title="负载均衡下session共享问题"></a>负载均衡下session共享问题</h3><ul>
-<li>session保持：通过session保持，LB进行请求转发的时候保证每个客户端固定地访问到集群的同一台服务器。显然，session保持并不能保证真正的负载均衡</li>
-<li>session复制：将每台服务器上的session信息复制给其他服务器，使得每台服务器都有一份session信息</li>
-<li>session共享：将session信息放在统一的地方统一访问，将session信息放在redis或Memcached这类KV数据库里</li>
-</ul>
-<h3 id="cookie禁用问题"><a href="#cookie禁用问题" class="headerlink" title="cookie禁用问题"></a>cookie禁用问题</h3><p>可以用时URL重写，将sessionId附在url之后</p>
+<p>String常量池本质上是一个散列表，但是该表不能自动扩容，当散列表中的String常量过多时，会引起大量hash collision，影响散列表的查询性能。hotspot虚拟机可以通过<code>-XX:StringTableSize</code>参数设定散列表的大小，我的eclipse默认大小为60013。</p>
+<p>jdk6中字符串常量池在Perm Space中，大量使用字符串常量池容易内存溢出。jdk7移到了Heap中，在放入常量池时不再重新创建新的对象，而是直接将常量的引用指向原对象。</p>
+<p>经典示例如下，我们基于jdk7来解析：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    String s = new String(&quot;1&quot;);//生成两个对象，一个普通对象s，一个字符串常量池内的对象&quot;1&quot;</span><br><span class="line">    s.intern();//s放入常量池时发现已经有“1”了</span><br><span class="line">    String s2 = &quot;1&quot;;//s2指向常量池内的“1”</span><br><span class="line">    System.out.println(s == s2);//false  s指向普通对象，s2指向常量池内对象</span><br><span class="line"></span><br><span class="line">    String s3 = new String(&quot;1&quot;) + new String(&quot;1&quot;);//生成4个对象，一个常量池“1”，一个普通对象s3（值为11）,</span><br><span class="line">    //两个匿名普通对象</span><br><span class="line">    s3.intern();//s3放入常量池成功</span><br><span class="line">    String s4 = &quot;11&quot;;//s4指向常量池“11”，常量池中“11”由s3放入，由于常量池在heap中，</span><br><span class="line">    //“11”直接指向了s3，而不是重新在常量池中新建一个“11”对象，则s4即指向了s3对象</span><br><span class="line">    System.out.println(s3 == s4);//true s3和s4指向同一个对象“11”</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    String s = new String(&quot;1&quot;);//创建两个对象，一个普通对象s,一个常量池对象“1”</span><br><span class="line">    String s2 = &quot;1&quot;;//s2指向常量池对象“1”</span><br><span class="line">    s.intern();//s放入的时候发现常量池已经存在“1”</span><br><span class="line">    System.out.println(s == s2);// false s和s2指向不同的对象</span><br><span class="line"></span><br><span class="line">    String s3 = new String(&quot;1&quot;) + new String(&quot;1&quot;);//创建四个对象：一个普通对象s3（值为11），</span><br><span class="line">    //一个常量池对象“1”,两个匿名普通对象</span><br><span class="line">    String s4 = &quot;11&quot;;//创建常量池对象“11”,s4指向它</span><br><span class="line">    s3.intern();//s3放入发现已存在</span><br><span class="line">    System.out.println(s3 == s4);//false s3 和s4指向不同的对象</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在大量创建String对象时，如果每次创建String对象后并调用intern方法，<strong>并将intern方法返回的引用作为该String对象的引用</strong>，则有相同内容的String对象将会在gc时被大量回收，可以节约内存和提高效率。</p>
+<h3 id="StringBuilder"><a href="#StringBuilder" class="headerlink" title="StringBuilder"></a>StringBuilder</h3><p>StringBuilder和StringBuffer的区别在于StringBuilder是非线程安全的，而StringBuffer是线程安全的。除此之外两者在功能上是相同的，均继承于抽象类AbstractStringBuilder，该类主要定义了针对字符串的几类操作：append、insert、delete、query等。<br>AbstractStringBuilder对象内部亦由char[]数组维护字符串，所以各种操作底层都是在操作数组。这里要注意的是由于数组定义后长度不可变，当append和insert操作时需要先检查容量是否足够，不够时需要新建数组扩容后再进行arrayCopy。</p>
+<blockquote>
+<p><a href="https://tech.meituan.com/in_depth_understanding_string_intern.html" target="_blank" rel="noopener">https://tech.meituan.com/in_depth_understanding_string_intern.html</a></p>
+</blockquote>
 
       
     </div>
@@ -568,7 +567,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie技术"><span class="nav-number">1.</span> <span class="nav-text">cookie技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session技术"><span class="nav-number">2.</span> <span class="nav-text">session技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session与cookie的关系"><span class="nav-number">3.</span> <span class="nav-text">session与cookie的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session与cookie的生命周期"><span class="nav-number">4.</span> <span class="nav-text">session与cookie的生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cookie"><span class="nav-number">4.1.</span> <span class="nav-text">cookie</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#session"><span class="nav-number">4.2.</span> <span class="nav-text">session</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session原理简述（tomcat）"><span class="nav-number">5.</span> <span class="nav-text">session原理简述（tomcat）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#负载均衡下session共享问题"><span class="nav-number">6.</span> <span class="nav-text">负载均衡下session共享问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie禁用问题"><span class="nav-number">7.</span> <span class="nav-text">cookie禁用问题</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#String类简述"><span class="nav-number">1.</span> <span class="nav-text">String类简述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-intern-方法"><span class="nav-number">2.</span> <span class="nav-text">String intern()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Java常量池"><span class="nav-number">2.0.1.</span> <span class="nav-text">Java常量池</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#String与常量池"><span class="nav-number">2.0.2.</span> <span class="nav-text">String与常量池</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#StringBuilder"><span class="nav-number">3.</span> <span class="nav-text">StringBuilder</span></a></li></div>
             
 
           </div>
