@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 15:01:10" itemprop="dateModified" datetime="2019-01-25T15:01:10+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 15:34:35" itemprop="dateModified" datetime="2019-01-25T15:34:35+08:00">2019-01-25</time>
               
             
           </span>
@@ -413,7 +413,7 @@
 <h5 id="多粒度"><a href="#多粒度" class="headerlink" title="多粒度"></a>多粒度</h5><p>上文所描述的并发控制机制均是基于单个的数据项的，但是在数据库中有时需要更大的控制粒度（如DDL中的ALTER TABLE操作），如果此时还是按照数据项的粒度去挨个加锁，效率将是极低的，引入多粒度加锁以解决这个问题。</p>
 <p><img src="http://static.johnlw.cn/blog_innodb_lock_multi-granularity.png" alt="这里写图片描述"></p>
 <p>如上图所示，有的事务需要锁住整个数据库，有的只需要锁住表，有的只需要锁住一条记录即可。</p>
-<p>多粒度封锁协议引入新的锁类型–<strong>意向锁</strong>（Intension Lock）来实现多粒度加锁，意向锁用来<strong>表示事务在加锁的数据项（各种粒度）上的操作意向</strong>。意向锁分为共享意向锁和排他意向锁，其与共享锁、排他锁的相容性矩阵如下表所示：<br>|相容性|IS|IX|S|X|<br>|-|-|-|-|-|<br>|IS|true|true|true|false|<br>|IX|true|true|false|false|<br>|S|true|false|true|false|<br>|X|false|false|false|false|<br><strong>多粒度封锁协议要求加锁按自顶向下的顺序（根到叶），解锁按照自底向上的顺序（叶到根）。</strong>如对某个记录加共享锁，需要先对根（数据库）加共享意向锁，再对表加共享意向锁，最后对该记录加共享锁；释放时，先释放该记录的共享锁，再释放在表上的共享意向锁，最后释放数据库上的共享意向锁。</p>
+<p>多粒度封锁协议引入新的锁类型–<strong>意向锁</strong>（Intension Lock）来实现多粒度加锁，意向锁用来<strong>表示事务在加锁的数据项（各种粒度）上的操作意向</strong>。意向锁分为共享意向锁和排他意向锁，其与共享锁、排他锁的相容性矩阵如下表所示：<br>|相容性|IS|IX|S|X|<br>|:-:|:-:|:-:|:-:|:-:|<br>|IS|true|true|true|false|<br>|IX|true|true|false|false|<br>|S|true|false|true|false|<br>|X|false|false|false|false|<br><strong>多粒度封锁协议要求加锁按自顶向下的顺序（根到叶），解锁按照自底向上的顺序（叶到根）。</strong>如对某个记录加共享锁，需要先对根（数据库）加共享意向锁，再对表加共享意向锁，最后对该记录加共享锁；释放时，先释放该记录的共享锁，再释放在表上的共享意向锁，最后释放数据库上的共享意向锁。</p>
 <p>多粒度封锁协议增强了并发性，减小了锁的开销。</p>
 <h4 id="封锁的实现"><a href="#封锁的实现" class="headerlink" title="封锁的实现"></a>封锁的实现</h4><p>封锁通过锁管理器实现事务加解锁的管理，锁管理器通过维护一个锁表实现该功能。锁表如下图所示，图中I表示数据项，T表示事务。<br><img src="http://static.johnlw.cn/blog_innodb_lock.png" alt="这里写图片描述"></p>
 <p>锁管理器为目前所有已经加锁的数据项I维护一个链表，每个请求T为链表中的一条记录，按请求到达的顺序排序（防止饿死）。数据项通过散列表来维护。</p>
