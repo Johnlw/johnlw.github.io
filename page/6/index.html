@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-24 20:06:32" itemprop="dateModified" datetime="2019-01-24T20:06:32+08:00">2019-01-24</time>
+                <time title="Modified: 2019-01-25 13:32:44" itemprop="dateModified" datetime="2019-01-25T13:32:44+08:00">2019-01-25</time>
               
             
           </span>
@@ -414,7 +414,7 @@
 </ol>
 <p>ps:数组对象额外一部分用于存储数组的长度。</p>
 <p>在运行期间，Mark Word里存储的数据会随着锁标志位的变化而变化。<br>|锁状态|存储内容|锁标志位|<br>|—-|||<br>|无锁|对象hashcode，GC分代年龄，偏向锁标志位：0|01|<br>|偏向锁|ThreadID，Epoch，对象分代年龄，偏向锁标志位：1|01|<br>|轻量级锁|指向栈中锁记录的指针/|00|<br>|重量级锁|指向互斥量（重量级锁）的指针/|10|<br>|GC标记|空/|11|</p>
-<h1 id="JVM线程状态转化机制"><a href="#JVM线程状态转化机制" class="headerlink" title="JVM线程状态转化机制"></a>JVM线程状态转化机制</h1><p>线程阻塞/等待队列图：<br><img src="http://johnlw.cn/blog_thread_block_wait.jpg" alt="JVM协调结构图"></p>
+<h1 id="JVM线程状态转化机制"><a href="#JVM线程状态转化机制" class="headerlink" title="JVM线程状态转化机制"></a>JVM线程状态转化机制</h1><p>线程阻塞/等待队列图：<br><img src="http://static.johnlw.cn/blog_thread_block_wait.jpg" alt="JVM协调结构图"></p>
 <p>工作原理：当多个线程同时请求某个管程时，管程会设置几种状态来区分和组织协调请求的线程</p>
 <ul>
 <li>Contention List:所有请求锁的线程首先添加至竞争队列</li>

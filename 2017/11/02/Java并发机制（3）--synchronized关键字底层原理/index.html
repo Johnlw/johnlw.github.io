@@ -103,12 +103,12 @@
 <meta property="og:site_name" content="John What">
 <meta property="og:description" content="synchronized关键字在Java语言层面提供了同步功能。 synchronized同步的形式Java中的任何对象都可以被锁。有以下三种形式：  对于普通同步方法，锁住的是当前实例对象 对于静态同步方法，锁住的是当前类的Class对象 对于同步方法块，锁住的是synchronized括号里配置的对象  这三种形式在jvm里都是由管程来支撑的。同步代码块在字节码层面插入了monitorente">
 <meta property="og:locale" content="en">
-<meta property="og:image" content="http://johnlw.cn/blog_thread_block_wait.jpg">
-<meta property="og:updated_time" content="2019-01-24T12:06:32.502Z">
+<meta property="og:image" content="http://static.johnlw.cn/blog_thread_block_wait.jpg">
+<meta property="og:updated_time" content="2019-01-25T05:32:44.415Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发机制（3）--synchronized关键字底层原理">
 <meta name="twitter:description" content="synchronized关键字在Java语言层面提供了同步功能。 synchronized同步的形式Java中的任何对象都可以被锁。有以下三种形式：  对于普通同步方法，锁住的是当前实例对象 对于静态同步方法，锁住的是当前类的Class对象 对于同步方法块，锁住的是synchronized括号里配置的对象  这三种形式在jvm里都是由管程来支撑的。同步代码块在字节码层面插入了monitorente">
-<meta name="twitter:image" content="http://johnlw.cn/blog_thread_block_wait.jpg">
+<meta name="twitter:image" content="http://static.johnlw.cn/blog_thread_block_wait.jpg">
 
 
 
@@ -367,7 +367,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-24 20:06:32" itemprop="dateModified" datetime="2019-01-24T20:06:32+08:00">2019-01-24</time>
+                <time title="Modified: 2019-01-25 13:32:44" itemprop="dateModified" datetime="2019-01-25T13:32:44+08:00">2019-01-25</time>
               
             
           </span>
@@ -415,7 +415,7 @@
 </ol>
 <p>ps:数组对象额外一部分用于存储数组的长度。</p>
 <p>在运行期间，Mark Word里存储的数据会随着锁标志位的变化而变化。<br>|锁状态|存储内容|锁标志位|<br>|—-|||<br>|无锁|对象hashcode，GC分代年龄，偏向锁标志位：0|01|<br>|偏向锁|ThreadID，Epoch，对象分代年龄，偏向锁标志位：1|01|<br>|轻量级锁|指向栈中锁记录的指针/|00|<br>|重量级锁|指向互斥量（重量级锁）的指针/|10|<br>|GC标记|空/|11|</p>
-<h1 id="JVM线程状态转化机制"><a href="#JVM线程状态转化机制" class="headerlink" title="JVM线程状态转化机制"></a>JVM线程状态转化机制</h1><p>线程阻塞/等待队列图：<br><img src="http://johnlw.cn/blog_thread_block_wait.jpg" alt="JVM协调结构图"></p>
+<h1 id="JVM线程状态转化机制"><a href="#JVM线程状态转化机制" class="headerlink" title="JVM线程状态转化机制"></a>JVM线程状态转化机制</h1><p>线程阻塞/等待队列图：<br><img src="http://static.johnlw.cn/blog_thread_block_wait.jpg" alt="JVM协调结构图"></p>
 <p>工作原理：当多个线程同时请求某个管程时，管程会设置几种状态来区分和组织协调请求的线程</p>
 <ul>
 <li>Contention List:所有请求锁的线程首先添加至竞争队列</li>

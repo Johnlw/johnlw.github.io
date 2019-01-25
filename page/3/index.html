@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-24 20:32:03" itemprop="dateModified" datetime="2019-01-24T20:32:03+08:00">2019-01-24</time>
+                <time title="Modified: 2019-01-25 13:33:15" itemprop="dateModified" datetime="2019-01-25T13:33:15+08:00">2019-01-25</time>
               
             
           </span>
@@ -408,9 +408,9 @@
 <li>服务端返回时未设置有效时间，则cookie在浏览器关闭后即失效。<h4 id="session"><a href="#session" class="headerlink" title="session"></a>session</h4></li>
 <li>创建：在服务端调用HttpServletRequest.getSession(true)时为该用户创建session（ps:java服务端）</li>
 <li>有效期：默认有效期30分钟，可以自行调整。</li>
-<li>失效：1、session超时失效。2、调用invalidate()方法。3、服务器关闭或重启，这里如果session做了持久化，服务器重启之后依然可以从持久化的记录中重建session。<h3 id="session原理简述（tomcat）"><a href="#session原理简述（tomcat）" class="headerlink" title="session原理简述（tomcat）"></a>session原理简述（tomcat）</h3>这是tomcat下session包源码结构：<br><img src="http://johnlw.cn/blog_tomcat_session.png" alt="这里写图片描述"><br>session本身是一个接口，是servlet中HttpSession接口的外观模式，阅读session的标准实现类StandardSession源码，我们可以发现本质上其通过ConcurrentHashMap来保存存在其中的各属性值，记录了创建时间和上次访问时间用于表征生命周期状态等<br><img src="http://johnlw.cn/blog_session_code1.png" alt="这里写图片描述"></li>
+<li>失效：1、session超时失效。2、调用invalidate()方法。3、服务器关闭或重启，这里如果session做了持久化，服务器重启之后依然可以从持久化的记录中重建session。<h3 id="session原理简述（tomcat）"><a href="#session原理简述（tomcat）" class="headerlink" title="session原理简述（tomcat）"></a>session原理简述（tomcat）</h3>这是tomcat下session包源码结构：<br><img src="http://static.johnlw.cn/blog_tomcat_session.png" alt="这里写图片描述"><br>session本身是一个接口，是servlet中HttpSession接口的外观模式，阅读session的标准实现类StandardSession源码，我们可以发现本质上其通过ConcurrentHashMap来保存存在其中的各属性值，记录了创建时间和上次访问时间用于表征生命周期状态等<br><img src="http://static.johnlw.cn/blog_session_code1.png" alt="这里写图片描述"></li>
 </ul>
-<p>对于整个web服务器来说，需要一个session容器来对session进行管理，这个容器对应的接口就是Manager接口，其抽象实现类ManagerBase中实现了对session生命周期的管理（创建、计时、销毁），其容器也是ConcurrentHashMap，其key值通常为jsessionId<br><img src="http://johnlw.cn/blog_session_code2.png" alt="这里写图片描述"></p>
+<p>对于整个web服务器来说，需要一个session容器来对session进行管理，这个容器对应的接口就是Manager接口，其抽象实现类ManagerBase中实现了对session生命周期的管理（创建、计时、销毁），其容器也是ConcurrentHashMap，其key值通常为jsessionId<br><img src="http://static.johnlw.cn/blog_session_code2.png" alt="这里写图片描述"></p>
 <h3 id="负载均衡下session共享问题"><a href="#负载均衡下session共享问题" class="headerlink" title="负载均衡下session共享问题"></a>负载均衡下session共享问题</h3><ul>
 <li>session保持：通过session保持，LB进行请求转发的时候保证每个客户端固定地访问到集群的同一台服务器。显然，session保持并不能保证真正的负载均衡</li>
 <li>session复制：将每台服务器上的session信息复制给其他服务器，使得每台服务器都有一份session信息</li>
