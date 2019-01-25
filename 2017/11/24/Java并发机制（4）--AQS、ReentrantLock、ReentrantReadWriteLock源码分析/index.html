@@ -103,7 +103,7 @@
 <meta property="og:site_name" content="John What">
 <meta property="og:description" content="背景锁是用来控制多个线程访问共享资源的工具，Java中有两种锁，一种是jvm层面的synchronized关键字，一种是JUC的Lock接口的实现类。Lock接口对比synchronized关键字需要显示的获取/释放锁，虽然丧失了一定的便捷性，但是提供了synchronized关键字所不具备的获取/释放锁的灵活性、可中断获取锁、超时获取锁、非阻塞获取锁（trylock）、以及多个条件变量。 队列同">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-24T12:13:28.004Z">
+<meta property="og:updated_time" content="2019-01-25T07:52:22.547Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发机制（4）--AQS、ReentrantLock、ReentrantReadWriteLock源码分析">
 <meta name="twitter:description" content="背景锁是用来控制多个线程访问共享资源的工具，Java中有两种锁，一种是jvm层面的synchronized关键字，一种是JUC的Lock接口的实现类。Lock接口对比synchronized关键字需要显示的获取/释放锁，虽然丧失了一定的便捷性，但是提供了synchronized关键字所不具备的获取/释放锁的灵活性、可中断获取锁、超时获取锁、非阻塞获取锁（trylock）、以及多个条件变量。 队列同">
@@ -365,7 +365,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-24 20:13:28" itemprop="dateModified" datetime="2019-01-24T20:13:28+08:00">2019-01-24</time>
+                <time title="Modified: 2019-01-25 15:52:22" itemprop="dateModified" datetime="2019-01-25T15:52:22+08:00">2019-01-25</time>
               
             
           </span>
@@ -412,7 +412,37 @@
 <h1 id="初识AQS"><a href="#初识AQS" class="headerlink" title="初识AQS"></a>初识AQS</h1><p>AQS主要提供了同步状态的管理、线程的阻塞/唤醒、排队、条件变量、监控五个方面的功能。</p>
 <h3 id="同步状态的管理"><a href="#同步状态的管理" class="headerlink" title="同步状态的管理"></a>同步状态的管理</h3><p>AQS有一个volatile修饰的int变量state用于表示同步状态，在前面的文章我们讲解过volatile关键字的作用。同时提供了三个子类可访问的getState()，setState(int newState)，compareAndSetState(int expect, int update)的方法来访问和修改同步状态。<br>线程获取同步锁的策略由抽象方法tryAcquire(int arg)，tryRelease(int arg)，tryAcquireShared(int arg)，tryReleaseShared(int arg)描述，交由子类自己实现。这里AQS将操作和策略解耦，AQS本身并不关心子类怎么定义获取，怎么定义获取成功与失败，AQS关心的是当线程获取失败后如何处理（阻塞/唤醒、排队等），将获取策略解耦交给子类可以借以实现更复杂更灵活的同步方案（如排他模式下的公平锁和非公平锁ReentrantLock，共享模式下的ReentrantReadWriteLock等。）</p>
 <h3 id="排队"><a href="#排队" class="headerlink" title="排队"></a>排队</h3><p>AQS内部维护了一个的带头尾引用的双链表用以构成一个FIFO的类CLH队列，队列中的节点类型由内部类Node表示。Node节点含有等待线程的引用、Node是共享/排他型节点、Node的状态、前后Node的引用等信息。head节点中的线程为当前队列中获取到锁的线程。<br>当线程竞争共享资源失败后，AQS将用该线程构建Node，并将其入队。</p>
-<h3 id="阻塞与唤醒"><a href="#阻塞与唤醒" class="headerlink" title="阻塞与唤醒"></a>阻塞与唤醒</h3><p>线程在获取资源失败后在AQS中入队，该线程即将阻塞以释放CPU，这里Node节点的状态信息将发挥关键作用。<br>|waitStatus 节点状态|意义|<br>|-|-|<br>|CANCELLED|值为1，在线程在排队过程中出现了超时或者中断时，该线程将被取消，此时该节点状态将被置为1|<br>|SIGNAL|值为-1，由后继节点设置，当后继节点将当前节点状态设置为-1后，后继节点进入阻塞态；当前节点如果释放了资源或者被取消，将会通知后继节点（唤醒它）|<br>|CONDITION|值为-2，当节点在条件变量上等待时，节点的状态为CONDITION|<br>|PROPAGATE|值为-3，用于共享模式，表示下一次共享式同步状态将会无条件地被传播下去|<br>|INITIAL|值为0，初始状态|</p>
+<h3 id="阻塞与唤醒"><a href="#阻塞与唤醒" class="headerlink" title="阻塞与唤醒"></a>阻塞与唤醒</h3><p>线程在获取资源失败后在AQS中入队，该线程即将阻塞以释放CPU，这里Node节点的状态信息将发挥关键作用。</p>
+<table>
+<thead>
+<tr>
+<th>waitStatus 节点状态</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CANCELLED</td>
+<td>值为1，在线程在排队过程中出现了超时或者中断时，该线程将被取消，此时该节点状态将被置为1</td>
+</tr>
+<tr>
+<td>SIGNAL</td>
+<td>值为-1，由后继节点设置，当后继节点将当前节点状态设置为-1后，后继节点进入阻塞态；当前节点如果释放了资源或者被取消，将会通知后继节点（唤醒它）</td>
+</tr>
+<tr>
+<td>CONDITION</td>
+<td>值为-2，当节点在条件变量上等待时，节点的状态为CONDITION</td>
+</tr>
+<tr>
+<td>PROPAGATE</td>
+<td>值为-3，用于共享模式，表示下一次共享式同步状态将会无条件地被传播下去</td>
+</tr>
+<tr>
+<td>INITIAL</td>
+<td>值为0，初始状态</td>
+</tr>
+</tbody>
+</table>
 <p>线程入队后，检查前驱节点是否被取消，如果被取消则向前进直到找到未取消的前驱节点，将该前驱节点的状态设置为SIGNAL，然后进入阻塞态。<br>head节点为队列中当前占用资源的线程，该线程释放资源时，将唤醒后继节点竞争锁。<br>这类似等待/通知模式，这种方式避免了自旋主动查询浪费CPU时间。</p>
 <h3 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h3><p>条件变量常与互斥量一起使用，在条件变量上的等待需要先获取互斥量。AQS的等待/通知机制由内部类ConditionObject支持。ConditionObject实现了Condition接口，内部维护了一个带有首尾引用的FIFO单链表。节点类型依然为Node。<br>当有线程在某个ConditionObject上等待（调用Condition.await()）时，那么该线程首先将释放锁，然后构造新的Node类型节点入队并进入阻塞状态。<br>调用ConditionObject对象上的signal()方法，先将首节点移至同步等待队列队尾，然后唤醒该线程，进而加入到同步状态的竞争中。</p>
 <h3 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h3><p>AQS提供了一些用于监控当前同步队列和条件队列的方法。如getQueueLength()，getQueuedThreads()，getExclusiveQueuedThreads()，getSharedQueuedThreads()，getWaitQueueLength(ConditionObject condition)等，便于对同步器的竞争状态有个估计（AQS中的队列一直在变化，监测方法只能返回一个估计值）。</p>
