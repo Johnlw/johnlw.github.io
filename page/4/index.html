@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/15/InnoDB引擎--索引/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/14/InnoDB引擎--存储结构与文件/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/05/15/InnoDB引擎--索引/" class="post-title-link" itemprop="url">InnoDB引擎--索引</a>
+                <a href="/2018/05/14/InnoDB引擎--存储结构与文件/" class="post-title-link" itemprop="url">InnoDB引擎--存储结构与文件</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2018-05-15 10:56:36" itemprop="dateCreated datePublished" datetime="2018-05-15T10:56:36+08:00">2018-05-15</time>
+              <time title="Created: 2018-05-14 14:36:54" itemprop="dateCreated datePublished" datetime="2018-05-14T14:36:54+08:00">2018-05-14</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 14:54:10" itemprop="dateModified" datetime="2019-01-25T14:54:10+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 15:10:18" itemprop="dateModified" datetime="2019-01-25T15:10:18+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,29 +399,45 @@
       
         
           
-            <p>良好的索引设计可以大大提高数据库查询性能。InnoDB引擎支持自适应哈希索引、B+树索引和全文索引。其中自适应哈希索引是系统自动调整的，用户无法干预。</p>
-<h3 id="B-树索引"><a href="#B-树索引" class="headerlink" title="B+树索引"></a>B+树索引</h3><h5 id="聚集索引"><a href="#聚集索引" class="headerlink" title="聚集索引"></a>聚集索引</h5><p>聚集索引以主键顺序构建B+树，叶子节点中<strong>存储行数据记录</strong>，数据也是索引的一部分。</p>
-<h5 id="辅助索引"><a href="#辅助索引" class="headerlink" title="辅助索引"></a>辅助索引</h5><p>辅助索引以<strong>索引列逻辑顺序</strong>构建B+树，叶子节点中<strong>不存储实际的行数据记录，而存储的是行数据的聚集索引键</strong>。</p>
-<p>InnoDB聚集索引和辅助索引检索过程图：<br><img src="http://static.johnlw.cn/blog_innodb_indexes.png" alt="这里写图片描述"><br>如图所示，主键索引的叶子节点上存储了实际行数据，而辅助索引叶子节点上存储的是主键。通过主键查询行记录时，只需要使用主键索引；通过辅助索引查询行记录时，如果查询的是辅助索引列数据，则可以直接使用辅助索引，如果需要更多数据，则需要再次访问主键索引。</p>
-<h5 id="索引的开销"><a href="#索引的开销" class="headerlink" title="索引的开销"></a>索引的开销</h5><p>使用索引需要占用额外的磁盘空间和更新操作中的时间。空间问题主要在于缓存，占用空间小的索引可以更多地被读入缓存，在查询时除了叶子节点都可以在内存中进行，避免了磁盘IO。时间问题主要在于创建索引和维护索引的开销。在OLTP应用中，时间问题相对空间问题更加突出。</p>
-<h6 id="索引的创建开销"><a href="#索引的创建开销" class="headerlink" title="索引的创建开销"></a>索引的创建开销</h6><p>在线上环境中添加索引中是一件颇具风险的事。创建索引时需要锁或者需要创建临时表，这将使得数据表在索引创建期间可用性大大降低。</p>
-<p>InnoDB通过Online DDL来改善这种情况，Online DDL视情况给表添加共享锁或者排它锁复制来添加索引，对于添加索引期间的更新操作写入到一个缓存中，待索引创建完成后再将操作应用到表上达到一致性。</p>
-<h6 id="索引的维护开销"><a href="#索引的维护开销" class="headerlink" title="索引的维护开销"></a>索引的维护开销</h6><p>每向数据表插入一行数据，都需要更新表上所有的索引，如果是唯一性索引还需要提前做唯一性检查；每更新一列带有索引的列，都需要更新索引顺序。这些使得更改操作时间开销增加。</p>
-<p>不同于聚集索引，辅助索引的更新操作更多是随机磁盘访问，开销较大。InnoDB引入了Insert Buffer来提高辅助索引的更新性能。每次更新索引页时，如果该索引页已经被读入内存缓存，可以直接更新；如果没有读入，则将更新写入Insert Buffer而不是写回磁盘，然后再周期性地合并更新操作一起写回磁盘，减少了磁盘IO次数，提高了辅助索引更新的性能。但是Insert Buffer不能用在唯一索引上，因为需要访问磁盘做唯一性检查。</p>
-<p>基于索引的维护开销，在创建辅助索引时需要综合考虑，盲目添加索引可能给系统增加不必要的负担。</p>
-<h5 id="索引的使用"><a href="#索引的使用" class="headerlink" title="索引的使用"></a>索引的使用</h5><h6 id="Cardinality值"><a href="#Cardinality值" class="headerlink" title="Cardinality值"></a>Cardinality值</h6><p>Cardinality值表征了索引列值的离散程度，Cardinality值越接近记录总数，离散程度越高，反之越低。离散程度高的列数据选择性高，通过索引容易定位某一行，反之选择性低，索引查找出来还是有很多行，需要线性遍历，开销很大。<br>InnoDB的Cardinality值是通过采样8个索引页估算的，并不完全精确。</p>
-<h6 id="联合索引"><a href="#联合索引" class="headerlink" title="联合索引"></a>联合索引</h6><p>联合索引的键值排序是先依照第一列排序，第一列元素相同的依照第二列排序…依此类推，所以在<strong>使用联合索引时，如果条件不包含前面的列，将无法确定元素在索引中的位置，因而也无法使用索引</strong>。</p>
-<p>联合索引对索引列依次排序，在查询含有ORDER BY的SQL时，如果ORDER BY的字段在联合索引中，将节省查询时间。</p>
-<h6 id="短索引"><a href="#短索引" class="headerlink" title="短索引"></a>短索引</h6><p>某个字段长度较长，但其前面几个字符的离散程度已经比较高了，可以只在其前面几个字符上建立索引，一方面减少排序的计算量，一方面减少索引的大小，可以更多地被读入内存缓存，减少索引读取的磁盘IO。</p>
-<h6 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h6><p>如果需要的信息从辅助索引中就可以直接查询出来，而不需要回主键索引再次查询行数据，则直接通过辅助索引返回数据，效率更高。</p>
-<h6 id="MRR"><a href="#MRR" class="headerlink" title="MRR"></a>MRR</h6><p>由辅助索引查询出来的主键数据是依照索引列排序的，MRR先将这些主键数据按照主键顺序排序，然后再去主键索引中查询行数据，变随机读取为顺序读取，提高IO效率。</p>
-<h6 id="其他不使用索引的情况"><a href="#其他不使用索引的情况" class="headerlink" title="其他不使用索引的情况"></a>其他不使用索引的情况</h6><ul>
-<li>like以%开头</li>
-<li>条件中对索引列有计算（函数计算、数学计算、类型转换）</li>
-<li>优化器认为全表扫描效率更高（多见于范围查找【范围查找全表扫描可以顺序读，索引的随机读效率并不一定高】）</li>
+            <p>数据库是数据的集合，数据库管理系统（DBMS）是操作和管理数据库的应用程序。数据库应用主要有两类：OLAP（联机分析处理）和OLTP（联机事务处理）。<br>OLAP的主要特点是:</p>
+<ul>
+<li>实时性要求不高</li>
+<li>数据量大</li>
+<li>并发量小</li>
+</ul>
+<p>OLTP的主要特点是:</p>
+<ul>
+<li>实时性要求高</li>
+<li>数据量小</li>
+<li>高并发</li>
+<li>要求满足ACID</li>
+</ul>
+<h3 id="Mysql体系架构"><a href="#Mysql体系架构" class="headerlink" title="Mysql体系架构"></a>Mysql体系架构</h3><p>mysql是一种DBMS，其体系架构如下图所示：<br><img src="http://static.johnlw.cn/blog_mysql_arch.png" alt="这里写图片描述"><br>mysql中集成的是插件式的存储引擎，InnoDB引擎是其中之一。<strong>存储引擎基于表而不是数据库</strong>：同一个数据库中根据不同表的访问操作需求可以选择不同的存储引擎。</p>
+<h3 id="InnoDB引擎"><a href="#InnoDB引擎" class="headerlink" title="InnoDB引擎"></a>InnoDB引擎</h3><p><strong>InnoDB引擎主要面对OLTP类应用</strong>。 </p>
+<p>InnoDB引擎在mysql中处于文件和文件系统的上层，管理着对InnoDB引擎表的访问和更新。</p>
+<h4 id="InnoDB引擎逻辑存储结构"><a href="#InnoDB引擎逻辑存储结构" class="headerlink" title="InnoDB引擎逻辑存储结构"></a>InnoDB引擎逻辑存储结构</h4><p>数据需要在一定的数据结构和组织结构下才能进行有效的管理。InnoDB表中的每行数据是基于B+树存储的，其中B+树中的顺序依据是主键的顺序，称为索引组织表。B+树存储在数据文件中，在B+树之外，InnoDB对数据文件中数据的管理和组织定义一个新的逻辑结构如下图所示：<br><img src="http://static.johnlw.cn/blog_innodb_structure.png" alt="这里写图片描述"><br>所有的数据都被逻辑地存放在表空间中，对于整个数据库中的InnoDB表，可以共用一个表空间，也可以将表空间拆分为共享表空间和各个表私有的表空间。拆分后，私有表空间仅存储该表的数据、索引、和插入缓冲BitMap页，其他类的数据如回滚（undo）信息、系统事务信息等还是存储在共享表空间里。<br>共享表空间文件格式：<br><img src="http://static.johnlw.cn/blog_ibdata1_file.png" alt="这里写图片描述"><br>私有表空间文件格式：<br><img src="http://static.johnlw.cn/blog_ibdfile.png" alt="这里写图片描述"><br>表空间中的数据分类为各个段：数据段、索引段、回滚段等。为了 便于管理，在各个段中继续拆分为区，区再细化拆分为连续的页，<strong>页是InnoDB磁盘管理的最小单位</strong>（即InnoDB从磁盘读取和写入都是以页为单位进行的）。页中<strong>按关系表中的行</strong>来存储实际的关系数据。</p>
+<p>在InnoDB中，表的数据均存储在B+树的叶子节点上，数据也是索引的一部分，即聚集索引。</p>
+<p>InnoDB索引页的文件格式：<br><img src="http://static.johnlw.cn/blog_innodb_index.png" alt="这里写图片描述"></p>
+<p>先看FIL Header：<br><img src="http://static.johnlw.cn/blog_innodb_fil.png" alt="这里写图片描述"><br>FIL Header中包含了索引页作为文件的信息。存储了指向上个页和下个页的指针，即索引页之间是通过链表连接起来的；同时还存储了该页的LSN（Log Squence Number），用于支持CheckPoint。</p>
+<p>再看INDEX Header:<br><img src="http://static.johnlw.cn/blog_innodb_index_header.png" alt="这里写图片描述"><br>INDEX Header中包含了对于索引页作为索引的信息。存储了索引页中记录的数量，索引节点的类型（根节点、非叶结点、叶结点），页目录槽数（Page Directory）等信息。</p>
+<p>然后就是User Records行记录了，存储了B+树索引非叶节点数据和叶结点数据，从图中可以看出<strong>User Records在物理上并不有序，但是逻辑上是以单链表有序的，顺序为主键顺序</strong>。</p>
+<p>最后来看页目录（Page Directory）。User Records是以单链表组织的，一个页的大小是16K，最多可以存储近8000行数据，查询某一个行时需要顺序遍历所有行，引入Page Directory对User Records进行二分查找，提高页内数据查询效率，如下图所示：<br><img src="http://static.johnlw.cn/blog_innodb_page_directory.png" alt="这里写图片描述"></p>
+<p>最终，以表、段、区、页的逻辑结构为载体，构建出InnoDB表B+树的逻辑结构如下图：<br><img src="http://static.johnlw.cn/blog_innodb_b+tree.png" alt="这里写图片描述"></p>
+<h4 id="Mysql相关文件"><a href="#Mysql相关文件" class="headerlink" title="Mysql相关文件"></a>Mysql相关文件</h4><h6 id="参数文件"><a href="#参数文件" class="headerlink" title="参数文件"></a>参数文件</h6><p>mysql数据库的配置文件，包含了各类系统参数。</p>
+<h6 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h6><p>mysql中常见的日志文件：</p>
+<ul>
+<li>error log:记录了mysql启动、运行、关闭过程。</li>
+<li>binary log:记录了对mysql数据库执行更改（不包含查询）的所有操作。</li>
+<li>slow query log:记录执行超过指定时间值的SQL语句。</li>
+<li>query log:记录所有对mysql数据库请求的信息。<h6 id="表结构文件"><a href="#表结构文件" class="headerlink" title="表结构文件"></a>表结构文件</h6>无论选用什么存储引擎，mysql会对定义的表和视图生成（表名.frm）文件用以存储表和视图的结构定义。</li>
+</ul>
+<p>以下为InnoDB引擎的文件：</p>
+<h6 id="表空间文件"><a href="#表空间文件" class="headerlink" title="表空间文件"></a>表空间文件</h6><ul>
+<li>共享表空间文件：ibdata1</li>
+<li>私有表空间文件：表名.ibd<h6 id="redo-log文件"><a href="#redo-log文件" class="headerlink" title="redo log文件"></a>redo log文件</h6>ib_logfile0 与 ib_logfile1，用于支持事务的持久性。</li>
 </ul>
 <blockquote>
-<p>MySQL技术内幕 InnoDB存储引擎 第2版<br><a href="https://blog.csdn.net/voidccc/article/details/40077329" target="_blank" rel="noopener">https://blog.csdn.net/voidccc/article/details/40077329</a><br><a href="https://blog.csdn.net/kaka1121/article/details/53395628" target="_blank" rel="noopener">https://blog.csdn.net/kaka1121/article/details/53395628</a></p>
+<p>MySQL技术内幕 InnoDB存储引擎 第2版<br><a href="https://blog.jcole.us/innodb/" target="_blank" rel="noopener">https://blog.jcole.us/innodb/</a><br>mysql 官方手册</p>
 </blockquote>
 
           

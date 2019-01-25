@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/15/InnoDB引擎--事务持久性/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/15/InnoDB引擎--索引/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/05/15/InnoDB引擎--事务持久性/" class="post-title-link" itemprop="url">InnoDB引擎--事务持久性</a>
+                <a href="/2018/05/15/InnoDB引擎--索引/" class="post-title-link" itemprop="url">InnoDB引擎--索引</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2018-05-15 14:36:14" itemprop="dateCreated datePublished" datetime="2018-05-15T14:36:14+08:00">2018-05-15</time>
+              <time title="Created: 2018-05-15 10:56:36" itemprop="dateCreated datePublished" datetime="2018-05-15T10:56:36+08:00">2018-05-15</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 14:56:58" itemprop="dateModified" datetime="2019-01-25T14:56:58+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 14:54:10" itemprop="dateModified" datetime="2019-01-25T14:54:10+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,30 +399,29 @@
       
         
           
-            <p>事务是指构成单一逻辑工作单元的操作的集合。数据库系统维护事务的ACID四个特性：</p>
-<ul>
-<li>原子性：事务的所有操作在数据库中要么全部反映，要么全部不反映。</li>
-<li>一致性：事务执行前后数据库保持约束一致性和业务逻辑一致性。</li>
-<li>隔离性：在事务并发执行时，各个事务都感觉不到其他事务的存在。</li>
-<li>持久性：事务一旦提交，其更改是永久性的，即使数据库系统崩溃也能恢复。</li>
+            <p>良好的索引设计可以大大提高数据库查询性能。InnoDB引擎支持自适应哈希索引、B+树索引和全文索引。其中自适应哈希索引是系统自动调整的，用户无法干预。</p>
+<h3 id="B-树索引"><a href="#B-树索引" class="headerlink" title="B+树索引"></a>B+树索引</h3><h5 id="聚集索引"><a href="#聚集索引" class="headerlink" title="聚集索引"></a>聚集索引</h5><p>聚集索引以主键顺序构建B+树，叶子节点中<strong>存储行数据记录</strong>，数据也是索引的一部分。</p>
+<h5 id="辅助索引"><a href="#辅助索引" class="headerlink" title="辅助索引"></a>辅助索引</h5><p>辅助索引以<strong>索引列逻辑顺序</strong>构建B+树，叶子节点中<strong>不存储实际的行数据记录，而存储的是行数据的聚集索引键</strong>。</p>
+<p>InnoDB聚集索引和辅助索引检索过程图：<br><img src="http://static.johnlw.cn/blog_innodb_indexes.png" alt="这里写图片描述"><br>如图所示，主键索引的叶子节点上存储了实际行数据，而辅助索引叶子节点上存储的是主键。通过主键查询行记录时，只需要使用主键索引；通过辅助索引查询行记录时，如果查询的是辅助索引列数据，则可以直接使用辅助索引，如果需要更多数据，则需要再次访问主键索引。</p>
+<h5 id="索引的开销"><a href="#索引的开销" class="headerlink" title="索引的开销"></a>索引的开销</h5><p>使用索引需要占用额外的磁盘空间和更新操作中的时间。空间问题主要在于缓存，占用空间小的索引可以更多地被读入缓存，在查询时除了叶子节点都可以在内存中进行，避免了磁盘IO。时间问题主要在于创建索引和维护索引的开销。在OLTP应用中，时间问题相对空间问题更加突出。</p>
+<h6 id="索引的创建开销"><a href="#索引的创建开销" class="headerlink" title="索引的创建开销"></a>索引的创建开销</h6><p>在线上环境中添加索引中是一件颇具风险的事。创建索引时需要锁或者需要创建临时表，这将使得数据表在索引创建期间可用性大大降低。</p>
+<p>InnoDB通过Online DDL来改善这种情况，Online DDL视情况给表添加共享锁或者排它锁复制来添加索引，对于添加索引期间的更新操作写入到一个缓存中，待索引创建完成后再将操作应用到表上达到一致性。</p>
+<h6 id="索引的维护开销"><a href="#索引的维护开销" class="headerlink" title="索引的维护开销"></a>索引的维护开销</h6><p>每向数据表插入一行数据，都需要更新表上所有的索引，如果是唯一性索引还需要提前做唯一性检查；每更新一列带有索引的列，都需要更新索引顺序。这些使得更改操作时间开销增加。</p>
+<p>不同于聚集索引，辅助索引的更新操作更多是随机磁盘访问，开销较大。InnoDB引入了Insert Buffer来提高辅助索引的更新性能。每次更新索引页时，如果该索引页已经被读入内存缓存，可以直接更新；如果没有读入，则将更新写入Insert Buffer而不是写回磁盘，然后再周期性地合并更新操作一起写回磁盘，减少了磁盘IO次数，提高了辅助索引更新的性能。但是Insert Buffer不能用在唯一索引上，因为需要访问磁盘做唯一性检查。</p>
+<p>基于索引的维护开销，在创建辅助索引时需要综合考虑，盲目添加索引可能给系统增加不必要的负担。</p>
+<h5 id="索引的使用"><a href="#索引的使用" class="headerlink" title="索引的使用"></a>索引的使用</h5><h6 id="Cardinality值"><a href="#Cardinality值" class="headerlink" title="Cardinality值"></a>Cardinality值</h6><p>Cardinality值表征了索引列值的离散程度，Cardinality值越接近记录总数，离散程度越高，反之越低。离散程度高的列数据选择性高，通过索引容易定位某一行，反之选择性低，索引查找出来还是有很多行，需要线性遍历，开销很大。<br>InnoDB的Cardinality值是通过采样8个索引页估算的，并不完全精确。</p>
+<h6 id="联合索引"><a href="#联合索引" class="headerlink" title="联合索引"></a>联合索引</h6><p>联合索引的键值排序是先依照第一列排序，第一列元素相同的依照第二列排序…依此类推，所以在<strong>使用联合索引时，如果条件不包含前面的列，将无法确定元素在索引中的位置，因而也无法使用索引</strong>。</p>
+<p>联合索引对索引列依次排序，在查询含有ORDER BY的SQL时，如果ORDER BY的字段在联合索引中，将节省查询时间。</p>
+<h6 id="短索引"><a href="#短索引" class="headerlink" title="短索引"></a>短索引</h6><p>某个字段长度较长，但其前面几个字符的离散程度已经比较高了，可以只在其前面几个字符上建立索引，一方面减少排序的计算量，一方面减少索引的大小，可以更多地被读入内存缓存，减少索引读取的磁盘IO。</p>
+<h6 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h6><p>如果需要的信息从辅助索引中就可以直接查询出来，而不需要回主键索引再次查询行数据，则直接通过辅助索引返回数据，效率更高。</p>
+<h6 id="MRR"><a href="#MRR" class="headerlink" title="MRR"></a>MRR</h6><p>由辅助索引查询出来的主键数据是依照索引列排序的，MRR先将这些主键数据按照主键顺序排序，然后再去主键索引中查询行数据，变随机读取为顺序读取，提高IO效率。</p>
+<h6 id="其他不使用索引的情况"><a href="#其他不使用索引的情况" class="headerlink" title="其他不使用索引的情况"></a>其他不使用索引的情况</h6><ul>
+<li>like以%开头</li>
+<li>条件中对索引列有计算（函数计算、数学计算、类型转换）</li>
+<li>优化器认为全表扫描效率更高（多见于范围查找【范围查找全表扫描可以顺序读，索引的随机读效率并不一定高】）</li>
 </ul>
-<p>先从持久性说起。</p>
-<h3 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h3><p>保证持久性的策略就是<strong>Write Ahead Logging</strong>。在事务提交之前，备份一份事务的操作日志在磁盘上，备份成功再允许事务成功提交。</p>
-<p>InnoDB引擎中支持持久性的是redo log，redo log写入过程如图所示：<br><img src="http://static.johnlw.cn/blog_innodb_redo_log.png" alt="这里写图片描述"></p>
-<p>redo log的写入为<strong>顺序循环</strong>写入。默认有两个redo log文件，InnoDB顺序写其中一个，写满之后，再顺序写另外一个日志文件，再回过头来写第一个…循环往复。</p>
-<p>既然重复利用redo log文件，就涉及到确定哪些日志可以被覆写的问题，InnoDB引擎利用CheckPoint技术来解决这个问题。</p>
-<h3 id="CheckPoint"><a href="#CheckPoint" class="headerlink" title="CheckPoint"></a>CheckPoint</h3><p>在 深入理解InnoDB引擎–存储结构与文件 中介绍了LSN记录了页的版本，CheckPoint用以表示已经刷新至磁盘的页的版本，在CheckPoint之前的事务已经持久化在磁盘上，redo log可以被覆写重用。</p>
-<p>在事务的执行过程中，由于缓存的缘故，有些页被修改后（脏页）并没有立刻被刷新至磁盘，但是事务提交成功了（redo log已经记录完毕）。</p>
-<p>那么什么时候刷新缓存中的脏页到磁盘呢？主要有以下三种情况：</p>
-<ul>
-<li>周期性刷新：Master Thread周期性刷新一定脏页到磁盘</li>
-<li>缓存不够用：基于LRU的缓存不够用，需要刷新一定脏页给新的热点页腾出位置</li>
-<li>redo log不够用：checkpoint_age高出async_water_mark/sync_water_mark，刷新一定脏页到磁盘以保证redo log有足够的空间给后来事务覆写</li>
-</ul>
-<h3 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h3><h5 id="redo-log文件大小问题"><a href="#redo-log文件大小问题" class="headerlink" title="redo log文件大小问题"></a>redo log文件大小问题</h5><p>redo log 不能太大也不能太小：redo log日志太大，将会导致大量脏页驻留内存而未被刷新至磁盘，系统故障恢复时将需要更多的时间。redo log日志太小，日志文件切换频率和发生CheckPoint的频率随着升高，导致性能抖动。</p>
-<h5 id="redo-log写入“深度”"><a href="#redo-log写入“深度”" class="headerlink" title="redo log写入“深度”"></a>redo log写入“深度”</h5><p>innodb_flush_log_at_trx_commit参数控制着redo log的写入策略：<br>|参数值|commit写入位置|性能与可靠性|<br>|-|-|-|<br>|0|内存里的redo log buffer，最终等待Master Thread刷新回磁盘|性能最好，可靠性最差，数据库系统故障则发生事务丢失|<br>|1|磁盘，调用fsync直接刷新至磁盘|性能最差，可靠性最好，不会发生事务丢失|<br>|2|磁盘缓存，最终等待宿主机文件系统刷新回磁盘|性能中等，可靠性中等，数据库系统故障但是宿主机操作系统不故障则不会发生事务丢失|</p>
 <blockquote>
-<p>MySQL技术内幕 InnoDB存储引擎 第2版 </p>
+<p>MySQL技术内幕 InnoDB存储引擎 第2版<br><a href="https://blog.csdn.net/voidccc/article/details/40077329" target="_blank" rel="noopener">https://blog.csdn.net/voidccc/article/details/40077329</a><br><a href="https://blog.csdn.net/kaka1121/article/details/53395628" target="_blank" rel="noopener">https://blog.csdn.net/kaka1121/article/details/53395628</a></p>
 </blockquote>
 
           
