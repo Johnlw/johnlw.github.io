@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="冒泡排序算法思想：比较+交换。从数组第一个元素开始，两两比较相邻元素，将较大者后移，直到最后一个元素。重复此操作，直到数组中所有元素有序。 123456789101112131415161718192021public class BubbleSort &amp;#123;	public static void sort(int[] arr) &amp;#123;	//重复N-1次		for (int i = 0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="排序算法汇总">
+<meta property="og:url" content="http://yoursite.com/2018/03/19/排序算法汇总/index.html">
+<meta property="og:site_name" content="John What">
+<meta property="og:description" content="冒泡排序算法思想：比较+交换。从数组第一个元素开始，两两比较相邻元素，将较大者后移，直到最后一个元素。重复此操作，直到数组中所有元素有序。 123456789101112131415161718192021public class BubbleSort &amp;#123;	public static void sort(int[] arr) &amp;#123;	//重复N-1次		for (int i = 0">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-01-25T05:44:46.510Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="排序算法汇总">
+<meta name="twitter:description" content="冒泡排序算法思想：比较+交换。从数组第一个元素开始，两两比较相邻元素，将较大者后移，直到最后一个元素。重复此操作，直到数组中所有元素有序。 123456789101112131415161718192021public class BubbleSort &amp;#123;	public static void sort(int[] arr) &amp;#123;	//重复N-1次		for (int i = 0">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/19/排序算法汇总/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>排序算法汇总 | John What</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">John What</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/19/排序算法汇总/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">排序算法汇总
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-03-19 15:27:47" itemprop="dateCreated datePublished" datetime="2018-03-19T15:27:47+08:00">2018-03-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-25 13:44:46" itemprop="dateModified" datetime="2019-01-25T13:44:46+08:00">2019-01-25</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><p>算法思想：比较+交换。从数组第一个元素开始，两两比较相邻元素，将较大者后移，直到最后一个元素。重复此操作，直到数组中所有元素有序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class BubbleSort &#123;</span><br><span class="line">	public static void sort(int[] arr) &#123;</span><br><span class="line">	//重复N-1次</span><br><span class="line">		for (int i = 0; i &lt; arr.length - 1; i++) &#123;</span><br><span class="line">		//优化方案，如果有一轮比较中没有发生交换，则表示数据已经有序，避免无用循环</span><br><span class="line">			boolean swaped = false;</span><br><span class="line">			//从第一个元素开始两两比较，如果前者大于后者，则交换位置</span><br><span class="line">			for (int j = 0; j &lt; arr.length - i - 1; j++) &#123;</span><br><span class="line">				if (arr[j] &gt; arr[j + 1]) &#123;</span><br><span class="line">					int tmp = arr[j];</span><br><span class="line">					arr[j] = arr[j + 1];</span><br><span class="line">					arr[j + 1] = tmp;</span><br><span class="line">					swaped = true;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			if (!swaped) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>复杂度分析：最坏情况下，输入全逆序数组，需要进行N-1轮比较交换，比较交换最多为N-1次，最少1次，总比较次数为N(N-1)/2，平均比较次数为N/2，则最坏时间复杂度O（N（N-1）/2） = O(N^2)。空间复杂度：算法只需要存储临时变量tmp的固定存储空间，空间复杂度为O（1）。</p>
+<h3 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h3><p>算法思路：在未排序的数组中找到最小元素，交换到未排序数组的起始位置；然后在剩余未排序的数组中找到最小元素，交换到未排序数组的起始位置，以此类推，直到数组有序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] arr) &#123;</span><br><span class="line">		for (int i = 0; i &lt; arr.length-1; i++) &#123;</span><br><span class="line">			int minIndex = i;</span><br><span class="line">			for (int j = i + 1; j &lt; arr.length; j++) &#123;</span><br><span class="line">				if (arr[j] &lt; arr[minIndex]) &#123;</span><br><span class="line">					minIndex = j;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			if (minIndex != i) &#123;</span><br><span class="line">				int tmp = arr[i];</span><br><span class="line">				arr[i] = arr[minIndex];</span><br><span class="line">				arr[minIndex] = tmp;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：外层循环共N-1次，内层比较最多比较N-1次，最少比较1次，平均比较N/2次，时间复杂度为O（N^2）。排序过程中只需要固定的存储空间存储临时变量，空间复杂度为O（1）。</p>
+<h3 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h3><p>算法思想：构建有序序列，对于未排序的数据，在有序序列中从后向前查找，找到合适的位置插入（也可以边找边插入），直到输入数组有序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">for (int i = 1; i &lt; arr.length; i++) &#123;</span><br><span class="line">			int tmp = arr[i];</span><br><span class="line">			for (int j = i; j &gt;= 1; j--) &#123;</span><br><span class="line">				if (tmp &lt; arr[j - 1]) &#123;</span><br><span class="line">					arr[j] = arr[j - 1];</span><br><span class="line">					arr[j - 1] = tmp;</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					break;//已经找到合适位置，不需要继续向前比较了</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：最坏情况下，外层循环需要插入N-1个数，内层循环最多需要比较N-1次，最少需要比较1次，平均比较N/2次，时间复杂度O（N^2），空间复杂度O（1）。如果输入序列本身有序，则时间复杂度为O（N）。</p>
+<h3 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h3><p>希尔排序是最早突破O（N^2）时间复杂度的排序算法之一，是插入排序的改进版，它通过比较相距一定距离的元素来工作。<br>算法思想：希尔排序使用一个增量序列来每次对相隔一定距离的元素进行插入排序，随着增量值的减小，数据逐渐大部分有序，直到数据全部有序。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] arr) &#123;</span><br><span class="line">		for (int gap = arr.length / 2; gap &gt;= 1; gap /= 2) &#123;</span><br><span class="line">		//从gap开始，后面的每一个数进行子序列插入排序</span><br><span class="line">			for (int i = gap; i &lt; arr.length; i++) &#123;</span><br><span class="line">			//按增量gap插入排序</span><br><span class="line">				for (int j = i; j &gt;= gap; j -= gap) &#123;</span><br><span class="line">					if (arr[j] &lt; arr[j - gap]) &#123;</span><br><span class="line">						int tmp = arr[j];</span><br><span class="line">						arr[j] = arr[j - gap];</span><br><span class="line">						arr[j - gap] = tmp;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：定理：通过交换相邻元素进行排序的任何算法都需要O（N^2）时间复杂度。排序算法通过消除逆序得以向前工作，为了使一个排序算法以亚二次时间复杂度运行，必须执行一些比较，特别是要对相距较远的元素进行交换，这些交换必须每次消除不止一个逆序。使用hibbard增量的希尔排序最坏时间复杂度为O（N^3/2）</p>
+<h3 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h3><p>算法思想：快速排序算法体现了分治的思想。选取一个枢纽元，将小于枢纽元的元素放在其左边，将大于枢纽元的放在其右边，则枢纽元本身的位置已确定。然后再对左边子序列和右子序列分别应用这种策略，直至数组有序。</p>
+<h5 id="第一步：选取枢纽元"><a href="#第一步：选取枢纽元" class="headerlink" title="第一步：选取枢纽元"></a>第一步：选取枢纽元</h5><p>枢纽元的选择通常有三种方式：</p>
+<ul>
+<li>选取第一个元素：这种方式在输入序列有序的情况下效率比较低，如果输入是随机的，可以选择这种方式</li>
+<li>随机选择一个元素：这种方式每次都要根据输入随机生成一个数字，生成随机数效率并不是很高</li>
+<li>选取输入的中值：一般来说输入的中值不容易计算，一般采用将输入左端、右端、和中心位置上的中值来作为枢纽元。</li>
+</ul>
+<h5 id="第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分"><a href="#第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分" class="headerlink" title="第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分"></a>第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分</h5><p>分割策略均采用两端向中间逼近的方式。<br>针对选取第一个元素为枢纽元的情况，分割策略如下：</p>
+<p>取游标i,j，i从左端开始，j从右端开始。首先从j向左遍历，遇到小于枢纽元的元素则与枢纽元交换位置，然后交换遍历方向，由i向右端遍历，遇到大于枢纽元的元素再与枢纽元交换位置…以此类推，交替遍历，我们可以看到静止的游标位置即枢纽元的位置，最终遍历到i=j时所有数据都遍历完毕，分割完成。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] arr, int start, int end) &#123;</span><br><span class="line">		</span><br><span class="line">		if (start &gt;= end) &#123;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		int pivot = arr[start];</span><br><span class="line">		</span><br><span class="line">		int i = start;</span><br><span class="line">		int j = end;</span><br><span class="line">		while (i &lt; j) &#123;</span><br><span class="line">			while (i &lt; j &amp;&amp; arr[j] &gt;= pivot) &#123;</span><br><span class="line">				j--;</span><br><span class="line">			&#125;</span><br><span class="line">			swap(arr, i, j);</span><br><span class="line">			while (i &lt; j &amp;&amp; arr[i] &lt;= pivot) &#123;</span><br><span class="line">				i++;</span><br><span class="line">			&#125;</span><br><span class="line">			swap(arr, i, j);</span><br><span class="line">		&#125;</span><br><span class="line">		sort(arr, start, i - 1);</span><br><span class="line">		sort(arr, i + 1, end);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>针对选取中值作为枢纽元的情况，分割策略稍微复杂一些（假设数据互异）：<br>第一步：选取枢纽元，我们采用冒泡排序先为三个元素排序，再选取中间值。注意此时对于选取的中值来说，数组的第一个和最后一个元素已经是分割完成了的。<br>第二步：对剩余未分割的元素进行分割。首先，对于数组[left…right]，先将枢纽元放在right-1的位置，取游标i,j，i从[left+1]从左向右遍历，j从[right-2]从右向左遍历，i碰到大于枢纽元的元素时停止，j碰到小于枢纽元的元素时停止，当两者都停止时且i小于j时，交换i和j的元素，然后继续相向遍历….直到i&gt;=j时所有数据都遍历完毕，此时j停在一个小于枢纽元的元素上，i停在一个大于枢纽元的元素上，将枢纽元和i交换则分割完毕。</p>
+<p>对于相等的元素，我们选择让两个游标都停下来进行交换，而不是继续前进，以便最大可能获取均衡的的分割。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] arr, int start, int end) &#123;</span><br><span class="line"></span><br><span class="line">	if (start &gt;= end) &#123;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	int piovt = getPivotIndex(arr, start, end);</span><br><span class="line"></span><br><span class="line">	int i = start, j = end - 1;</span><br><span class="line">	for (;;) &#123;</span><br><span class="line"></span><br><span class="line">		while (arr[++i] &lt; arr[piovt]) &#123;</span><br><span class="line">		&#125;</span><br><span class="line">		//j的下限</span><br><span class="line">		while (j &gt; start &amp;&amp; arr[--j] &gt; arr[piovt]) &#123;</span><br><span class="line">		&#125;</span><br><span class="line">		//关于游标这里有一个错误写法：</span><br><span class="line">		/*while(arr[i]&lt;arr[piovt]) i++;</span><br><span class="line">		while(j&gt;start&amp;&amp;arr[j]&gt;arr[piovt]) j--;*/</span><br><span class="line">		//这个写法在arr[i] = arr[j] = arr[piovt]时，游标将无法前进，陷入无限循环</span><br><span class="line">		if (i &lt; j) &#123;</span><br><span class="line">			swap(arr, i, j);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			break;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	//i的上限</span><br><span class="line">	if (i &lt; end) &#123;</span><br><span class="line">		swap(arr, i, piovt);</span><br><span class="line">	&#125;</span><br><span class="line">	sort(arr, start, i - 1);</span><br><span class="line">	sort(arr, i + 1, end);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="算法分析"><a href="#算法分析" class="headerlink" title="算法分析"></a>算法分析</h5><ul>
+<li>最坏情况：枢纽元始终为最小或者最大元素的情况。此时有递推关系T（N）= T（N-1）+cN，cN为遍历时间，时间复杂度为O（N^2）</li>
+<li>最好情况：枢纽元始终平分输入数组。T（N） = 2T（N/2）+cN，时间复杂度为O（NlogN）</li>
+<li>平均情况：时间复杂度O（NlogN）<h5 id="算法优化"><a href="#算法优化" class="headerlink" title="算法优化"></a>算法优化</h5>快速排序在数组长度较小时性能较差，不如插入排序、冒泡排序等，原因在于当数组长度较小时，插入和冒泡的比较和交换会越来越少，而快速排序不论数组多小，选取枢纽元时的比较与交换，都是一样多的，而且选完之后的比较与交换次数也不少，算法可以在数组长度较小时换做插入等排序方式。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">quickSort(int[] arr)&#123;</span><br><span class="line">	if(arr.length&lt;10)&#123;</span><br><span class="line">		insertSort(arr);</span><br><span class="line">	&#125;else&#123;</span><br><span class="line">		quickSort(sub arr);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h3><p>算法思想：归并排序体现了分治的思想。先递归地将输入数组一层层分为两个部分，然后从最底层将两个小部分排好序，归并在一起，再与同一层的另外的部分继续归并，直至数据全部有序。归并排序与快速排序均使用了分治的思想，不过归并排序是“先分再治”，而快速排序是“先治再分”。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] tmp, int[] arr, int start, int end) &#123;</span><br><span class="line">		// 基准条件</span><br><span class="line">		if (start &gt;= end) &#123;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		int mid = (start + end) / 2;</span><br><span class="line">		int start0 = start;</span><br><span class="line">		int start1 = mid + 1;</span><br><span class="line">		</span><br><span class="line">		sort(tmp, arr, start, mid);</span><br><span class="line">		sort(tmp, arr, start1, end);</span><br><span class="line"></span><br><span class="line">		int i = 0;</span><br><span class="line">		for (;;) &#123;</span><br><span class="line"></span><br><span class="line">			if (start &gt; mid &amp;&amp; start1 &gt; end) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (start &gt; mid) &#123;</span><br><span class="line">				tmp[i++] = arr[start1++];</span><br><span class="line">				continue;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (start1 &gt; end) &#123;</span><br><span class="line">				tmp[i++] = arr[start++];</span><br><span class="line">				continue;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (arr[start] &lt;= arr[start1]) &#123;</span><br><span class="line">				tmp[i++] = arr[start++];</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				tmp[i++] = arr[start1++];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		for (int j = 0; j &lt; i; j++) &#123;</span><br><span class="line">			arr[start0++] = tmp[j];</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>算法分析：归并排序共需要log2N次归并，归并操作的最少归并2个，最多归并N个，时间复杂度为O（N），则归并排序的时间复杂度为O（NlogN）。空间上需要O（N）的辅助存储空间。</p>
+<h3 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h3><p>算法思想：根据堆序性质，首先将输入数据构建一个堆，然后依次出堆，输出序列就是有序状态。构建堆的时间复杂度为O（N），每次出堆的时间复杂度为O（logN），N个元素则堆排序的时间复杂度为O（NlogN）+O（N） = O（NlogN）。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><table>
+<thead>
+<tr>
+<th>算法名称</th>
+<th>平均情况</th>
+<th>最坏情况</th>
+<th>最好情况</th>
+<th>辅助空间</th>
+<th>稳定性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>冒泡排序</td>
+<td>O（N^2）</td>
+<td>O（N^2）</td>
+<td>O（N）</td>
+<td>O（1）</td>
+<td>稳定</td>
+</tr>
+<tr>
+<td>选择排序</td>
+<td>O（N^2）</td>
+<td>O（N^2）</td>
+<td>O（N^2）</td>
+<td>O（1）</td>
+<td>不稳定</td>
+</tr>
+<tr>
+<td>插入排序</td>
+<td>O（N^2）</td>
+<td>O（N^2）</td>
+<td>O（N）</td>
+<td>O（1）</td>
+<td>稳定</td>
+</tr>
+<tr>
+<td>希尔排序</td>
+<td></td>
+<td>O（N^3/2）</td>
+<td></td>
+<td>O（1）</td>
+<td>不稳定</td>
+</tr>
+<tr>
+<td>快速排序</td>
+<td>O（NlogN）</td>
+<td>O（N^2）</td>
+<td>O（NlogN）</td>
+<td>O（1）</td>
+<td>不稳定</td>
+</tr>
+<tr>
+<td>归并排序</td>
+<td>O（NlogN）</td>
+<td>O（NlogN）</td>
+<td>O（NlogN）</td>
+<td>O（N）</td>
+<td>稳定</td>
+</tr>
+<tr>
+<td>堆排序</td>
+<td>O（NlogN）</td>
+<td>O（NlogN）</td>
+<td>O（NlogN）</td>
+<td>O（1）</td>
+<td>不稳定</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/15/Java String类相关/" rel="next" title="Java String类相关">
+                <i class="fa fa-chevron-left"></i> Java String类相关
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/22/二叉查找树Java实现/" rel="prev" title="二叉查找树Java实现">
+                二叉查找树Java实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#冒泡排序"><span class="nav-number">1.</span> <span class="nav-text">冒泡排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选择排序"><span class="nav-number">2.</span> <span class="nav-text">选择排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插入排序"><span class="nav-number">3.</span> <span class="nav-text">插入排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#希尔排序"><span class="nav-number">4.</span> <span class="nav-text">希尔排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快速排序"><span class="nav-number">5.</span> <span class="nav-text">快速排序</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#第一步：选取枢纽元"><span class="nav-number">5.0.1.</span> <span class="nav-text">第一步：选取枢纽元</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分"><span class="nav-number">5.0.2.</span> <span class="nav-text">第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#算法分析"><span class="nav-number">5.0.3.</span> <span class="nav-text">算法分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#算法优化"><span class="nav-number">5.0.4.</span> <span class="nav-text">算法优化</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#归并排序"><span class="nav-number">6.</span> <span class="nav-text">归并排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆排序"><span class="nav-number">7.</span> <span class="nav-text">堆排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

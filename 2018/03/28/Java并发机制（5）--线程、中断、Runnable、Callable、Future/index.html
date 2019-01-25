@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Thread线程的基本概念我们已经在深入理解Java并发机制（1）–理论基础中总结过了，这里不再赘述。 线程的状态Java线程在其生命周期里处于以下6种状态，这些状态定义在Thread类内部枚举中。|状态|说明||:—-:|:—-:||NEW|初始态，还未调用start()方法||RUNNABLE|运行态，将操作系统中的就绪态和运行态统一定义为RUNNABLE||BLOCKED|阻塞态，线程等待获">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发机制（5）--线程、中断、Runnable、Callable、Future">
+<meta property="og:url" content="http://yoursite.com/2018/03/28/Java并发机制（5）--线程、中断、Runnable、Callable、Future/index.html">
+<meta property="og:site_name" content="John What">
+<meta property="og:description" content="Thread线程的基本概念我们已经在深入理解Java并发机制（1）–理论基础中总结过了，这里不再赘述。 线程的状态Java线程在其生命周期里处于以下6种状态，这些状态定义在Thread类内部枚举中。|状态|说明||:—-:|:—-:||NEW|初始态，还未调用start()方法||RUNNABLE|运行态，将操作系统中的就绪态和运行态统一定义为RUNNABLE||BLOCKED|阻塞态，线程等待获">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://static.johnlw.cn/blog_thread_state.png">
+<meta property="og:updated_time" content="2019-01-25T05:58:34.063Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java并发机制（5）--线程、中断、Runnable、Callable、Future">
+<meta name="twitter:description" content="Thread线程的基本概念我们已经在深入理解Java并发机制（1）–理论基础中总结过了，这里不再赘述。 线程的状态Java线程在其生命周期里处于以下6种状态，这些状态定义在Thread类内部枚举中。|状态|说明||:—-:|:—-:||NEW|初始态，还未调用start()方法||RUNNABLE|运行态，将操作系统中的就绪态和运行态统一定义为RUNNABLE||BLOCKED|阻塞态，线程等待获">
+<meta name="twitter:image" content="http://static.johnlw.cn/blog_thread_state.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/28/Java并发机制（5）--线程、中断、Runnable、Callable、Future/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java并发机制（5）--线程、中断、Runnable、Callable、Future | John What</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">John What</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/28/Java并发机制（5）--线程、中断、Runnable、Callable、Future/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java并发机制（5）--线程、中断、Runnable、Callable、Future
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-03-28 09:51:50" itemprop="dateCreated datePublished" datetime="2018-03-28T09:51:50+08:00">2018-03-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-25 13:58:34" itemprop="dateModified" datetime="2019-01-25T13:58:34+08:00">2019-01-25</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Thread"><a href="#Thread" class="headerlink" title="Thread"></a>Thread</h3><p>线程的基本概念我们已经在<a href="http://blog.csdn.net/john_lw/article/details/78340919" target="_blank" rel="noopener">深入理解Java并发机制（1）–理论基础</a>中总结过了，这里不再赘述。</p>
+<h4 id="线程的状态"><a href="#线程的状态" class="headerlink" title="线程的状态"></a>线程的状态</h4><p>Java线程在其生命周期里处于以下6种状态，这些状态定义在Thread类内部枚举中。<br>|状态|说明|<br>|:—-:|:—-:|<br>|NEW|初始态，还未调用start()方法|<br>|RUNNABLE|运行态，将操作系统中的就绪态和运行态统一定义为RUNNABLE|<br>|BLOCKED|阻塞态，线程等待获取锁|<br>|WAITING|等待态，线程等待其他线程做出一些特定状态（通知或中断）|<br>|TIME_WAITING|超时等待态，不同于等待态，超时后自行返回|<br>|TERMINATED|终止态，线程执行完毕|</p>
+<p>状态转移图如下：<br><img src="http://static.johnlw.cn/blog_thread_state.png" alt="这里写图片描述"></p>
+<p>从本质上讲，BLOCKED/WAITING/TIME_WAITING这三种状态都是等待状态，只不过分为三类便于管理。BLOCKED状态是获取锁而不得，WAITING状态是自己放弃执行等待某条件成熟。在需要竞争锁的场景下，这两者分别是阻塞队列和等待队列，阻塞队列竞争锁执行，等待队列等待条件成熟移至阻塞队列竞争锁继续执行。在不需要竞争锁的情况下，WAITING状态可以直接转为RUNNABLE。</p>
+<h4 id="阻塞与中断"><a href="#阻塞与中断" class="headerlink" title="阻塞与中断"></a>阻塞与中断</h4><p>当线程阻塞时，它通常处于BLOCKED/WAITING/TIME_WAITING状态，等待某个事件的发生（如：IO/锁的获取/sleep中醒来等）。线程阻塞和运行时间长的程序区别在于，阻塞的线程必须<strong>等待一个不受它自己控制的事件发生</strong>以后才能继续执行。</p>
+<p>当一个方法抛出InterruptedException时，表示该方法是一个阻塞方法，如果这个方法被中断，那么它将尽力提前结束阻塞状态。</p>
+<p>中断是线程的标志位属性，表示一个运行中的线程是否被其他线程进行了中断操作。中断是一种协作机制，当线程A中断线程B时，仅仅是要求B在执行到可以暂停的地方停止正在执行的工作—这<strong>经常用于取消某个操作</strong>，方法对中断的响应度越高，就越容易取消那些执行时间很长的操作。</p>
+<p>当在代码中调用了一个将抛出InterruptedException的方法时，调用者也就变成了一个阻塞方法，重点是必须要对中断做相应的处理，一般有两种处理方式：</p>
+<ul>
+<li><strong>传递InterruptedException</strong>：不做任何处理将中断情况传递给高层调用者，交由调用者处理</li>
+<li><strong>恢复中断</strong>：当不能抛出InterruptException时，如Runnable中的run方法，捕获到了InterruptException后，调用线程的interrupt方法重新设置中断标志位，以便保持中断信息，供其他代码使用。</li>
+</ul>
+<p>这两种方式对于中断的处理都是一个原则：不能无缘无故吃掉中断信息，保证中断信息可靠有效的传递给需要的代码。</p>
+<h4 id="取消与关闭"><a href="#取消与关闭" class="headerlink" title="取消与关闭"></a>取消与关闭</h4><p>当我们启动一个线程后，如果我们对它失去控制将是一件很可怕的事情，想象一下当一个写文件的线程启动后，我们无法终止它，即使我们不想它继续写了，这很尴尬，在线程中加入控制手段是非常有必要的。</p>
+<p>Java没有提供任何机制来安全的终止线程，但提供了线程协作机制—中断，通过中断，一个线程可以终止另外一个线程。</p>
+<p>这里说终止，并不意味着线程A可以直接关闭线程B，而是指的是A可以通过interrupt(Thread t)方法去设置线程B的中断标志位。在线程B内有轮询代码（可中断的阻塞方法或者是外层循环代码）不断检查其中断标志位，如果发现已经被线程A中断，是抛出Interrupt-Exception，还是执行其他业务逻辑，还是执行相应的清理工作提前结束线程工作，取决于具体的逻辑需要。</p>
+<h4 id="Runnable与Callable"><a href="#Runnable与Callable" class="headerlink" title="Runnable与Callable"></a>Runnable与Callable</h4><p>Java线程执行内容的定义有三种方式：</p>
+<ul>
+<li>继承Thread类，重写run()方法</li>
+<li>实现Runnable接口</li>
+<li>实现Callable接口</li>
+</ul>
+<p>虽然有三种定义方式，但是本质上线程的启动都是通过Thread实例中的start方法来启动的（线程池的部分我们后面再讲）。</p>
+<p>Runnable和Callable的区别和联系：</p>
+<ul>
+<li>区别：主要表现在两点：1、对异常的捕捉 2、线程执行结果的获取</li>
+<li>联系：Callable是对Runnable的补充，通过FutureTask类封装为Runnable类型</li>
+</ul>
+<p>区别很明显，直接看代码：<br>Runnable:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public</span><br><span class="line">interface Runnable &#123;</span><br><span class="line">    /**</span><br><span class="line">     * When an object implementing interface &lt;code&gt;Runnable&lt;/code&gt; is used</span><br><span class="line">     * to create a thread, starting the thread causes the object&apos;s</span><br><span class="line">     * &lt;code&gt;run&lt;/code&gt; method to be called in that separately executing</span><br><span class="line">     * thread.</span><br><span class="line">     * &lt;p&gt;</span><br><span class="line">     * The general contract of the method &lt;code&gt;run&lt;/code&gt; is that it may</span><br><span class="line">     * take any action whatsoever.</span><br><span class="line">     *</span><br><span class="line">     * @see     java.lang.Thread# run()</span><br><span class="line">     */</span><br><span class="line">    public abstract void run();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Callable:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public interface Callable&lt;V&gt; &#123;</span><br><span class="line">    /**</span><br><span class="line">     * Computes a result, or throws an exception if unable to do so.</span><br><span class="line">     *</span><br><span class="line">     * @return computed result</span><br><span class="line">     * @throws Exception if unable to compute a result</span><br><span class="line">     */</span><br><span class="line">    V call() throws Exception;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>简要说明一下Callable的使用逻辑：<br>首先定义了一个类实现了Callable接口，在Callable对象在submit到线程池执行时，会先被封装为一个FutureTask对象，Callable提供的多于Runnable的对异常的捕捉和结果的返回就封装在FutureTask类里，可以说FutureTask就是Callable的一个装饰器类。</p>
+<p>FutureTask类实现了RunnableFuture接口（即Runnable和Future接口的结合接口），定义了7种线程执行的状态如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * The run state of this task, initially NEW.  The run state</span><br><span class="line">     * transitions to a terminal state only in methods set,</span><br><span class="line">     * setException, and cancel.  During completion, state may take on</span><br><span class="line">     * transient values of COMPLETING (while outcome is being set) or</span><br><span class="line">     * INTERRUPTING (only while interrupting the runner to satisfy a</span><br><span class="line">     * cancel(true)). Transitions from these intermediate to final</span><br><span class="line">     * states use cheaper ordered/lazy writes because values are unique</span><br><span class="line">     * and cannot be further modified.</span><br><span class="line">     *</span><br><span class="line">     * Possible state transitions:</span><br><span class="line">     * NEW -&gt; COMPLETING -&gt; NORMAL</span><br><span class="line">     * NEW -&gt; COMPLETING -&gt; EXCEPTIONAL</span><br><span class="line">     * NEW -&gt; CANCELLED</span><br><span class="line">     * NEW -&gt; INTERRUPTING -&gt; INTERRUPTED</span><br><span class="line">     */</span><br><span class="line">    private volatile int state;</span><br><span class="line">    private static final int NEW          = 0;</span><br><span class="line">    private static final int COMPLETING   = 1;</span><br><span class="line">    private static final int NORMAL       = 2;</span><br><span class="line">    private static final int EXCEPTIONAL  = 3;</span><br><span class="line">    private static final int CANCELLED    = 4;</span><br><span class="line">    private static final int INTERRUPTING = 5;</span><br><span class="line">    private static final int INTERRUPTED  = 6;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> public FutureTask(Callable&lt;V&gt; callable) &#123;</span><br><span class="line">        if (callable == null)</span><br><span class="line">            throw new NullPointerException();</span><br><span class="line">        this.callable = callable;</span><br><span class="line">        this.state = NEW;       // ensure visibility of callable</span><br><span class="line">    &#125;</span><br><span class="line">public FutureTask(Runnable runnable, V result) &#123;</span><br><span class="line">        this.callable = Executors.callable(runnable, result);</span><br><span class="line">        this.state = NEW;       // ensure visibility of callable</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>从构造器可以看出它对callable和runnable都可以进行包装。</p>
+<p>FutureTask的run方法实现增强了对callable的调用，在线程执行后持有了线程异常或者线程执行结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public void run() &#123;</span><br><span class="line">        if (state != NEW ||</span><br><span class="line">            !UNSAFE.compareAndSwapObject(this, runnerOffset,</span><br><span class="line">                                         null, Thread.currentThread()))</span><br><span class="line">            return;</span><br><span class="line">        try &#123;</span><br><span class="line">            Callable&lt;V&gt; c = callable;</span><br><span class="line">            if (c != null &amp;&amp; state == NEW) &#123;</span><br><span class="line">                V result;</span><br><span class="line">                boolean ran;</span><br><span class="line">                try &#123;</span><br><span class="line">                //这里就是对callable定义的方法进行了直接调用</span><br><span class="line">                    result = c.call();</span><br><span class="line">                    ran = true;</span><br><span class="line">                &#125; catch (Throwable ex) &#123;</span><br><span class="line">                    result = null;</span><br><span class="line">                    ran = false;</span><br><span class="line">                    // 捕获发生的异常并持有</span><br><span class="line">                    setException(ex);</span><br><span class="line">                &#125;</span><br><span class="line">                if (ran)</span><br><span class="line">                //没有发生异常则持有结果</span><br><span class="line">                    set(result);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            // runner must be non-null until state is settled to</span><br><span class="line">            // prevent concurrent calls to run()</span><br><span class="line">            runner = null;</span><br><span class="line">            // state must be re-read after nulling runner to prevent</span><br><span class="line">            // leaked interrupts</span><br><span class="line">            int s = state;</span><br><span class="line">            if (s &gt;= INTERRUPTING)</span><br><span class="line">                handlePossibleCancellationInterrupt(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>再来看其如何实现结果和异常的返回，主要是Future接口的get()方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"> public V get() throws InterruptedException, ExecutionException &#123;</span><br><span class="line">        int s = state;</span><br><span class="line">        if (s &lt;= COMPLETING)</span><br><span class="line">        //当线程未执行完毕时，进入awaitDone方法</span><br><span class="line">            s = awaitDone(false, 0L);</span><br><span class="line">            // 通过report方法返回结果</span><br><span class="line">        return report(s);</span><br><span class="line">    &#125;</span><br><span class="line">private int awaitDone(boolean timed, long nanos)</span><br><span class="line">        throws InterruptedException &#123;</span><br><span class="line">        final long deadline = timed ? System.nanoTime() + nanos : 0L;</span><br><span class="line">        WaitNode q = null;</span><br><span class="line">        boolean queued = false;</span><br><span class="line">        //轮询</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">        //检测中断</span><br><span class="line">            if (Thread.interrupted()) &#123;</span><br><span class="line">                removeWaiter(q);</span><br><span class="line">                throw new InterruptedException();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            int s = state;</span><br><span class="line">            //如果线程执行完毕，或者被取消，或者抛出异常，或者被中断，即从轮询中返回</span><br><span class="line">            if (s &gt; COMPLETING) &#123;</span><br><span class="line">                if (q != null)</span><br><span class="line">                    q.thread = null;</span><br><span class="line">                return s;</span><br><span class="line">            &#125;</span><br><span class="line">            else if (s == COMPLETING) // cannot time out yet</span><br><span class="line">                Thread.yield();</span><br><span class="line">            else if (q == null)</span><br><span class="line">                q = new WaitNode();</span><br><span class="line">            else if (!queued)</span><br><span class="line">                queued = UNSAFE.compareAndSwapObject(this, waitersOffset,</span><br><span class="line">                                                     q.next = waiters, q);</span><br><span class="line">          //在轮询中等待线程状态的切换</span><br><span class="line">            else if (timed) &#123;</span><br><span class="line">                nanos = deadline - System.nanoTime();</span><br><span class="line">                if (nanos &lt;= 0L) &#123;</span><br><span class="line">                    removeWaiter(q);</span><br><span class="line">                    return state;</span><br><span class="line">                &#125;</span><br><span class="line">                LockSupport.parkNanos(this, nanos);</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">                LockSupport.park(this);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // report方法可以视线程执行情况返回异常或结果</span><br><span class="line">private V report(int s) throws ExecutionException &#123;</span><br><span class="line">        Object x = outcome;</span><br><span class="line">        // 如果线程没有抛出异常，则返回结果</span><br><span class="line">        if (s == NORMAL)</span><br><span class="line">            return (V)x;</span><br><span class="line">        if (s &gt;= CANCELLED)</span><br><span class="line">        //如果被取消了则抛出CancellationException()</span><br><span class="line">            throw new CancellationException();</span><br><span class="line">            //如果线程抛出了其他异常，则将异常包装为ExecutionException继续向上抛出</span><br><span class="line">        throw new ExecutionException((Throwable)x);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>FutureTask还提供了取消的方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public boolean cancel(boolean mayInterruptIfRunning) &#123;</span><br><span class="line">        if (state != NEW)</span><br><span class="line">            return false;</span><br><span class="line">            // 线程已经开始执行，在允许中断的情况下，通过中断通知被取消的线程</span><br><span class="line">        if (mayInterruptIfRunning) &#123;</span><br><span class="line">            if (!UNSAFE.compareAndSwapInt(this, stateOffset, NEW, INTERRUPTING))</span><br><span class="line">                return false;</span><br><span class="line">            Thread t = runner;</span><br><span class="line">            if (t != null)</span><br><span class="line">                t.interrupt();</span><br><span class="line">            UNSAFE.putOrderedInt(this, stateOffset, INTERRUPTED); // final state</span><br><span class="line">        &#125;</span><br><span class="line">        //线程尚未开始执行，直接取消</span><br><span class="line">        else if (!UNSAFE.compareAndSwapInt(this, stateOffset, NEW, CANCELLED))</span><br><span class="line">            return false;</span><br><span class="line">        finishCompletion();</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>FutureTask类通过对callable和runnable的包装增强，是我们可以对线程生命周期做到良好控制和有效监控，并给之后线程池技术的实现打下了基础。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/27/AVL树图解和Java实现/" rel="next" title="AVL树图解和Java实现">
+                <i class="fa fa-chevron-left"></i> AVL树图解和Java实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/29/JVM--JVM内存布局与Java对象的定义/" rel="prev" title="JVM--JVM内存布局与Java对象的定义">
+                JVM--JVM内存布局与Java对象的定义 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Thread"><span class="nav-number">1.</span> <span class="nav-text">Thread</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线程的状态"><span class="nav-number">1.1.</span> <span class="nav-text">线程的状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#阻塞与中断"><span class="nav-number">1.2.</span> <span class="nav-text">阻塞与中断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#取消与关闭"><span class="nav-number">1.3.</span> <span class="nav-text">取消与关闭</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Runnable与Callable"><span class="nav-number">1.4.</span> <span class="nav-text">Runnable与Callable</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

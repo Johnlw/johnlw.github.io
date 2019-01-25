@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="###JVM内存基本布局如图所示： ###运行时数据区Java虚拟机定义了若干种程序运行时会用到的运行时数据区。 ######程序计数器每个Java线程都拥有自己的程序计数器，字节码执行游标。 ######虚拟机栈每个Java线程都拥有自己的虚拟机栈，在线程创建时同时创建，用于存储栈帧。栈帧是用来存储数据和部分过程结果的数据结构，用来处理动态链接，方法返回和异常分派。栈帧随着方法的调用而创建，随着">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM--JVM内存布局与Java对象的定义">
+<meta property="og:url" content="http://yoursite.com/2018/03/29/JVM--JVM内存布局与Java对象的定义/index.html">
+<meta property="og:site_name" content="John What">
+<meta property="og:description" content="###JVM内存基本布局如图所示： ###运行时数据区Java虚拟机定义了若干种程序运行时会用到的运行时数据区。 ######程序计数器每个Java线程都拥有自己的程序计数器，字节码执行游标。 ######虚拟机栈每个Java线程都拥有自己的虚拟机栈，在线程创建时同时创建，用于存储栈帧。栈帧是用来存储数据和部分过程结果的数据结构，用来处理动态链接，方法返回和异常分派。栈帧随着方法的调用而创建，随着">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://static.johnlw.cn/blog_jvm_mem_layout.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_object_head.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_object_metadata.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_object_reference.png">
+<meta property="og:updated_time" content="2019-01-25T06:04:12.520Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM--JVM内存布局与Java对象的定义">
+<meta name="twitter:description" content="###JVM内存基本布局如图所示： ###运行时数据区Java虚拟机定义了若干种程序运行时会用到的运行时数据区。 ######程序计数器每个Java线程都拥有自己的程序计数器，字节码执行游标。 ######虚拟机栈每个Java线程都拥有自己的虚拟机栈，在线程创建时同时创建，用于存储栈帧。栈帧是用来存储数据和部分过程结果的数据结构，用来处理动态链接，方法返回和异常分派。栈帧随着方法的调用而创建，随着">
+<meta name="twitter:image" content="http://static.johnlw.cn/blog_jvm_mem_layout.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/29/JVM--JVM内存布局与Java对象的定义/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>JVM--JVM内存布局与Java对象的定义 | John What</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">John What</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/29/JVM--JVM内存布局与Java对象的定义/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM--JVM内存布局与Java对象的定义
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-03-29 12:46:41" itemprop="dateCreated datePublished" datetime="2018-03-29T12:46:41+08:00">2018-03-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-25 14:04:12" itemprop="dateModified" datetime="2019-01-25T14:04:12+08:00">2019-01-25</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>###JVM内存基本布局<br>如图所示：<br><img src="http://static.johnlw.cn/blog_jvm_mem_layout.png" alt="这里写图片描述"></p>
+<p>###运行时数据区<br>Java虚拟机定义了若干种程序运行时会用到的运行时数据区。</p>
+<p>######程序计数器<br>每个Java线程都拥有自己的程序计数器，字节码执行游标。</p>
+<p>######虚拟机栈<br>每个Java线程都拥有自己的虚拟机栈，在线程创建时同时创建，用于存储栈帧。栈帧是用来存储数据和部分过程结果的数据结构，用来处理动态链接，方法返回和异常分派。栈帧随着方法的调用而创建，随着方法的返回（正常或抛异常）而销毁，栈帧中含有本地变量表，操作数栈，和指向当前方法的类的运行期常量池引用。栈溢出抛StackOverFlowError。</p>
+<p>######本地方法栈<br>功能上类似虚拟机栈，作用于本地方法</p>
+<p>######方法区<br>方法区是线程共享的内存区域。类似于传统语言中的编译代码存储区，它主要存储每个类的结构信息和JIT编译后的代码等。方法区溢出抛OOM。</p>
+<p>######堆<br>堆区是线程共享的内存区域，类实例以及数组对象都在堆区存储。堆溢出抛OOM。</p>
+<p>######运行时常量池<br>运行时常量池主要存放编译器生成的各种字面量和符号引用。</p>
+<p>###hotspot中的运行时常量池和方法区<br>hotspot在jdk7以前运行时常量池在方法区分配，jdk7以后运行时常量池移到了堆区，主要影响为String.intern()方法不用像之前在方法区重新生成新的对象，而转为在堆中直接持有对象引用，并避免了方法区内存溢出。</p>
+<p>hotspot在jdk8以后将方法区由原PermSpace移至MetaSpace，在本地内存分配，其大小上限取决于系统本地内存大小。此后对于Proxy、CGLIB和JSP等大量动态生成Class的情况下，方法区内存将更为充足。<br>对于僵死的类及类加载器的垃圾回收将在元数据使用到“MaxMeta-spaceSize”参数的设定值时进行。测试虚拟机启动需要的MetaSpace大小后，可以调整MaxMetaspaceSize参数来减少GC的次数。</p>
+<p>###对象的内存布局<br>Hotspot虚拟机使用OOP-Klass二分模型，即将一个java对象分成该对象的实例数据部分和该类的类型信息部分，具体如下：</p>
+<ul>
+<li>OOP :即普通对象指针，描述对象实例信息。</li>
+<li>Klass:java类的c++对等体，用来描述该对象的Java类。</li>
+</ul>
+<p>对象内存布局主要分为三个部分：对象头、实例数据和对齐填充。其中，对齐填充主要方便内存管理，没有特别意义。如图：<br><img src="http://static.johnlw.cn/blog_object_head.png" alt="这里写图片描述"><br>注：如果是普通对象，则没有数组长度部分；如果是数组对象就需要加上数组长度。</p>
+<p>MarkWord的设计类似于网络协议报文头，将MarkWord划分为多个bit区间用于表示不同的信息。主要用于存储对象自身的运行时数据：hashcode、GC分代年龄、锁状态标志、锁记录指针、锁线程ID等。</p>
+<p>对象头中的元数据指针用来指向对象的类信息，虚拟机需要这个指针来定位位于方法区中的对象类型信息。实例数据即类定义中的各个字段内容。</p>
+<p>我们通过HSDB实际观察一下Eclipse的主线程对象：_mark（MarkWord），_metadata_compressed_Klass(元数据指针)和下面的实例数据。<br><img src="http://static.johnlw.cn/blog_object_metadata.png" alt="这里写图片描述"></p>
+<p>###对象的访问机制<br>在方法执行过程中，我们通过栈上的变量引用来访问堆中的对象实例，再通过类型指针来访问实例的类型数据，下图体现了hotspot中对象的访问机制。<br><img src="http://static.johnlw.cn/blog_object_reference.png" alt="这里写图片描述"></p>
+<blockquote>
+<p>《深入理解Java虚拟机》<br>《hotspot实战》<br>《实战Java虚拟机》<br><a href="https://www.javacodegeeks.com/2013/02/java-8-from-permgen-to-metaspace.html" target="_blank" rel="noopener">https://www.javacodegeeks.com/2013/02/java-8-from-permgen-to-metaspace.html</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/28/Java并发机制（5）--线程、中断、Runnable、Callable、Future/" rel="next" title="Java并发机制（5）--线程、中断、Runnable、Callable、Future">
+                <i class="fa fa-chevron-left"></i> Java并发机制（5）--线程、中断、Runnable、Callable、Future
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/30/JVM--垃圾回收/" rel="prev" title="JVM--垃圾回收">
+                JVM--垃圾回收 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
