@@ -104,7 +104,7 @@
 <meta property="og:description" content="事务是指构成单一逻辑工作单元的操作的集合。数据库系统维护事务的ACID四个特性：  原子性：事务的所有操作在数据库中要么全部反映，要么全部不反映。 一致性：事务执行前后数据库保持约束一致性和业务逻辑一致性。 隔离性：在事务并发执行时，各个事务都感觉不到其他事务的存在。 持久性：事务一旦提交，其更改是永久性的，即使数据库系统崩溃也能恢复。  先从持久性说起。 持久性保证持久性的策略就是Write A">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="http://static.johnlw.cn/blog_innodb_redo_log.png">
-<meta property="og:updated_time" content="2019-01-25T06:56:58.795Z">
+<meta property="og:updated_time" content="2019-01-25T07:40:03.537Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="InnoDB引擎--事务持久性">
 <meta name="twitter:description" content="事务是指构成单一逻辑工作单元的操作的集合。数据库系统维护事务的ACID四个特性：  原子性：事务的所有操作在数据库中要么全部反映，要么全部不反映。 一致性：事务执行前后数据库保持约束一致性和业务逻辑一致性。 隔离性：在事务并发执行时，各个事务都感觉不到其他事务的存在。 持久性：事务一旦提交，其更改是永久性的，即使数据库系统崩溃也能恢复。  先从持久性说起。 持久性保证持久性的策略就是Write A">
@@ -367,7 +367,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 14:56:58" itemprop="dateModified" datetime="2019-01-25T14:56:58+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 15:40:03" itemprop="dateModified" datetime="2019-01-25T15:40:03+08:00">2019-01-25</time>
               
             
           </span>
@@ -421,7 +421,33 @@
 <li>redo log不够用：checkpoint_age高出async_water_mark/sync_water_mark，刷新一定脏页到磁盘以保证redo log有足够的空间给后来事务覆写</li>
 </ul>
 <h3 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h3><h5 id="redo-log文件大小问题"><a href="#redo-log文件大小问题" class="headerlink" title="redo log文件大小问题"></a>redo log文件大小问题</h5><p>redo log 不能太大也不能太小：redo log日志太大，将会导致大量脏页驻留内存而未被刷新至磁盘，系统故障恢复时将需要更多的时间。redo log日志太小，日志文件切换频率和发生CheckPoint的频率随着升高，导致性能抖动。</p>
-<h5 id="redo-log写入“深度”"><a href="#redo-log写入“深度”" class="headerlink" title="redo log写入“深度”"></a>redo log写入“深度”</h5><p>innodb_flush_log_at_trx_commit参数控制着redo log的写入策略：<br>|参数值|commit写入位置|性能与可靠性|<br>|-|-|-|<br>|0|内存里的redo log buffer，最终等待Master Thread刷新回磁盘|性能最好，可靠性最差，数据库系统故障则发生事务丢失|<br>|1|磁盘，调用fsync直接刷新至磁盘|性能最差，可靠性最好，不会发生事务丢失|<br>|2|磁盘缓存，最终等待宿主机文件系统刷新回磁盘|性能中等，可靠性中等，数据库系统故障但是宿主机操作系统不故障则不会发生事务丢失|</p>
+<h5 id="redo-log写入“深度”"><a href="#redo-log写入“深度”" class="headerlink" title="redo log写入“深度”"></a>redo log写入“深度”</h5><p>innodb_flush_log_at_trx_commit参数控制着redo log的写入策略：</p>
+<table>
+<thead>
+<tr>
+<th>参数值</th>
+<th>commit写入位置</th>
+<th>性能与可靠性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>内存里的redo log buffer，最终等待Master Thread刷新回磁盘</td>
+<td>性能最好，可靠性最差，数据库系统故障则发生事务丢失</td>
+</tr>
+<tr>
+<td>1</td>
+<td>磁盘，调用fsync直接刷新至磁盘</td>
+<td>性能最差，可靠性最好，不会发生事务丢失</td>
+</tr>
+<tr>
+<td>2</td>
+<td>磁盘缓存，最终等待宿主机文件系统刷新回磁盘</td>
+<td>性能中等，可靠性中等，数据库系统故障但是宿主机操作系统不故障则不会发生事务丢失</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
 <p>MySQL技术内幕 InnoDB存储引擎 第2版 </p>
 </blockquote>
