@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/15/InnoDB引擎--事务持久性/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/05/Spring AOP实现原理解析/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/05/15/InnoDB引擎--事务持久性/" class="post-title-link" itemprop="url">InnoDB引擎--事务持久性</a>
+                <a href="/2018/07/05/Spring AOP实现原理解析/" class="post-title-link" itemprop="url">Spring AOP实现原理解析</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2018-05-15 14:36:14" itemprop="dateCreated datePublished" datetime="2018-05-15T14:36:14+08:00">2018-05-15</time>
+              <time title="Created: 2018-07-05 13:39:32" itemprop="dateCreated datePublished" datetime="2018-07-05T13:39:32+08:00">2018-07-05</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 14:56:58" itemprop="dateModified" datetime="2019-01-25T14:56:58+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 15:17:51" itemprop="dateModified" datetime="2019-01-25T15:17:51+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,30 +399,60 @@
       
         
           
-            <p>事务是指构成单一逻辑工作单元的操作的集合。数据库系统维护事务的ACID四个特性：</p>
-<ul>
-<li>原子性：事务的所有操作在数据库中要么全部反映，要么全部不反映。</li>
-<li>一致性：事务执行前后数据库保持约束一致性和业务逻辑一致性。</li>
-<li>隔离性：在事务并发执行时，各个事务都感觉不到其他事务的存在。</li>
-<li>持久性：事务一旦提交，其更改是永久性的，即使数据库系统崩溃也能恢复。</li>
+            <h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><h3 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h3><ul>
+<li>AOP：Aspect-Oriented Programming，是一种新的模块化机制，用来描述分散在对象、类或者函数中的横切关注点。</li>
+<li>Join Point：程序流中被分割为一个个代码单元，单元之间的点即为Join Point。如程序调用栈中，可以按照各个方法将代码执行流分割为一个个方法单元，那么方法调用前后都是Join Point。</li>
+<li>Advice：模块化内容，也是增强逻辑本身。</li>
+<li>Introduction：引介增强，向Target引入新的属性或者方法</li>
+<li>PointCut：关注点，将要织入Advice的Join Point的集合。</li>
+<li>Advisor：增强与关注点的结合，Advice+PointCut/Introduction+PointCut</li>
+<li>MethodInterceptor：Advice的子类，在Spring AOP中，<strong>各类Advice最终都会封装为MethodInterceptor，其invoke方法中封装了Target和Advice的相对执行顺序</strong></li>
+<li>MethodInvocation：Joinpoint的子类，指对一个方法的调用。</li>
 </ul>
-<p>先从持久性说起。</p>
-<h3 id="持久性"><a href="#持久性" class="headerlink" title="持久性"></a>持久性</h3><p>保证持久性的策略就是<strong>Write Ahead Logging</strong>。在事务提交之前，备份一份事务的操作日志在磁盘上，备份成功再允许事务成功提交。</p>
-<p>InnoDB引擎中支持持久性的是redo log，redo log写入过程如图所示：<br><img src="http://static.johnlw.cn/blog_innodb_redo_log.png" alt="这里写图片描述"></p>
-<p>redo log的写入为<strong>顺序循环</strong>写入。默认有两个redo log文件，InnoDB顺序写其中一个，写满之后，再顺序写另外一个日志文件，再回过头来写第一个…循环往复。</p>
-<p>既然重复利用redo log文件，就涉及到确定哪些日志可以被覆写的问题，InnoDB引擎利用CheckPoint技术来解决这个问题。</p>
-<h3 id="CheckPoint"><a href="#CheckPoint" class="headerlink" title="CheckPoint"></a>CheckPoint</h3><p>在 深入理解InnoDB引擎–存储结构与文件 中介绍了LSN记录了页的版本，CheckPoint用以表示已经刷新至磁盘的页的版本，在CheckPoint之前的事务已经持久化在磁盘上，redo log可以被覆写重用。</p>
-<p>在事务的执行过程中，由于缓存的缘故，有些页被修改后（脏页）并没有立刻被刷新至磁盘，但是事务提交成功了（redo log已经记录完毕）。</p>
-<p>那么什么时候刷新缓存中的脏页到磁盘呢？主要有以下三种情况：</p>
-<ul>
-<li>周期性刷新：Master Thread周期性刷新一定脏页到磁盘</li>
-<li>缓存不够用：基于LRU的缓存不够用，需要刷新一定脏页给新的热点页腾出位置</li>
-<li>redo log不够用：checkpoint_age高出async_water_mark/sync_water_mark，刷新一定脏页到磁盘以保证redo log有足够的空间给后来事务覆写</li>
-</ul>
-<h3 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h3><h5 id="redo-log文件大小问题"><a href="#redo-log文件大小问题" class="headerlink" title="redo log文件大小问题"></a>redo log文件大小问题</h5><p>redo log 不能太大也不能太小：redo log日志太大，将会导致大量脏页驻留内存而未被刷新至磁盘，系统故障恢复时将需要更多的时间。redo log日志太小，日志文件切换频率和发生CheckPoint的频率随着升高，导致性能抖动。</p>
-<h5 id="redo-log写入“深度”"><a href="#redo-log写入“深度”" class="headerlink" title="redo log写入“深度”"></a>redo log写入“深度”</h5><p>innodb_flush_log_at_trx_commit参数控制着redo log的写入策略：<br>|参数值|commit写入位置|性能与可靠性|<br>|-|-|-|<br>|0|内存里的redo log buffer，最终等待Master Thread刷新回磁盘|性能最好，可靠性最差，数据库系统故障则发生事务丢失|<br>|1|磁盘，调用fsync直接刷新至磁盘|性能最差，可靠性最好，不会发生事务丢失|<br>|2|磁盘缓存，最终等待宿主机文件系统刷新回磁盘|性能中等，可靠性中等，数据库系统故障但是宿主机操作系统不故障则不会发生事务丢失|</p>
+<h3 id="支撑技术"><a href="#支撑技术" class="headerlink" title="支撑技术"></a>支撑技术</h3><p>JDK动态代理与CGLIB动态代理</p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><p>Spring AOP的主要工作就是<strong>将Advice和Target结合生成代理对象</strong>（不同的是AspectJ是在字节码层面织入的，JVM类加载的就是经过增强的对象，而不需要代理模式）。其主要逻辑可大体拆分为两部分：</p>
+<ol>
+<li>获取Advice、Target等相关配置信息</li>
+<li>生成代理对象</li>
+</ol>
+<p>以ProxyFactoryBean开始分析，这个FactoryBean的getObject()方法即可获取代理对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public Object getObject() throws BeansException &#123;</span><br><span class="line">		//初始化Advisor链</span><br><span class="line">		initializeAdvisorChain();</span><br><span class="line">		//生成代理对象</span><br><span class="line">		if (isSingleton()) &#123;</span><br><span class="line">			return getSingletonInstance();</span><br><span class="line">		&#125;</span><br><span class="line">		else &#123;</span><br><span class="line">			if (this.targetName == null) &#123;</span><br><span class="line">				logger.warn(&quot;Using non-singleton proxies with singleton targets is often undesirable. &quot; +</span><br><span class="line">						&quot;Enable prototype proxies by setting the &apos;targetName&apos; property.&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">			return newPrototypeInstance();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://static.johnlw.cn/blog_spring_aop_proxyfactorybean.png" alt="这里写图片描述"><br>这是ProxyFactoryBean的继承关系图，其中<strong>AdvisedSupport父类主要持有Advice相关配置信息，ProxyCreatorSupport父类主要负责代理类的实际生成工作。</strong></p>
+<h5 id="配置信息获取与初始化"><a href="#配置信息获取与初始化" class="headerlink" title="配置信息获取与初始化"></a>配置信息获取与初始化</h5><p>ProxyFactoryBean中配置信息的获取是经由IOC容器获取的，ProxyFactoryBean有一个属性为interceptorNames，需要在IOC容器中配置设置。在此基础上，在调用getObject()方法时，进行Advisor链的初始化。</p>
+<p>Advisor链的初始化主要分两步：</p>
+<ol>
+<li>注册器包装</li>
+<li>添加入链表</li>
+</ol>
+<p>其中注册器包装由适配器注册器GlobalAdvisorAdapterRegistry类将IOC配置中的interceptor对象类型（可能是Advisor，或者Advice等）包装为Advisor类型，并过滤不支持的类型。<strong>添加入链表的操作和链表的持有交给了父类AdvisedSupport来完成。</strong></p>
+<p>包装代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public Advisor wrap(Object adviceObject) throws UnknownAdviceTypeException &#123;</span><br><span class="line">	//Bean可以是直接定义好的含有PointCut的Advisor</span><br><span class="line">		if (adviceObject instanceof Advisor) &#123;</span><br><span class="line">			return (Advisor) adviceObject;</span><br><span class="line">		&#125;</span><br><span class="line">		if (!(adviceObject instanceof Advice)) &#123;</span><br><span class="line">			throw new UnknownAdviceTypeException(adviceObject);</span><br><span class="line">		&#125;</span><br><span class="line">		Advice advice = (Advice) adviceObject;</span><br><span class="line">		//可以是Advice的子类MethodInterceptor类型</span><br><span class="line">		if (advice instanceof MethodInterceptor) &#123;</span><br><span class="line">			// So well-known it doesn&apos;t even need an adapter.</span><br><span class="line">			return new DefaultPointcutAdvisor(advice);</span><br><span class="line">		&#125;</span><br><span class="line">		//也可以是各类Advice，如果有适配器支持即可封装，后两者封装的都是默认的PointCutAdvisor。</span><br><span class="line">		for (AdvisorAdapter adapter : this.adapters) &#123;</span><br><span class="line">			// Check that it is supported.</span><br><span class="line">			if (adapter.supportsAdvice(advice)) &#123;</span><br><span class="line">				return new DefaultPointcutAdvisor(advice);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		throw new UnknownAdviceTypeException(advice);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="生成代理对象"><a href="#生成代理对象" class="headerlink" title="生成代理对象"></a>生成代理对象</h5><p>在父类AdvisedSupport持有了Advisor链表之后，下一步即可进行代理对象的生成工作，这一步交给父类ProxyCreatorSupport来完成，该类持有DefaultAopProxyFactory代理工厂，并通过该工厂生产代理对象。主要有两种代理对象生成方式：</p>
+<ol>
+<li>JDK代理</li>
+<li>CGLIB代理</li>
+</ol>
+<p>通常目标类是接口的情况下使用JDK代理。其中JDK代理由JdkDynamicAopProxy类支持，CGLIB代理由CglibAopProxy支持。</p>
+<p>JdkDynamicAopProxy类实现了InvocationHandler接口，在其Invoke方法里实现了Advice的织入。</p>
+<p>invoke方法里有两个重要的地方：MethodInterceptor链的生成和增强方法的调用逻辑</p>
+<h6 id="MethodInterceptor链的生成"><a href="#MethodInterceptor链的生成" class="headerlink" title="MethodInterceptor链的生成"></a>MethodInterceptor链的生成</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Object&gt; chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);</span><br></pre></td></tr></table></figure>
+<p>这一步由DefaultAdvisorChainFactory支持，该工厂方法用于<strong>从Advisor链生成某个方法的MethodInterceptor链</strong>。这里主要有两部分内容：</p>
+<ol>
+<li>拆出Advisor里的PointCut用于方法的匹配和过滤</li>
+<li>拆出Advisor里的Advice，根据Advice的实际类型来创建对应的MethodInterceptor，并加入链表</li>
+</ol>
+<p>前面我们讲到GlobalAdvisorAdapterRegistry将IOC容器中的InterceptorNames对应的Bean封装为Advisor，后来，从Advisor拆出Advice并依据其类型创建对应的MethodInterceptor</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException &#123;</span><br><span class="line">		List&lt;MethodInterceptor&gt; interceptors = new ArrayList&lt;MethodInterceptor&gt;(3);</span><br><span class="line">		Advice advice = advisor.getAdvice();</span><br><span class="line">		//如果本身就是子类型MethodInterceptor，向下转型即可</span><br><span class="line">		if (advice instanceof MethodInterceptor) &#123;</span><br><span class="line">			interceptors.add((MethodInterceptor) advice);</span><br><span class="line">		&#125;</span><br><span class="line">		//如果只是Advice类型，通过各类AdvisorAdapter适配器来创建</span><br><span class="line">		for (AdvisorAdapter adapter : this.adapters) &#123;</span><br><span class="line">			if (adapter.supportsAdvice(advice)) &#123;</span><br><span class="line">				interceptors.add(adapter.getInterceptor(advisor));</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		if (interceptors.isEmpty()) &#123;</span><br><span class="line">			throw new UnknownAdviceTypeException(advisor.getAdvice());</span><br><span class="line">		&#125;</span><br><span class="line">		return interceptors.toArray(new MethodInterceptor[interceptors.size()]);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>以MethodBeforeAdviceAdapter为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public boolean supportsAdvice(Advice advice) &#123;</span><br><span class="line">		return (advice instanceof MethodBeforeAdvice);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public MethodInterceptor getInterceptor(Advisor advisor) &#123;</span><br><span class="line">		MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();</span><br><span class="line">		//从Advisor中拆出Advice后重新封装为MethodBeforeAdviceInterceptor</span><br><span class="line">		return new MethodBeforeAdviceInterceptor(advice);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>具体封装逻辑如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Serializable &#123;</span><br><span class="line"></span><br><span class="line">	private MethodBeforeAdvice advice;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * Create a new MethodBeforeAdviceInterceptor for the given advice.</span><br><span class="line">	 * @param advice the MethodBeforeAdvice to wrap</span><br><span class="line">	 */</span><br><span class="line">	public MethodBeforeAdviceInterceptor(MethodBeforeAdvice advice) &#123;</span><br><span class="line">		Assert.notNull(advice, &quot;Advice must not be null&quot;);</span><br><span class="line">		this.advice = advice;</span><br><span class="line">	&#125;</span><br><span class="line">//BeforeAdvice的执行逻辑封装在这里</span><br><span class="line">//MethodInvocation为一个Joinpoint，表示将要被调用的方法，这里先执行了</span><br><span class="line">//BeforeAdvice的before逻辑，再继续执行Joinpoint</span><br><span class="line">	@Override</span><br><span class="line">	public Object invoke(MethodInvocation mi) throws Throwable &#123;</span><br><span class="line">		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis() );</span><br><span class="line">		return mi.proceed();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h6 id="增强方法的调用"><a href="#增强方法的调用" class="headerlink" title="增强方法的调用"></a>增强方法的调用</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">if (chain.isEmpty()) &#123;</span><br><span class="line">	// We can skip creating a MethodInvocation: just invoke the target directly</span><br><span class="line">	// Note that the final invoker must be an InvokerInterceptor so we know it does</span><br><span class="line">	// nothing but a reflective operation on the target, and no hot swapping or fancy proxying.</span><br><span class="line">	retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">	// We need to create a method invocation...</span><br><span class="line">	invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);</span><br><span class="line">	// Proceed to the joinpoint through the interceptor chain.</span><br><span class="line">	retVal = invocation.proceed();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这一步即实际的方法调用逻辑，当该方法的Advisor链为空时，直接通过反射调用该方法。如果不为空，通过ReflectiveMethodInvocation的proceed()方法调用。ReflectiveMethodInvocation重写了MethodInvacation的proceed()方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public Object proceed() throws Throwable &#123;</span><br><span class="line">		//	We start with an index of -1 and increment early.</span><br><span class="line">		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) &#123;</span><br><span class="line">		//直到MethodInterceptor链都执行了，才直接调用当前MethodInvocation执行</span><br><span class="line">			return invokeJoinpoint();</span><br><span class="line">		&#125;</span><br><span class="line">//不然则进入MethodInterceptor的执行逻辑，这里是动态PointCut匹配</span><br><span class="line">		Object interceptorOrInterceptionAdvice =</span><br><span class="line">				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);</span><br><span class="line">		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) &#123;</span><br><span class="line">			// Evaluate dynamic method matcher here: static part will already have</span><br><span class="line">			// been evaluated and found to match.</span><br><span class="line">			InterceptorAndDynamicMethodMatcher dm =</span><br><span class="line">					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;</span><br><span class="line">			if (dm.methodMatcher.matches(this.method, this.targetClass, this.arguments)) &#123;</span><br><span class="line">				return dm.interceptor.invoke(this);</span><br><span class="line">			&#125;</span><br><span class="line">			else &#123;</span><br><span class="line">				// Dynamic matching failed.</span><br><span class="line">				// Skip this interceptor and invoke the next in the chain.</span><br><span class="line">				return proceed();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		else &#123;</span><br><span class="line">			// It&apos;s an interceptor, so we just invoke it: The pointcut will have</span><br><span class="line">			// been evaluated statically before this object was constructed.</span><br><span class="line">			//MethodInterceptor的执行逻辑</span><br><span class="line">			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>这里ReflectiveMethodInvocation实际上代表了一个Joinpoint的调用，但是其内部包含了一个MethodInterceptor链，即各类增强逻辑。各类增强逻辑有多个，有前也右后，其前后顺序封装在各MethodInterceptor的invoke方法里了（如前面所写的MethodBeforeAdviceInterceptor）,invoke方法里对MethodInvocation的递归调用使得多个MethodInterceptor的循环得以进行，非常巧妙。</p>
+<p>关于CGLIB的增强逻辑，是在CallBack中设置了默认的DynamicAdvisedInterceptor，其intercept方法中封装的逻辑与JDK代理的invoke方法封装的逻辑大同小异，不再赘述。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>spring aop首先从IOC容器中获取Advice或者MethodInterceptor等，将其封装为Advisor（这一步主要目的是将Advice与PointCut相结合），最后在JDK Proxy和CGLIB Proxy的回调方法中应用PointCut匹配具体方法，并将Advisor中的Advice按类型封装为MethodInterceptor应用到目标方法的调用MethodInvocation上去。</p>
 <blockquote>
-<p>MySQL技术内幕 InnoDB存储引擎 第2版 </p>
+<p>Spring 技术内幕</p>
 </blockquote>
 
           
@@ -469,7 +499,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -512,7 +542,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>

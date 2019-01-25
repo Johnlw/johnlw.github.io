@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/31/Java并发机制（2）--volatile关键字/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/28/单例模式/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2017/10/31/Java并发机制（2）--volatile关键字/" class="post-title-link" itemprop="url">Java并发机制（2）--volatile关键字</a>
+                <a href="/2018/02/28/单例模式/" class="post-title-link" itemprop="url">单例模式</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2017-10-31 11:04:47" itemprop="dateCreated datePublished" datetime="2017-10-31T11:04:47+08:00">2017-10-31</time>
+              <time title="Created: 2018-02-28 16:03:51" itemprop="dateCreated datePublished" datetime="2018-02-28T16:03:51+08:00">2018-02-28</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-24 17:25:51" itemprop="dateModified" datetime="2019-01-24T17:25:51+08:00">2019-01-24</time>
+                <time title="Modified: 2019-01-24 20:25:05" itemprop="dateModified" datetime="2019-01-24T20:25:05+08:00">2019-01-24</time>
               
             
           </span>
@@ -399,62 +399,94 @@
       
         
           
-            <p>关键字volatile提供了轻量级的同步机制，在理解volatile关键字之前先来看几个支撑技术。</p>
-<h1 id="有序性的一种保证方式：内存屏障"><a href="#有序性的一种保证方式：内存屏障" class="headerlink" title="有序性的一种保证方式：内存屏障"></a>有序性的一种保证方式：内存屏障</h1><p>内存屏障是一组指令，分4类，这些指令指定了其前后指令的排序规则。</p>
-<table>
-<thead>
-<tr>
-<th>屏障类型</th>
-<th>指令示例</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>LoadLoad Barrier</td>
-<td>Load1;LoadLoad;Load2</td>
-<td>确保load1数据的装载先于load2及其后续所有load指令</td>
-</tr>
-<tr>
-<td>StoreStore Barrier</td>
-<td>Store1;StoreStore;Store2</td>
-<td>确保Store1数据刷新到内存先于Store2及其后续所有store指令</td>
-</tr>
-<tr>
-<td>LoadStore Barrier</td>
-<td>Load1;LoadStore;Store2</td>
-<td>确保load1数据的装载先于Store2及其后续所有store指令</td>
-</tr>
-<tr>
-<td>StoreLoad Barrier</td>
-<td>Store1;StoreLoad;Load2</td>
-<td>确保Store1数据刷新到内存先于load2及其后续所有load指令 。<strong>注意</strong>：StoreLoad Barriers会使该屏障之前的所有内存访问指令（包括load和store指令）都执行完了之后，再执行屏障之后的内存访问指令。</td>
-</tr>
-</tbody>
-</table>
-<p>也就是说，在一个指令序列中插入了内存屏障，这些内存屏障会限制其前后指令的排序，而在两个内存屏障之间代码序列的重排序则没有约束。就好像屏障一样，被限制的指令无法越过。<br>同时也可以看出内存屏障将缓存值刷新到内存也起到了提供可见性的作用。</p>
-<h1 id="强大的汇编指令前缀：Lock"><a href="#强大的汇编指令前缀：Lock" class="headerlink" title="强大的汇编指令前缀：Lock"></a>强大的汇编指令前缀：Lock</h1><p>lock前缀有三方面的功能：</p>
-<ol>
-<li>确保对内存的读-改-写操作原子执行。</li>
-<li>禁止该指令，与之前和之后的读写指令重排序。</li>
-<li>将写缓冲区的所有数据刷新到内存中，并且这个写操作会使其他CPU里缓存了该内存地址的数据无效。</li>
-</ol>
-<p>其中第2条和第3条共同起到了内存屏障的效果，并且是一并禁止了load和store指令。<br>可以看出，单单一个lock前缀就提供了原子性、有序性和可见性的三方面的可靠保证。</p>
-<h1 id="volatile修饰变量"><a href="#volatile修饰变量" class="headerlink" title="volatile修饰变量"></a>volatile修饰变量</h1><p>被volatile修饰的变量有三个特性：</p>
-<ol>
-<li>原子性。对任意单个volatile变量的读、写具有原子性，但类似于volatile++这种<strong>复合操作</strong>没有原子性。</li>
-<li>可见性。对一个volatile的读，总是能看到任意线程对这个变量的最后一次写入。</li>
-<li>有序性。volatile禁止指令重排序。</li>
-</ol>
-<p>之所以volatile具有这三个特性，在于对volatile变量的操作有lock prefix支持。lock prefix提供了三方面的特性保证。</p>
-<h1 id="锁与volatile"><a href="#锁与volatile" class="headerlink" title="锁与volatile"></a>锁与volatile</h1><p>锁的释放与volatile写具有同样的内存语义：释放锁和对volatile变量的写，JMM都会把线程对应的本地内存中的共享变量刷新到主内存中。<br>锁的获取与volatile读具有同样的内存语义：获取锁和对volatile变量的读，JMM都会将线程对应的本地内存置为无效，而是从主内存中重新读取。</p>
-<h1 id="CAS与volatile"><a href="#CAS与volatile" class="headerlink" title="CAS与volatile"></a>CAS与volatile</h1><p>CAS操作具有volatile读和写的内存语义。该操作在执行cmpxchg指令之前，如果是多处理器，将会插入lock前缀。lock前缀提供了与volatile一致的内存语义。</p>
-<h1 id="volatile重排序例子"><a href="#volatile重排序例子" class="headerlink" title="volatile重排序例子"></a>volatile重排序例子</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//线程1:</span><br><span class="line">context = loadContext();   //语句1</span><br><span class="line">inited = true;             //语句2</span><br><span class="line"> </span><br><span class="line">//线程2:</span><br><span class="line">while(!inited )&#123;</span><br><span class="line">  sleep()</span><br><span class="line">&#125;</span><br><span class="line">doSomethingwithconfig(context);</span><br></pre></td></tr></table></figure>
-<p>有可能语句2会在语句1之前执行，那么就可能导致context还没被初始化，而线程2中就使用未初始化的context去进行操作，导致程序出错。</p>
-<p>这里如果用volatile关键字对inited变量进行修饰，就不会出现这种问题了，因为当执行到语句2时，必定能保证context已经初始化完毕。</p>
-<blockquote>
-<p>现代操作系统<br>Java并发编程的艺术<br>深入理解Java虚拟机<br>Java并发编程实战<br>JSR-133<br>并发编程网<br>Intel IA-32</p>
-</blockquote>
+            <h3 id="单例模式定义"><a href="#单例模式定义" class="headerlink" title="单例模式定义"></a>单例模式定义</h3><p>确保某一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+<h3 id="单例模式优缺点"><a href="#单例模式优缺点" class="headerlink" title="单例模式优缺点"></a>单例模式优缺点</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>在内存中只有一个实例，节约内存，减少性能开销。当一个对象的产生需要占用较多资源时（如文件、读取配置文件等），采用单例模式可有效节约资源。</li>
+<li>单例对象可以作为全局访问点，优化和共享全局资源访问。</li>
+</ul>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>单例模式要求自行实例化，因此单例模式一般没有接口，拓展性不好。<h3 id="单例模式使用场景"><a href="#单例模式使用场景" class="headerlink" title="单例模式使用场景"></a>单例模式使用场景</h3></li>
+<li>要求生成唯一序列号的场景</li>
+<li>在整个项目中需要一个共享访问点或共享资源</li>
+<li>创建一个对象需要消耗的资源过多，如要访问IO和数据库等资源</li>
+<li>需要定义大量的静态变量和静态方法的场景</li>
+</ul>
+<h3 id="单例模式代码形式"><a href="#单例模式代码形式" class="headerlink" title="单例模式代码形式"></a>单例模式代码形式</h3><h4 id="饿汉形式"><a href="#饿汉形式" class="headerlink" title="饿汉形式"></a>饿汉形式</h4><pre><code>public class Singleton{
+      private static Singleton instance = new Singleton();//在类加载时即进行创建
+      private Singleton(){}
+      public static Singleton newInstance(){
+            return instance;
+      }
+}
+</code></pre><p>饿汉形式中该对象在类加载的时候就完成了对象的创建，不存在线程安全问题。当对象占用内存小而且初始化后很快就会被用到时，饿汉形式很适用；但是如果这个对象并不急着用或者根本没有用到，该对象还是会被创建，如果该对象占用的内存空间较大，则造成了系统资源的浪费。</p>
+<h4 id="懒汉形式"><a href="#懒汉形式" class="headerlink" title="懒汉形式"></a>懒汉形式</h4><pre><code>public class Singleton{
+      private static Singleton instance = null;
+      private Singleton(){}
+      public static Singleton newInstance(){
+             if(instance == null){
+                   instance =  new Singleton();
+             }
+             return instance;
+      }
+}
+</code></pre><p>懒汉形式中该对象时在需要的时候才去创建，即按需使用，在单例使用次数少、占用资源多的场景下比较适用。但是懒汉形式并不是线程安全的，当有多个线程同时调用newInstance方法时，可能会创建多个实例。</p>
+<h4 id="线程安全的懒汉形式"><a href="#线程安全的懒汉形式" class="headerlink" title="线程安全的懒汉形式"></a>线程安全的懒汉形式</h4><pre><code>public class Singleton{
+      private static Singleton instance = null;
+      private Singleton(){}
+      public static synchronized Singleton newInstance(){//使用synchronized关键字同步
+             if(instance == null){
+                   instance =  new Singleton();
+             }
+             return instance;
+      }
+}
+</code></pre><p>这种形式下，线程每次调用newInstance方法都会先获取对象锁，然后再执行方法体，在高并发情况下，对象锁有可能升级为重量级锁，带来一定的性能问题。</p>
+<h4 id="一种看起来可行的改进方式–双重检查锁定形式"><a href="#一种看起来可行的改进方式–双重检查锁定形式" class="headerlink" title="一种看起来可行的改进方式–双重检查锁定形式"></a>一种看起来可行的改进方式–双重检查锁定形式</h4><p>既然存在性能问题，我们将代码稍加改进：</p>
+<pre><code>public class Singleton{
+      private static Singleton instance = null;
+      private Singleton(){}
+      public static Singleton newInstance(){
+             if(instance == null){
+                  synchronized(Singleton.class){
+                        if(instance == null){
+                            instance =  new Singleton();
+                        }                  
+                  }                                 
+             }
+             return instance;
+       }
+}
+</code></pre><p>在这种形式的代码下，只要对象被线程安全的创建成功，将不会在存在性能问题。然而既然是“看起来可行的”办法，那么一定有什么隐患。</p>
+<h4 id="可靠的改进方式–volatile"><a href="#可靠的改进方式–volatile" class="headerlink" title="可靠的改进方式–volatile"></a>可靠的改进方式–volatile</h4><p>上面的双重检查锁定形式不可靠的地方在于它并不能保证线程安全，根本原因在于<code>instance = new Singleton();</code> 这一行代码可以分为如下三行伪代码：</p>
+<pre><code>memory = allocate();//1.分配内存
+initInstance(memory);//2.初始化
+instance = memory;3.设置引用指向内存地址
+</code></pre><p>我们知道在java代码的各级编译过程中都存在执行重排序的情况，如果上述代码中2和3被重排序，3先于2执行，并不违反单线程as-if-serial语义和多线程happens-before语义，再如果在2执行之前发生线程切换，另外一个线程在判断instance变量是否为Null时将返回false，并返回Instance，然而此时instance对应的内存区域并没有被初始化为Singleton对象。</p>
+<p>那么我们应该如何处理这种情况呢？很简单，禁止<code>instance = new Singleton();</code>这行代码指令重排序，为此我们给instance变量引入happens-before语义限制—-就是用<code>volatile</code>关键字修饰instance变量。可靠的改进方式：</p>
+<pre><code>public class Singleton{
+      private static volatile Singleton instance = null;
+      private Singleton(){}
+      public static Singleton newInstance(){
+             if(instance == null){
+                  synchronized(Singleton.class){
+                        if(instance == null){
+                            instance =  new Singleton();
+                        }                  
+                  }                                 
+             }
+             return instance;
+       }
+}
+</code></pre><h4 id="静态内部类形式"><a href="#静态内部类形式" class="headerlink" title="静态内部类形式"></a>静态内部类形式</h4><pre><code>public class Singleton{
+    private static class SingletonHolder{
+        public static Singleton instance = new Singleton();
+    }
+    public static Singleton newInstance(){
+        return SingletonHolder.instance;
+    }
+}
+</code></pre><p>在这种形式中，巧妙地利用的jvm的类加载机制，实现了线程安全的懒汉式实例化。<br>当线程调用newInstance方法时，会触发静态内部类SingletonHolder的加载和初始化，这里不存在线程安全问题；同时当没有线程调用newInstance方法时，静态内部类将不会被加载。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>由上面的分析可知，<strong>静态内部类形式</strong>和<strong>volatile关键字改进的双重检查锁定形式</strong>最能称得上是单例模式的最佳实践。</p>
 
           
         
@@ -500,7 +532,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/19/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/21/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/19/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><span class="page-number current">20</span><a class="page-number" href="/page/21/">21</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/21/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -543,7 +575,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>

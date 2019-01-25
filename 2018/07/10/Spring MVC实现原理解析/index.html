@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Spring MVC基于MVC设计模式设计，其实现基于Spring IOC容器和Servlet。 Spring MVC的启动Spring MVC通常运行在Web容器（如Tomcat）中，其启动由Web容器触发。以下是一个常规的Web应用部署描述文件Web.xml：1234567891011121314151617181920212223242526272829303132333435&amp;lt;?xm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring MVC实现原理解析">
+<meta property="og:url" content="http://yoursite.com/2018/07/10/Spring MVC实现原理解析/index.html">
+<meta property="og:site_name" content="John What">
+<meta property="og:description" content="Spring MVC基于MVC设计模式设计，其实现基于Spring IOC容器和Servlet。 Spring MVC的启动Spring MVC通常运行在Web容器（如Tomcat）中，其启动由Web容器触发。以下是一个常规的Web应用部署描述文件Web.xml：1234567891011121314151617181920212223242526272829303132333435&amp;lt;?xm">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://static.johnlw.cn/blog_springmvc_httpservletbean.png">
+<meta property="og:updated_time" content="2019-01-25T07:20:17.587Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring MVC实现原理解析">
+<meta name="twitter:description" content="Spring MVC基于MVC设计模式设计，其实现基于Spring IOC容器和Servlet。 Spring MVC的启动Spring MVC通常运行在Web容器（如Tomcat）中，其启动由Web容器触发。以下是一个常规的Web应用部署描述文件Web.xml：1234567891011121314151617181920212223242526272829303132333435&amp;lt;?xm">
+<meta name="twitter:image" content="http://static.johnlw.cn/blog_springmvc_httpservletbean.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/07/10/Spring MVC实现原理解析/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring MVC实现原理解析 | John What</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">John What</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/10/Spring MVC实现原理解析/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Spring MVC实现原理解析
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-07-10 17:14:53" itemprop="dateCreated datePublished" datetime="2018-07-10T17:14:53+08:00">2018-07-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-25 15:20:17" itemprop="dateModified" datetime="2019-01-25T15:20:17+08:00">2019-01-25</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Spring MVC基于MVC设计模式设计，其实现基于Spring IOC容器和Servlet。</p>
+<h1 id="Spring-MVC的启动"><a href="#Spring-MVC的启动" class="headerlink" title="Spring MVC的启动"></a>Spring MVC的启动</h1><p>Spring MVC通常运行在Web容器（如Tomcat）中，其启动由Web容器触发。<br>以下是一个常规的Web应用部署描述文件Web.xml：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">	xmlns=&quot;http://java.sun.com/xml/ns/javaee&quot;</span><br><span class="line">	xmlns:web=&quot;http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span><br><span class="line">	xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span><br><span class="line">	id=&quot;WebApp_ID&quot; version=&quot;3.0&quot;&gt;</span><br><span class="line">	&lt;display-name&gt;&lt;/display-name&gt;</span><br><span class="line">	&lt;!-- 配置Spring MVC DispatcherServlet --&gt;</span><br><span class="line">	&lt;servlet&gt;</span><br><span class="line">		&lt;servlet-name&gt;SpringMVC&lt;/servlet-name&gt;</span><br><span class="line">		&lt;servlet-class&gt;org.springframework.web.servlet.DispatcherServlet&lt;/servlet-class&gt;</span><br><span class="line">		&lt;!-- 初始化参数 --&gt;</span><br><span class="line">		&lt;init-param&gt;</span><br><span class="line">			&lt;!-- 加载SpringMVC的xml到 spring的上下文容器中 --&gt;</span><br><span class="line">			&lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;</span><br><span class="line">			&lt;param-value&gt;  </span><br><span class="line">                classpath:spring/springmvc.xml </span><br><span class="line">            &lt;/param-value&gt;</span><br><span class="line">		&lt;/init-param&gt;</span><br><span class="line">	&lt;/servlet&gt;</span><br><span class="line">	&lt;!-- 配置DispatcherServlet所需要拦截的 url --&gt;</span><br><span class="line">	&lt;servlet-mapping&gt;</span><br><span class="line">		&lt;servlet-name&gt;SpringMVC&lt;/servlet-name&gt;</span><br><span class="line">		&lt;url-pattern&gt;/&lt;/url-pattern&gt;</span><br><span class="line">	&lt;/servlet-mapping&gt;</span><br><span class="line">	&lt;!-- 监听spring上下文容器 --&gt;</span><br><span class="line">	&lt;listener&gt;</span><br><span class="line">		&lt;listener-class&gt;org.springframework.web.context.ContextLoaderListener&lt;/listener-class&gt;</span><br><span class="line">	&lt;/listener&gt;</span><br><span class="line"></span><br><span class="line">	&lt;!-- 加载spring的xml配置文件到 spring的上下文容器中 --&gt;</span><br><span class="line">	&lt;context-param&gt;</span><br><span class="line">		&lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;</span><br><span class="line">		&lt;param-value&gt;classpath:spring/applicationContext-*.xml&lt;/param-value&gt;</span><br><span class="line">	&lt;/context-param&gt;</span><br></pre></td></tr></table></figure></p>
+<p>主要分为两部分：</p>
+<ol>
+<li>DispatcherServlet的配置</li>
+<li>ContextLoaderListener的配置</li>
+</ol>
+<p>这两部分的配置为Spring MVC启动的入口，也是Web容器与Spring IOC/MVC相耦合的点（通过ServletContext耦合）。其中DispatcherServlet是一个Servlet，具备Servlet的生命周期，ContextLoaderListener实现了ServletContextListener接口，该接口提供了关于ServletContext生命周期的回调方法。<strong>在Web容器启动时，将调用Servlet生命周期的init方法，同时其作为宿主环境的上下文ServletContext将触发事件信息使得ServletContextListener监听器调用contextInitialized方法。</strong></p>
+<p>首先来看ContextLoaderListner：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public void contextInitialized(ServletContextEvent event) &#123;</span><br><span class="line">		//启动了Spring IOC容器，其配置文件位置在web.xml中已经设定</span><br><span class="line">		//通常这个容器中的Bean主要是web开发中的Service层和DAO层相关的类</span><br><span class="line">		initWebApplicationContext(event.getServletContext());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>再看DispatcherServlet，在Servlet启动时将调用init方法。其继承结构如下图：<br><img src="http://static.johnlw.cn/blog_springmvc_httpservletbean.png" alt="这里写图片描述"><br>init()方法在HttpServletBean中定义，该方法调用了在FrameworkServlet中定义的initServletBean()方法，部分代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	protected final void initServletBean() throws ServletException &#123;</span><br><span class="line">		getServletContext().log(&quot;Initializing Spring FrameworkServlet &apos;&quot; + getServletName() + &quot;&apos;&quot;);</span><br><span class="line">		try &#123;</span><br><span class="line">		//启动另外一个IOC容器，该IOC容器配置文件在web.xml中设定过</span><br><span class="line">			this.webApplicationContext = initWebApplicationContext();</span><br><span class="line">			initFrameworkServlet();</span><br><span class="line">		&#125;</span><br><span class="line">		catch (ServletException ex) &#123;</span><br><span class="line">			this.logger.error(&quot;Context initialization failed&quot;, ex);</span><br><span class="line">			throw ex;</span><br><span class="line">		&#125;</span><br><span class="line">		catch (RuntimeException ex) &#123;</span><br><span class="line">			this.logger.error(&quot;Context initialization failed&quot;, ex);</span><br><span class="line">			throw ex;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>该IOC容器中包含的通常是web开发中的Controller层相关的Bean，启动过程中将会将ContextLoaderListener中启动的容器设置为父容器，形成IOC容器体系，在容器体系中获取Bean时，先在子容器中查找，再去父容器中查找。如Controller层中Service的注入，即需要去父容器中查找。</p>
+<p>至此，Spring MVC启动了两个IOC容器，其中ContextLoaderListener启动的为父容器（通常负责Service层和DAO层的相关Bean管理），而DispatcherServlet启动的为子容器（通常负责Controller层的相关Bean管理），IOC容器体系建立完毕，同时两个IOC容器通过ServletContext与Web容器（Tomcat）相耦合。</p>
+<p>HttpServletBean的init方法最终将调用DispatcherServlet的initStrategies方法，该方法主要用来初始化Spring MVC的主要支持部件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">protected void initStrategies(ApplicationContext context) &#123;</span><br><span class="line">		initMultipartResolver(context);</span><br><span class="line">		initLocaleResolver(context);</span><br><span class="line">		initThemeResolver(context);</span><br><span class="line">		initHandlerMappings(context);</span><br><span class="line">		initHandlerAdapters(context);</span><br><span class="line">		initHandlerExceptionResolvers(context);</span><br><span class="line">		initRequestToViewNameTranslator(context);</span><br><span class="line">		initViewResolvers(context);</span><br><span class="line">		initFlashMapManager(context);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>重点分析HandlerMapping/HandlerAdapters/ViewResolvers这三者。</p>
+<p>initStrategies中的主要工作就是设置DispatcherServlet中相关属性的值，对于handlerMapping/handlerAdapters/ViewResolvers这三者来说，都是先在IOC容器中查找是否已经有配置的各类实例，如果没有则启用默认类。默认值在DispatcherServlet.properties文件中有定义。至此，Spring MVC已经启动完毕。</p>
+<p><strong>可见，SpringMVC由tomcat以web.xml里一个Servlet一个Listener的配置触发启动，然后以这两个建立IOC容器体系，最终进行组件的初始化工作，启动完成。</strong></p>
+<h1 id="Spring-MVC重要组件"><a href="#Spring-MVC重要组件" class="headerlink" title="Spring MVC重要组件"></a>Spring MVC重要组件</h1><h3 id="HandlerMapping"><a href="#HandlerMapping" class="headerlink" title="HandlerMapping"></a>HandlerMapping</h3><p>HandlerMapping接口只有一个方法，getHandler，但是返回的是HandlerExecutionChain，一个执行链。其主要作用是将Http请求的URL映射到对应的handler上，返回的执行链中同时包含了handler本身和对应的拦截器链。handler的类型是多样的，在源码中handler类型为Object，可以是实现了Controller接口的对象，也可以是某个方法。因此，也有多种实现类，有直接以类作为handler的，有以方法作为handler的。</p>
+<p>在web开发中在方法上常见的RequestMapping注解handleMethod类型的handler，对应的handlerMapping为RequestMappingHandlerMapping。继承AbstractHandlerMethodMapping，持有请求URL与HandlerMethod之间的映射表。</p>
+<h3 id="HandlerAdapter"><a href="#HandlerAdapter" class="headerlink" title="HandlerAdapter"></a>HandlerAdapter</h3><p>由于handler的多样性，需要为框架提供更好的可拓展性，使用了适配器模式，通过handlerAdapter来调用handler的handle方法。在handlerMapping中获取到HandlerExecutionChain后，从中取出handler本身，遍历已经DispatcherServlet中初始化过的handlerAdapter找到可以适配的HandlerAdapter。</p>
+<p>以RequestMappingHandlerMapping为例，对应的Adapter为RequestMappingHandlerAdapter，该Adapter知道handler类型为HandlerMethod，最终通过反射调用完成请求的处理，返回ModelAndView结果。</p>
+<h3 id="ViewResolver-View"><a href="#ViewResolver-View" class="headerlink" title="ViewResolver/View"></a>ViewResolver/View</h3><p>视图解析器，ViewResolver接口只有一个方法，即resolveViewName，将一个视图名解析为一个View对象。View对象只是视图在Spring MVC中的表示，并非实际意义上的视图。由于视图的多样化，一类视图解析图解析一类视图对象。以JSP视图为例，其ViewResolver为InternalResourceViewResolver，通常都会如下配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean class = &quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;&gt;</span><br><span class="line">        &lt;property name=&quot;prefix&quot; value=&quot;/WEB-INF/jsp/&quot;&gt;&lt;/property&gt;</span><br><span class="line">        &lt;property name=&quot;suffix&quot; value=&quot;.jsp&quot;&gt;&lt;/property&gt;</span><br><span class="line">    &lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p>InternalResourceViewResolver持有View对象的缓存，如果缓存中不存在，则根据viewname新建View，InternalResourceViewResolver处理的视图对象类为InternalResourceView。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	protected View createView(String viewName, Locale locale) throws Exception &#123;</span><br><span class="line">		// If this resolver is not supposed to handle the given view,</span><br><span class="line">		// return null to pass on to the next resolver in the chain.</span><br><span class="line">		if (!canHandle(viewName, locale)) &#123;</span><br><span class="line">			return null;</span><br><span class="line">		&#125;</span><br><span class="line">		// 处理视图名称中的重定向前缀</span><br><span class="line">		// Check for special &quot;redirect:&quot; prefix.</span><br><span class="line">		if (viewName.startsWith(REDIRECT_URL_PREFIX)) &#123;</span><br><span class="line">			String redirectUrl = viewName.substring(REDIRECT_URL_PREFIX.length());</span><br><span class="line">			RedirectView view = new RedirectView(redirectUrl, isRedirectContextRelative(), isRedirectHttp10Compatible());</span><br><span class="line">			return applyLifecycleMethods(viewName, view);</span><br><span class="line">		&#125;</span><br><span class="line">		// 处理视图名称中的转发前缀</span><br><span class="line">		// Check for special &quot;forward:&quot; prefix.</span><br><span class="line">		if (viewName.startsWith(FORWARD_URL_PREFIX)) &#123;</span><br><span class="line">			String forwardUrl = viewName.substring(FORWARD_URL_PREFIX.length());</span><br><span class="line">			return new InternalResourceView(forwardUrl);</span><br><span class="line">		&#125;</span><br><span class="line">		// Else fall back to superclass implementation: calling loadView.</span><br><span class="line">		return super.createView(viewName, locale);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">protected AbstractUrlBasedView buildView(String viewName) throws Exception &#123;</span><br><span class="line">//通过反射新建了View对象，并设置其URL等属性</span><br><span class="line">		AbstractUrlBasedView view = (AbstractUrlBasedView) BeanUtils.instantiateClass(getViewClass());</span><br><span class="line">		view.setUrl(getPrefix() + viewName + getSuffix());</span><br><span class="line"></span><br><span class="line">		String contentType = getContentType();</span><br><span class="line">		if (contentType != null) &#123;</span><br><span class="line">			view.setContentType(contentType);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		view.setRequestContextAttribute(getRequestContextAttribute());</span><br><span class="line">		view.setAttributesMap(getAttributesMap());</span><br><span class="line"></span><br><span class="line">		Boolean exposePathVariables = getExposePathVariables();</span><br><span class="line">		if (exposePathVariables != null) &#123;</span><br><span class="line">			view.setExposePathVariables(exposePathVariables);</span><br><span class="line">		&#125;</span><br><span class="line">		Boolean exposeContextBeansAsAttributes = getExposeContextBeansAsAttributes();</span><br><span class="line">		if (exposeContextBeansAsAttributes != null) &#123;</span><br><span class="line">			view.setExposeContextBeansAsAttributes(exposeContextBeansAsAttributes);</span><br><span class="line">		&#125;</span><br><span class="line">		String[] exposedContextBeanNames = getExposedContextBeanNames();</span><br><span class="line">		if (exposedContextBeanNames != null) &#123;</span><br><span class="line">			view.setExposedContextBeanNames(exposedContextBeanNames);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		return view;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>视图解析完成之后，就是最后的视图渲染工作了，渲染工作由View对象来完成。<br>InternalResourceView的render方法实现在其基类AbstractView中定义：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public void render(Map&lt;String, ?&gt; model, HttpServletRequest request, HttpServletResponse response) throws Exception &#123;</span><br><span class="line">	//整合Model对象</span><br><span class="line">		Map&lt;String, Object&gt; mergedModel = createMergedOutputModel(model, request, response);</span><br><span class="line">		//设置response响应头</span><br><span class="line">		prepareResponse(request, response);</span><br><span class="line">		//最终渲染</span><br><span class="line">		renderMergedOutputModel(mergedModel, getRequestToExpose(request), response);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最终渲染部分代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	protected void renderMergedOutputModel(</span><br><span class="line">			Map&lt;String, Object&gt; model, HttpServletRequest request, HttpServletResponse response) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">		// 将各种Model值都设置到Http请求的请求属性中去，这里的Model已经</span><br><span class="line">		//是经过应用处理过的值，将其巧妙地加入Request的属性中继续传递给视图</span><br><span class="line">		exposeModelAsRequestAttributes(model, request);</span><br><span class="line"></span><br><span class="line">		// Expose helpers as request attributes, if any.</span><br><span class="line">		exposeHelpers(request);</span><br><span class="line"></span><br><span class="line">		// 通过View对象的URL即可获取到真正的视图路径</span><br><span class="line">		String dispatcherPath = prepareForRendering(request, response);</span><br><span class="line"></span><br><span class="line">		// 这里获取RequestDispatcher，即JSP对应的Servlet对象，并调用service方法响应请求</span><br><span class="line">		RequestDispatcher rd = getRequestDispatcher(request, dispatcherPath);</span><br><span class="line">		if (rd == null) &#123;</span><br><span class="line">			throw new ServletException(&quot;Could not get RequestDispatcher for [&quot; + getUrl() +</span><br><span class="line">					&quot;]: Check that the corresponding file exists within your web application archive!&quot;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		// If already included or response already committed, perform include, else forward.</span><br><span class="line">		if (useInclude(request, response)) &#123;</span><br><span class="line">			response.setContentType(getContentType());</span><br><span class="line">			if (logger.isDebugEnabled()) &#123;</span><br><span class="line">				logger.debug(&quot;Including resource [&quot; + getUrl() + &quot;] in InternalResourceView &apos;&quot; + getBeanName() + &quot;&apos;&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">			rd.include(request, response);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		else &#123;</span><br><span class="line">			// Note: The forwarded resource is supposed to determine the content type itself.</span><br><span class="line">			if (logger.isDebugEnabled()) &#123;</span><br><span class="line">				logger.debug(&quot;Forwarding to resource [&quot; + getUrl() + &quot;] in InternalResourceView &apos;&quot; + getBeanName() + &quot;&apos;&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">			rd.forward(request, response);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>View对象并不是真正的视图对象，只是视图对象在SpringMVC中的表示，持有了真正视图对象的路径，渲染时通过RequestDispatcher将Model数据传给真正的视图。</p>
+<h1 id="Spring-MVC对Http请求的处理"><a href="#Spring-MVC对Http请求的处理" class="headerlink" title="Spring MVC对Http请求的处理"></a>Spring MVC对Http请求的处理</h1><p>DispatcherServlet是spring mvc的核心Servlet，承担了请求转发处理的工作。它的本质是Servlet，其可以处理的请求在web.xml中定义，处理方法即service方法，该方法在父类HttpServlet中实现，并提供了钩子给子类。在DispatcherServlet中，主要处理逻辑在doDispatch方法中，部分代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception &#123;</span><br><span class="line">	HttpServletRequest processedRequest = request;</span><br><span class="line">	HandlerExecutionChain mappedHandler = null;</span><br><span class="line">		ModelAndView mv = null;</span><br><span class="line">		Exception dispatchException = null;</span><br><span class="line">		try &#123;</span><br><span class="line">			// 根据请求获取handler</span><br><span class="line">			mappedHandler = getHandler(processedRequest);</span><br><span class="line">			if (mappedHandler == null || mappedHandler.getHandler() == null) &#123;</span><br><span class="line">				noHandlerFound(processedRequest, response);</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			// 获取相应的handlerAdapter</span><br><span class="line">			HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());</span><br><span class="line">			//调用handler的拦截器链的preHandle方法，不符合则返回</span><br><span class="line">			if (!mappedHandler.applyPreHandle(processedRequest, response)) &#123;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line">			// 将请求交给handler处理</span><br><span class="line">			mv = ha.handle(processedRequest, response, mappedHandler.getHandler());</span><br><span class="line">			applyDefaultViewName(request, mv);</span><br><span class="line">			//调用handler的拦截器链的postHandler方法</span><br><span class="line">			mappedHandler.applyPostHandle(processedRequest, response, mv);</span><br><span class="line">		&#125;</span><br><span class="line">		catch (Exception ex) &#123;</span><br><span class="line">			dispatchException = ex;</span><br><span class="line">		&#125;</span><br><span class="line">		//处理最终结果，主要是将ModelAndView渲染至相应视图</span><br><span class="line">		processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>processDispatchResult部分代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private void processDispatchResult(HttpServletRequest request, HttpServletResponse response,</span><br><span class="line">		HandlerExecutionChain mappedHandler, ModelAndView mv, Exception exception) throws Exception &#123;</span><br><span class="line">	// 渲染视图</span><br><span class="line">	if (mv != null &amp;&amp; !mv.wasCleared()) &#123;</span><br><span class="line">		render(mv, request, response);</span><br><span class="line">		if (errorView) &#123;</span><br><span class="line">			WebUtils.clearErrorRequestAttributes(request);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>Spring MVC启动了两个IOC容器用于构建Spring应用，通过DispatcherServlet拦截Http请求，通过handlerMapping和handlerAdapter获取handler处理得到ModelAndView后，再通过View对象将Model包装在Http请求中，通过RequestDispatcher完成请求的进一步转发给真正的视图进行处理并返回http响应。</p>
+<blockquote>
+<p><a href="https://www.javatpoint.com/requestdispatcher-in-servlet" target="_blank" rel="noopener">https://www.javatpoint.com/requestdispatcher-in-servlet</a><br>spring技术内幕</p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/07/05/Spring AOP实现原理解析/" rel="next" title="Spring AOP实现原理解析">
+                <i class="fa fa-chevron-left"></i> Spring AOP实现原理解析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">28</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-MVC的启动"><span class="nav-number">1.</span> <span class="nav-text">Spring MVC的启动</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-MVC重要组件"><span class="nav-number">2.</span> <span class="nav-text">Spring MVC重要组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HandlerMapping"><span class="nav-number">2.0.1.</span> <span class="nav-text">HandlerMapping</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HandlerAdapter"><span class="nav-number">2.0.2.</span> <span class="nav-text">HandlerAdapter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewResolver-View"><span class="nav-number">2.0.3.</span> <span class="nav-text">ViewResolver/View</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-MVC对Http请求的处理"><span class="nav-number">3.</span> <span class="nav-text">Spring MVC对Http请求的处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

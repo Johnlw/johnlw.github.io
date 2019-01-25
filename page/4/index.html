@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/14/InnoDB引擎--存储结构与文件/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/03/InnoDB引擎--事务隔离性/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/05/14/InnoDB引擎--存储结构与文件/" class="post-title-link" itemprop="url">InnoDB引擎--存储结构与文件</a>
+                <a href="/2018/06/03/InnoDB引擎--事务隔离性/" class="post-title-link" itemprop="url">InnoDB引擎--事务隔离性</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2018-05-14 14:36:54" itemprop="dateCreated datePublished" datetime="2018-05-14T14:36:54+08:00">2018-05-14</time>
+              <time title="Created: 2018-06-03 17:21:44" itemprop="dateCreated datePublished" datetime="2018-06-03T17:21:44+08:00">2018-06-03</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 15:10:18" itemprop="dateModified" datetime="2019-01-25T15:10:18+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 15:01:10" itemprop="dateModified" datetime="2019-01-25T15:01:10+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,46 +399,46 @@
       
         
           
-            <p>数据库是数据的集合，数据库管理系统（DBMS）是操作和管理数据库的应用程序。数据库应用主要有两类：OLAP（联机分析处理）和OLTP（联机事务处理）。<br>OLAP的主要特点是:</p>
-<ul>
-<li>实时性要求不高</li>
-<li>数据量大</li>
-<li>并发量小</li>
+            <p>事务将数据库从一个一致状态转换至另外一个一致状态，若某个事务看到了另外一个事务在状态转换过程中的中间态数据（不一致状态），将有可能导致另外一个事务的操作基于一个不一致的数据库状态，进而数据库失去一致性。事务隔离性主要用于处理数据库的并发访问问题。</p>
+<h3 id="事务隔离性级别"><a href="#事务隔离性级别" class="headerlink" title="事务隔离性级别"></a>事务隔离性级别</h3><p>事务隔离性分为4个级别，可以在事务的一致性与并发性上的做出权衡。另外，不同的隔离级别也有不同的问题存在。</p>
+<h6 id="读未提交（Read-Uncommitted）"><a href="#读未提交（Read-Uncommitted）" class="headerlink" title="读未提交（Read Uncommitted）"></a>读未提交（Read Uncommitted）</h6><p>读未提交允许<strong>读取未提交</strong>的数据，这实际上并没有提供隔离性–事务之间可以完全可以看到彼此的修改。读取未提交的数据也称为<strong>脏读</strong>。</p>
+<h6 id="读已提交（Read-Committed）"><a href="#读已提交（Read-Committed）" class="headerlink" title="读已提交（Read Committed）"></a>读已提交（Read Committed）</h6><p>读已提交<strong>只允许读已提交</strong>的数据，避免了脏读现象。但是存在以下情况：在事务T1内，读取了数据D值为D1，然后T1执行其他SQL，事务T2更新了D为D2并提交，此时T1再次读取D时值为D2。这种情况称为<strong>不可重复读</strong>。</p>
+<h6 id="可重复读（Read-Repeatable）"><a href="#可重复读（Read-Repeatable）" class="headerlink" title="可重复读（Read Repeatable）"></a>可重复读（Read Repeatable）</h6><p>可重复读只允许读已提交数据，而且<strong>在一个事务两次读取一个数据项期间，其他事务不得更新该数据</strong>，避免了不可重复读现象。虽然其他事务不得更新该数据，但是并未禁止不得插入新数据，这使得在一个事务内，两次同样的SELECT语句读取的记录数量是不一致的，这种情况称为<strong>幻读</strong>。</p>
+<h6 id="可串行化（Serializable）"><a href="#可串行化（Serializable）" class="headerlink" title="可串行化（Serializable）"></a>可串行化（Serializable）</h6><p>可串行化保证事务的调度都是可串行化调度。可以避免幻读现象。</p>
+<p>简要说明一些可串行化的概念：事务按顺序一个一个执行是串行调度，但是串行调度效率较低（比如读事务可以并发执行），可以对调度中的指令重排序形成新的调度，新的调度执行结果与串行执行结果是一致的，效率也更高。两个指令中有一个为写指令时两者是冲突的，顺序不能打乱，在一个串行调度中，保证冲突的指令顺序不打乱，其他指令的顺序可以调整以提高效率，即为可串行化调度。</p>
+<p>隔离性级别与问题表：Y-可能，N-不可能<br>|隔离性级别|丢失更新|脏读|不可重复读|幻读|<br>|:-:|-|-|-|<br>|RU|N|Y|Y|Y|<br>|RC|N|N|Y|Y|<br>|RR|N|N|N|Y|<br>|S|N|N|N|N|</p>
+<p><strong>事务的隔离性主要靠锁和MVCC支持。</strong></p>
+<h3 id="事务中的锁-基础理论"><a href="#事务中的锁-基础理论" class="headerlink" title="事务中的锁-基础理论"></a>事务中的锁-基础理论</h3><p>确保隔离性的方法之一就是要求对数据项以互斥的方式访问，当一个事务访问一个数据项时，其他任何事务都不能修改该数据项。最常见的方法就是只允许事务访问其持有锁的数据项。</p>
+<h4 id="锁的类型"><a href="#锁的类型" class="headerlink" title="锁的类型"></a>锁的类型</h4><h5 id="排它锁与共享锁"><a href="#排它锁与共享锁" class="headerlink" title="排它锁与共享锁"></a>排它锁与共享锁</h5><p>排他锁与共享锁的相容函数：<br>|相容性|S|X|<br>|-|-|<br>|S|true|false|<br>|X|false|false|</p>
+<h5 id="多粒度"><a href="#多粒度" class="headerlink" title="多粒度"></a>多粒度</h5><p>上文所描述的并发控制机制均是基于单个的数据项的，但是在数据库中有时需要更大的控制粒度（如DDL中的ALTER TABLE操作），如果此时还是按照数据项的粒度去挨个加锁，效率将是极低的，引入多粒度加锁以解决这个问题。</p>
+<p><img src="http://static.johnlw.cn/blog_innodb_lock_multi-granularity.png" alt="这里写图片描述"></p>
+<p>如上图所示，有的事务需要锁住整个数据库，有的只需要锁住表，有的只需要锁住一条记录即可。</p>
+<p>多粒度封锁协议引入新的锁类型–<strong>意向锁</strong>（Intension Lock）来实现多粒度加锁，意向锁用来<strong>表示事务在加锁的数据项（各种粒度）上的操作意向</strong>。意向锁分为共享意向锁和排他意向锁，其与共享锁、排他锁的相容性矩阵如下表所示：<br>|相容性|IS|IX|S|X|<br>|-|-|-|-|-|<br>|IS|true|true|true|false|<br>|IX|true|true|false|false|<br>|S|true|false|true|false|<br>|X|false|false|false|false|<br><strong>多粒度封锁协议要求加锁按自顶向下的顺序（根到叶），解锁按照自底向上的顺序（叶到根）。</strong>如对某个记录加共享锁，需要先对根（数据库）加共享意向锁，再对表加共享意向锁，最后对该记录加共享锁；释放时，先释放该记录的共享锁，再释放在表上的共享意向锁，最后释放数据库上的共享意向锁。</p>
+<p>多粒度封锁协议增强了并发性，减小了锁的开销。</p>
+<h4 id="封锁的实现"><a href="#封锁的实现" class="headerlink" title="封锁的实现"></a>封锁的实现</h4><p>封锁通过锁管理器实现事务加解锁的管理，锁管理器通过维护一个锁表实现该功能。锁表如下图所示，图中I表示数据项，T表示事务。<br><img src="http://static.johnlw.cn/blog_innodb_lock.png" alt="这里写图片描述"></p>
+<p>锁管理器为目前所有已经加锁的数据项I维护一个链表，每个请求T为链表中的一条记录，按请求到达的顺序排序（防止饿死）。数据项通过散列表来维护。</p>
+<p>在InnoDB中的锁是行级锁（但其实际锁住的不是记录本身，而是索引），并支持多粒度封锁协议。InnoDB即时锁信息可以在Information_schema中的INNODB_TRX、INNODB_LOCKS、INNODB_LOCK_WAITS三张表中查询。</p>
+<h5 id="Two-Parse-Locking"><a href="#Two-Parse-Locking" class="headerlink" title="Two Parse Locking"></a>Two Parse Locking</h5><p>TPL将事务的锁操作分为加锁和解锁两个阶段，加锁阶段事务只能加锁而不能解锁，解锁阶段事务只能解锁而不能加新锁。</p>
+<p>通常TPL配合锁转换以避免级联回滚问题。即加锁阶段读锁可以升级为写锁，解锁阶段写锁降级为读锁而不是直接释放。</p>
+<p>TPL进一步提高了并发效率，事务在将数据库由一个一致性状态转换至新的一致状态之间，将部分一致的状态对其他事务可见。</p>
+<h5 id="InnoDB三种加锁方式"><a href="#InnoDB三种加锁方式" class="headerlink" title="InnoDB三种加锁方式"></a>InnoDB三种加锁方式</h5><ul>
+<li>Record Lock：记录锁，锁住记录的索引</li>
+<li>Gap Lock：间隙锁，锁住一个范围，但不包含记录本身</li>
+<li>Next-key Lock：Record Lock+Gap Lock，锁定一个记录范围，并且锁定记录本身</li>
 </ul>
-<p>OLTP的主要特点是:</p>
-<ul>
-<li>实时性要求高</li>
-<li>数据量小</li>
-<li>高并发</li>
-<li>要求满足ACID</li>
-</ul>
-<h3 id="Mysql体系架构"><a href="#Mysql体系架构" class="headerlink" title="Mysql体系架构"></a>Mysql体系架构</h3><p>mysql是一种DBMS，其体系架构如下图所示：<br><img src="http://static.johnlw.cn/blog_mysql_arch.png" alt="这里写图片描述"><br>mysql中集成的是插件式的存储引擎，InnoDB引擎是其中之一。<strong>存储引擎基于表而不是数据库</strong>：同一个数据库中根据不同表的访问操作需求可以选择不同的存储引擎。</p>
-<h3 id="InnoDB引擎"><a href="#InnoDB引擎" class="headerlink" title="InnoDB引擎"></a>InnoDB引擎</h3><p><strong>InnoDB引擎主要面对OLTP类应用</strong>。 </p>
-<p>InnoDB引擎在mysql中处于文件和文件系统的上层，管理着对InnoDB引擎表的访问和更新。</p>
-<h4 id="InnoDB引擎逻辑存储结构"><a href="#InnoDB引擎逻辑存储结构" class="headerlink" title="InnoDB引擎逻辑存储结构"></a>InnoDB引擎逻辑存储结构</h4><p>数据需要在一定的数据结构和组织结构下才能进行有效的管理。InnoDB表中的每行数据是基于B+树存储的，其中B+树中的顺序依据是主键的顺序，称为索引组织表。B+树存储在数据文件中，在B+树之外，InnoDB对数据文件中数据的管理和组织定义一个新的逻辑结构如下图所示：<br><img src="http://static.johnlw.cn/blog_innodb_structure.png" alt="这里写图片描述"><br>所有的数据都被逻辑地存放在表空间中，对于整个数据库中的InnoDB表，可以共用一个表空间，也可以将表空间拆分为共享表空间和各个表私有的表空间。拆分后，私有表空间仅存储该表的数据、索引、和插入缓冲BitMap页，其他类的数据如回滚（undo）信息、系统事务信息等还是存储在共享表空间里。<br>共享表空间文件格式：<br><img src="http://static.johnlw.cn/blog_ibdata1_file.png" alt="这里写图片描述"><br>私有表空间文件格式：<br><img src="http://static.johnlw.cn/blog_ibdfile.png" alt="这里写图片描述"><br>表空间中的数据分类为各个段：数据段、索引段、回滚段等。为了 便于管理，在各个段中继续拆分为区，区再细化拆分为连续的页，<strong>页是InnoDB磁盘管理的最小单位</strong>（即InnoDB从磁盘读取和写入都是以页为单位进行的）。页中<strong>按关系表中的行</strong>来存储实际的关系数据。</p>
-<p>在InnoDB中，表的数据均存储在B+树的叶子节点上，数据也是索引的一部分，即聚集索引。</p>
-<p>InnoDB索引页的文件格式：<br><img src="http://static.johnlw.cn/blog_innodb_index.png" alt="这里写图片描述"></p>
-<p>先看FIL Header：<br><img src="http://static.johnlw.cn/blog_innodb_fil.png" alt="这里写图片描述"><br>FIL Header中包含了索引页作为文件的信息。存储了指向上个页和下个页的指针，即索引页之间是通过链表连接起来的；同时还存储了该页的LSN（Log Squence Number），用于支持CheckPoint。</p>
-<p>再看INDEX Header:<br><img src="http://static.johnlw.cn/blog_innodb_index_header.png" alt="这里写图片描述"><br>INDEX Header中包含了对于索引页作为索引的信息。存储了索引页中记录的数量，索引节点的类型（根节点、非叶结点、叶结点），页目录槽数（Page Directory）等信息。</p>
-<p>然后就是User Records行记录了，存储了B+树索引非叶节点数据和叶结点数据，从图中可以看出<strong>User Records在物理上并不有序，但是逻辑上是以单链表有序的，顺序为主键顺序</strong>。</p>
-<p>最后来看页目录（Page Directory）。User Records是以单链表组织的，一个页的大小是16K，最多可以存储近8000行数据，查询某一个行时需要顺序遍历所有行，引入Page Directory对User Records进行二分查找，提高页内数据查询效率，如下图所示：<br><img src="http://static.johnlw.cn/blog_innodb_page_directory.png" alt="这里写图片描述"></p>
-<p>最终，以表、段、区、页的逻辑结构为载体，构建出InnoDB表B+树的逻辑结构如下图：<br><img src="http://static.johnlw.cn/blog_innodb_b+tree.png" alt="这里写图片描述"></p>
-<h4 id="Mysql相关文件"><a href="#Mysql相关文件" class="headerlink" title="Mysql相关文件"></a>Mysql相关文件</h4><h6 id="参数文件"><a href="#参数文件" class="headerlink" title="参数文件"></a>参数文件</h6><p>mysql数据库的配置文件，包含了各类系统参数。</p>
-<h6 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h6><p>mysql中常见的日志文件：</p>
-<ul>
-<li>error log:记录了mysql启动、运行、关闭过程。</li>
-<li>binary log:记录了对mysql数据库执行更改（不包含查询）的所有操作。</li>
-<li>slow query log:记录执行超过指定时间值的SQL语句。</li>
-<li>query log:记录所有对mysql数据库请求的信息。<h6 id="表结构文件"><a href="#表结构文件" class="headerlink" title="表结构文件"></a>表结构文件</h6>无论选用什么存储引擎，mysql会对定义的表和视图生成（表名.frm）文件用以存储表和视图的结构定义。</li>
-</ul>
-<p>以下为InnoDB引擎的文件：</p>
-<h6 id="表空间文件"><a href="#表空间文件" class="headerlink" title="表空间文件"></a>表空间文件</h6><ul>
-<li>共享表空间文件：ibdata1</li>
-<li>私有表空间文件：表名.ibd<h6 id="redo-log文件"><a href="#redo-log文件" class="headerlink" title="redo log文件"></a>redo log文件</h6>ib_logfile0 与 ib_logfile1，用于支持事务的持久性。</li>
-</ul>
-<blockquote>
-<p>MySQL技术内幕 InnoDB存储引擎 第2版<br><a href="https://blog.jcole.us/innodb/" target="_blank" rel="noopener">https://blog.jcole.us/innodb/</a><br>mysql 官方手册</p>
-</blockquote>
+<p><strong>当sql语句通过唯一性索引查询某唯一行时，不会产生Gap Lock。此唯一性索引包括主键、普通唯一索引、联合唯一索引。</strong></p>
+<p><strong>在查询中字段没有索引或者不是唯一索引时，都会产生Gap Lock。</strong></p>
+<p>因为有Next-key lock的存在，在InnoDB中的RR隔离级别下，事务中的锁定读可能存在的幻读问题不再存在。Next-key lock锁定了记录周围的域，使得插入操作阻塞，保证了查询范围内的一致性。</p>
+<p>PS：这里陈述的查询语句都是锁定读，手动加锁如SELECT .. FOR UPDATE，SELECT .. LOCK IN SHARED MODE。不涉及下文将要提到的MVCC非锁定一致性读</p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>目前的封锁协议无法完全避免死锁的发生。处理死锁主要有两种方式：一是在申请资源前进行死锁检测；而是在发生死锁后，进行回滚。一适用于死锁发生频繁的场景，二适用于死锁发生概率较小的场景。</p>
+<h3 id="丢失更新问题"><a href="#丢失更新问题" class="headerlink" title="丢失更新问题"></a>丢失更新问题</h3><p>前面的事务隔离性级别问题表中，丢失更新问题在任何一个隔离级别下的单纯更新操作事务中都不都可能发生，即使是在RU隔离级别下，对行数据的DML操作都会加X锁，最多降级为S锁，直到事务提交，另外的事务才能更新新的数据，所以不存在在一个事务内部，尚未提交的更新数据被另外一个事务的更新操作所覆盖。</p>
+<p>但是如果一个事务是先读后更新，分为两步操作，在操作间隙可能被另外的事务读取数据再更新，情况就不一样了。</p>
+<p>例如：业务逻辑A，T1读取数据D，然后更新D为D1。业务逻辑B，T2读取数据D，然后T2更新D为D2。</p>
+<p>如果T2读取D的时机在T1更新D之前，那么A和B更新操作都是基于数据D，D1的值将被D2覆盖。如果D代表了银行余额，A和B都是转账操作，那么明显数据库将不会处于一致状态。</p>
+<p>这时的丢失更新问题需要将<strong>读写操作作为一个整体</strong>来解决，即在SELECT时就要手动加锁SELECT….FOR UPDATE，在读的时候直接加X锁。</p>
+<h3 id="MVCC（Multi-version-Concurrency-Control）"><a href="#MVCC（Multi-version-Concurrency-Control）" class="headerlink" title="MVCC（Multi-version Concurrency Control）"></a>MVCC（Multi-version Concurrency Control）</h3><p>在业务场景中，不能读到数据与读到数据后但是更新失败给用户的体验是不一样的，大多数业务中读数据的请求都远远多于写数据的请求。在仅有锁控制的并发控制下，读事务仅在共享锁时可以并发读，而在排他锁时被阻塞，MVCC使得数据库在排他锁时，读事务依然不会阻塞，极大的提高了数据读并发处理能力。</p>
+<p>MVCC，多版本并发控制，提供了数据库非锁定读的能力，在InnoDB中，MVCC由Undo Log支持。<br><img src="http://static.johnlw.cn/blog_innodb_mvcc.png" alt="这里写图片描述"></p>
+<p>在查询事务查询时如果数据项被加排他锁，则查询事务不会被阻塞而是读取该数据项的快照数据。不同的隔离级别对快照数据的轻易不一样，<strong>在RR级别下，事务总是读取事务刚开始读取的那个版本；在RC级别下，事务总是读取数据项最新的那个版本。</strong></p>
 
           
         
@@ -484,7 +484,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -527,7 +527,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>

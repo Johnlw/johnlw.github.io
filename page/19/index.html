@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/11/02/Java并发机制（3）--synchronized关键字底层原理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/13/Session与Cookie/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2017/11/02/Java并发机制（3）--synchronized关键字底层原理/" class="post-title-link" itemprop="url">Java并发机制（3）--synchronized关键字底层原理</a>
+                <a href="/2018/03/13/Session与Cookie/" class="post-title-link" itemprop="url">Session与Cookie</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2017-11-02 10:32:52" itemprop="dateCreated datePublished" datetime="2017-11-02T10:32:52+08:00">2017-11-02</time>
+              <time title="Created: 2018-03-13 10:46:59" itemprop="dateCreated datePublished" datetime="2018-03-13T10:46:59+08:00">2018-03-13</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 13:32:44" itemprop="dateModified" datetime="2019-01-25T13:32:44+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 13:33:15" itemprop="dateModified" datetime="2019-01-25T13:33:15+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,78 +399,24 @@
       
         
           
-            <p>synchronized关键字在Java语言层面提供了同步功能。</p>
-<h1 id="synchronized同步的形式"><a href="#synchronized同步的形式" class="headerlink" title="synchronized同步的形式"></a>synchronized同步的形式</h1><p>Java中的任何对象都可以被锁。<br>有以下三种形式：</p>
-<ul>
-<li>对于普通同步方法，锁住的是当前实例对象</li>
-<li>对于静态同步方法，锁住的是当前类的Class对象</li>
-<li>对于同步方法块，锁住的是synchronized括号里配置的对象</li>
+            <h3 id="cookie技术"><a href="#cookie技术" class="headerlink" title="cookie技术"></a>cookie技术</h3><p>http协议是无状态的，服务器无法判断某一个简单http请求来自于谁。这里我们可以利用cookie技术，当一个用户第一次登录服务器时，http request中不带有cookie字段，服务器通过http response中set-cookie字段设置浏览器访问该网站的cookie，然后该用户第二次访问服务器时，由于服务器设置了cookie，浏览器会自动将关联该服务器的cookie中的内容添加在http request请求头中一并发给服务器，这时服务器通过cookie的内容就知道了这个请求来自于该用户。</p>
+<p>cookie本质上是一些键值对组成的表，它还包括了过期时间，路径和域。</p>
+<h3 id="session技术"><a href="#session技术" class="headerlink" title="session技术"></a>session技术</h3><p>服务器虽然可以简单的通过cookie技术识别用户，但是cookie本身安全性不好，容易被其他人读取。session技术是在服务端保存用户信息，而再向用户浏览器set-cookie时，设置一个sessionId，再次访问服务器时，通过sessionId来识别用户。</p>
+<h3 id="session与cookie的关系"><a href="#session与cookie的关系" class="headerlink" title="session与cookie的关系"></a>session与cookie的关系</h3><p>两者都用于解决http协议无状态的问题，cookie基于客户端，session基于服务端，同时session依赖于cookie。因此，当浏览器禁用cookie的时候，session也将随之失效。</p>
+<h3 id="session与cookie的生命周期"><a href="#session与cookie的生命周期" class="headerlink" title="session与cookie的生命周期"></a>session与cookie的生命周期</h3><h4 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h4><ul>
+<li>cookie在服务端返回http响应时可以设置有效时间，cookie在该时间范围内有效，过期即失效。cookie会持久化在硬盘上，即使浏览器关闭也可以再次读取，直至失效。</li>
+<li>服务端返回时未设置有效时间，则cookie在浏览器关闭后即失效。<h4 id="session"><a href="#session" class="headerlink" title="session"></a>session</h4></li>
+<li>创建：在服务端调用HttpServletRequest.getSession(true)时为该用户创建session（ps:java服务端）</li>
+<li>有效期：默认有效期30分钟，可以自行调整。</li>
+<li>失效：1、session超时失效。2、调用invalidate()方法。3、服务器关闭或重启，这里如果session做了持久化，服务器重启之后依然可以从持久化的记录中重建session。<h3 id="session原理简述（tomcat）"><a href="#session原理简述（tomcat）" class="headerlink" title="session原理简述（tomcat）"></a>session原理简述（tomcat）</h3>这是tomcat下session包源码结构：<br><img src="http://static.johnlw.cn/blog_tomcat_session.png" alt="这里写图片描述"><br>session本身是一个接口，是servlet中HttpSession接口的外观模式，阅读session的标准实现类StandardSession源码，我们可以发现本质上其通过ConcurrentHashMap来保存存在其中的各属性值，记录了创建时间和上次访问时间用于表征生命周期状态等<br><img src="http://static.johnlw.cn/blog_session_code1.png" alt="这里写图片描述"></li>
 </ul>
-<p>这三种形式在jvm里都是由管程来支撑的。<br>同步代码块在字节码层面插入了monitorenter和monitorexit指令，用于实现对管程的调用。<br>方法级的同步是隐式的，不需要在字节码中插入指令，它实现在方法调用和返回之中。JVM从方法常量池的方法表结构中的ACC_SYNCHRONIZED访问标志位来确定一个方法是否为同步方法。如果调用指令检查到方法为同步方法，则JVM要求当前执行线程必须先成功持有管程。</p>
-<h1 id="Java对象头"><a href="#Java对象头" class="headerlink" title="Java对象头"></a>Java对象头</h1><p>在hotspot虚拟机中，synchronized用的锁存在Java对象头里。非数组对象头分为两部分：</p>
-<ol>
-<li>Mark Word，存储对象自身的运行时数据，如hashcode,GC分代年龄，锁标志位等。</li>
-<li>存储指向方法去对象类型数据的指针</li>
-</ol>
-<p>ps:数组对象额外一部分用于存储数组的长度。</p>
-<p>在运行期间，Mark Word里存储的数据会随着锁标志位的变化而变化。<br>|锁状态|存储内容|锁标志位|<br>|—-|||<br>|无锁|对象hashcode，GC分代年龄，偏向锁标志位：0|01|<br>|偏向锁|ThreadID，Epoch，对象分代年龄，偏向锁标志位：1|01|<br>|轻量级锁|指向栈中锁记录的指针/|00|<br>|重量级锁|指向互斥量（重量级锁）的指针/|10|<br>|GC标记|空/|11|</p>
-<h1 id="JVM线程状态转化机制"><a href="#JVM线程状态转化机制" class="headerlink" title="JVM线程状态转化机制"></a>JVM线程状态转化机制</h1><p>线程阻塞/等待队列图：<br><img src="http://static.johnlw.cn/blog_thread_block_wait.jpg" alt="JVM协调结构图"></p>
-<p>工作原理：当多个线程同时请求某个管程时，管程会设置几种状态来区分和组织协调请求的线程</p>
-<ul>
-<li>Contention List:所有请求锁的线程首先添加至竞争队列</li>
-<li>Entry List:Contention List中有资格成为候选线程的添加至Entry List</li>
-<li>Wait Set:调用wait()方法阻塞的线程添加至wait set</li>
-<li>OnDeck:任何时候最多只能有一个线程正在竞争锁，即OnDeck</li>
-<li>Owner:获得锁的线程</li>
-<li>！Owner;释放锁的线程</li>
+<p>对于整个web服务器来说，需要一个session容器来对session进行管理，这个容器对应的接口就是Manager接口，其抽象实现类ManagerBase中实现了对session生命周期的管理（创建、计时、销毁），其容器也是ConcurrentHashMap，其key值通常为jsessionId<br><img src="http://static.johnlw.cn/blog_session_code2.png" alt="这里写图片描述"></p>
+<h3 id="负载均衡下session共享问题"><a href="#负载均衡下session共享问题" class="headerlink" title="负载均衡下session共享问题"></a>负载均衡下session共享问题</h3><ul>
+<li>session保持：通过session保持，LB进行请求转发的时候保证每个客户端固定地访问到集群的同一台服务器。显然，session保持并不能保证真正的负载均衡</li>
+<li>session复制：将每台服务器上的session信息复制给其他服务器，使得每台服务器都有一份session信息</li>
+<li>session共享：将session信息放在统一的地方统一访问，将session信息放在redis或Memcached这类KV数据库里</li>
 </ul>
-<p>具体过程：<br>Contention List:<br>当有新线程竞争管程时，先添加至Contention List。Contention List是一个LIFO队列，新线程通过CAS操作将队列头节点设置为自己，再将next引用指向之前的头结点。Owner线程从队列尾取元素。<br>Entry List:<br>Entry List 和Contention List逻辑上同属等待队列，因为Contention List会被多个线程并发访问，就涉及到等待或者阻塞，为了尽可能利用CPU时间，建立Entry List。Owner线程在unlock时会从Contention List中迁移线程至Entry List，并指定EntryList的head节点为OnDeck。Owner并不是直接将锁传递给OnDeck，而是将竞争锁的权利交给OnDeck，OnDeck需要重新竞争锁，也就是由OnDeck主动获取。正如前面所说，Owner线程会与其他线程并发访问Contention List，存在等待或者阻塞的情况，如果让Owner线程直接交给OnDeck锁，就有可能出现Owner线程阻塞在Contention List上而不能及时将锁交付，浪费CPU时间。<br>Wait Set:<br>如果Owner线程被wait方法阻塞，则转移到WaitSet队列，当在某个时刻被notify/notifyAll唤醒，则再次转移到EntryList。</p>
-<h1 id="自旋"><a href="#自旋" class="headerlink" title="自旋"></a>自旋</h1><p>在Contention List和Entry List中的线程均处于BLOCKED状态，Wait Set中的线程处于WAITING状态，所以直接进入等待队列会引起线程上下文切换。实际上，很多时候共享数据的锁定状态只会持续很短的时间，为了这段时间去阻塞和恢复线程并不值得。当发生竞争时，竞争线程在队列外自旋一段时间，在Owner线程释放锁之后，竞争线程可能立即得到锁，从而避免了线程阻塞带来的开销。</p>
-<h1 id="锁升级机制"><a href="#锁升级机制" class="headerlink" title="锁升级机制"></a>锁升级机制</h1><p>Java 1.6引入了锁升级机制，提高了synchronized的同步性能。锁一共有四种状态：无锁、偏向锁、轻量级锁、重量级锁，这几个状态随着竞争情况的越来越激烈而逐步升级。锁只能升级而不能降级。</p>
-<p>线程每次尝试竞争锁时，会首先在当前线程栈帧中建立一个锁记录（Lock Record），用于存储该对象Mark Word的拷贝（Displaced Mark Word）。</p>
-<h2 id="偏向锁"><a href="#偏向锁" class="headerlink" title="偏向锁"></a>偏向锁</h2><p>大多数情况下，锁不仅不存在多线程竞争，而且总是由同一线程多次获得，由此背景引入了偏向锁。</p>
-<h3 id="加锁"><a href="#加锁" class="headerlink" title="加锁"></a>加锁</h3><p>当一个对象Mark Word中的锁标志位为01（无锁/可偏向）时，</p>
-<ol>
-<li>当偏向锁标志位为0时，说明不是偏向锁，该对象管程未被任何线程获取，当前线程通过CAS操作尝试在对象Mark Word中记录当前线程ID，同时将偏向锁标志位置为1，当前线程即持有该对象的偏向锁。从此以后，持有偏向锁的线程进入该对象管程时，虚拟机将不再做任何同步操作。</li>
-<li>当偏向锁标志位为1时，说明该对象已经有所偏向，如果偏向线程ID并不是当前线程，则尝试用CAS操作在Mark Word中记录自己的线程ID，如果成功，则该对象重偏向至当前线程。<h3 id="解锁"><a href="#解锁" class="headerlink" title="解锁"></a>解锁</h3>如果重偏向失败，即已经出现竞争，偏向锁才会解锁。根据锁对象是否处于被锁定的状态，撤销偏向后对象要么重偏向，要么恢复到无锁状态，要么升级为轻量级锁–将锁标志位置为00。</li>
-</ol>
-<h2 id="轻量级锁"><a href="#轻量级锁" class="headerlink" title="轻量级锁"></a>轻量级锁</h2><h3 id="加锁-1"><a href="#加锁-1" class="headerlink" title="加锁"></a>加锁</h3><p>当偏向锁膨胀为轻量级锁后，线程再次竞争锁时，将使用CAS尝试将对象的Mark Word更新为指向Lock Record的指针，如果成功，则当前线程进入管程。如果失败，当前线程自旋获取锁。如果自旋获取锁失败，则竞争情况变得更加激烈了，锁膨胀为重量级锁，锁标志位置为10，同时当前线程进入阻塞态。</p>
-<h3 id="解锁-1"><a href="#解锁-1" class="headerlink" title="解锁"></a>解锁</h3><p>轻量级锁解锁时，会使用CAS操作尝试将Displaced Mark Word替换回对象头上，如果成功，则表示在执行同步代码期间没有竞争发生或者竞争线程自旋没有结束。如果失败，说明其他线程在同步期间竞争失败了，在释放锁的同时，需要唤醒阻塞线程。</p>
-<h2 id="重量级锁"><a href="#重量级锁" class="headerlink" title="重量级锁"></a>重量级锁</h2><p>重量级锁的加锁和解锁由状态转化机制协调。</p>
-<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><table>
-<thead>
-<tr>
-<th>锁</th>
-<th>背景</th>
-<th>优点</th>
-<th>缺点</th>
-<th>适用场景</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>偏向锁</td>
-<td>大多数情况下，锁不仅不存在多线程竞争，而且总是由同一个线程多次获得</td>
-<td>加锁和解锁过程没有额外的开销</td>
-<td>如果存在竞争，将带来额外的撤销开销</td>
-<td>竞争不激烈的情况</td>
-</tr>
-<tr>
-<td>轻量级锁</td>
-<td>在许多应用中，共享数据的锁定状态只会持续很短的一段时间</td>
-<td>竞争的线程不会阻塞，提高了程序的响应速度</td>
-<td>如果自旋竞争失败，会浪费CPU时间，还额外带来了CAS操作的开销（重量级锁没有CAS操作）</td>
-<td>同步块执行速度非常快的情况</td>
-</tr>
-<tr>
-<td>重量级锁</td>
-<td>竞争激烈情况下必须程序正确同步</td>
-<td>线程竞争不使用自旋，不会浪费CPU</td>
-<td>线程阻塞，用户态内核态的切换，线程上下文切换等开销</td>
-<td>竞争激烈，同步块执行时间长</td>
-</tr>
-</tbody>
-</table>
+<h3 id="cookie禁用问题"><a href="#cookie禁用问题" class="headerlink" title="cookie禁用问题"></a>cookie禁用问题</h3><p>可以用时URL重写，将sessionId附在url之后</p>
 
           
         
@@ -516,7 +462,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/18/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/20/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/18/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><span class="space">&hellip;</span><a class="page-number" href="/page/28/">28</a><a class="extend next" rel="next" href="/page/20/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -559,7 +505,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
