@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/30/JVM--垃圾回收/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/25/InnoDB引擎--存储结构与文件/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/03/30/JVM--垃圾回收/" class="post-title-link" itemprop="url">JVM--垃圾回收</a>
+                <a href="/2019/01/25/InnoDB引擎--存储结构与文件/" class="post-title-link" itemprop="url">InnoDB引擎--存储结构与文件</a>
               
             
           </h1>
@@ -347,24 +347,12 @@
                 
               
 
-              <time title="Created: 2018-03-30 10:48:01" itemprop="dateCreated datePublished" datetime="2018-03-30T10:48:01+08:00">2018-03-30</time>
+              <time title="Created: 2019-01-25 14:38:00 / Modified: 14:51:09" itemprop="dateCreated datePublished" datetime="2019-01-25T14:38:00+08:00">2019-01-25</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-01-25 14:19:15" itemprop="dateModified" datetime="2019-01-25T14:19:15+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,153 +387,45 @@
       
         
           
-            <h3 id="哪些内存应该被回收？"><a href="#哪些内存应该被回收？" class="headerlink" title="哪些内存应该被回收？"></a>哪些内存应该被回收？</h3><p>JVM垃圾回收主要针对堆区和方法区。在Java堆中，我们不再需要的对象就可以被回收了。例如：在一个方法中新生成了一个Integer对象作为局部变量，当方法结束后，该对象将不会再被使用，是被回收的对象。</p>
-<h3 id="如何确定对象可被回收？"><a href="#如何确定对象可被回收？" class="headerlink" title="如何确定对象可被回收？"></a>如何确定对象可被回收？</h3><h5 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h5><p>当没有引用指向某个对象时，可以认为该对象可被回收。</p>
-<p>在引用计数法中，每个对象都记录了指向它的引用的个数，当引用为0时即可被回收；但是引用计数法有个明显的缺陷就是它无法解决循环应用的问题。</p>
-<h5 id="可达性分析"><a href="#可达性分析" class="headerlink" title="可达性分析"></a>可达性分析</h5><p>可达性分析方法从一系列称为“GC Roots”的对象出发，向下搜索，搜索的路径形成引用链，最终构成一个有向连通图，如果某对象不在该图中，则认为该对象不可达，可以被回收。</p>
-<p>通常作为GC Roots的对象：</p>
+            <p>数据库是数据的集合，数据库管理系统（DBMS）是操作和管理数据库的应用程序。数据库应用主要有两类：OLAP（联机分析处理）和OLTP（联机事务处理）。<br>OLAP的主要特点是:</p>
 <ul>
-<li>虚拟机栈本地变量表中引用的对象</li>
-<li>方法区中类静态变量所引用的对象</li>
-<li>方法区中常量所引用的对象</li>
-<li>JNI本地栈中引用的对象</li>
+<li>实时性要求不高</li>
+<li>数据量大</li>
+<li>并发量小</li>
 </ul>
-<h5 id="引用分级"><a href="#引用分级" class="headerlink" title="引用分级"></a>引用分级</h5><p>对象是否可被回收，都是通过引用关系来确定的。在某些场景下，单一的引用定义不能很好的利用资源：对于某些既可以回收也可以不回收（非必需，如某些缓存对象）的对象，在内存充足的情况下，可以不回收，在内存不足的情况下，希望回收这些对象。为了充分利用资源，Java定义了四种引用级别：</p>
+<p>OLTP的主要特点是:</p>
 <ul>
-<li>强引用：直接赋值引用均为强引用</li>
-<li>软引用：用于描述非必需的对象，在内存充足时不回收，在将要OOM之前回收，对应SoftReference类。</li>
-<li>弱引用：用于描述非必需的对象，一旦指向该对象的强引用不存在了，GC发生时即被回收，对应WeakReference类。</li>
-<li>虚引用：不影响对象的生命周期，仅用于被回收时能收到系统通知。</li>
+<li>实时性要求高</li>
+<li>数据量小</li>
+<li>高并发</li>
+<li>要求满足ACID</li>
 </ul>
-<h5 id="方法区中类的回收"><a href="#方法区中类的回收" class="headerlink" title="方法区中类的回收"></a>方法区中类的回收</h5><p>满足以下条件的类可以被回收：</p>
+<h3 id="Mysql体系架构"><a href="#Mysql体系架构" class="headerlink" title="Mysql体系架构"></a>Mysql体系架构</h3><p>mysql是一种DBMS，其体系架构如下图所示：<br><img src="http://static.johnlw.cn/blog_mysql_arch.png" alt="这里写图片描述"><br>mysql中集成的是插件式的存储引擎，InnoDB引擎是其中之一。<strong>存储引擎基于表而不是数据库</strong>：同一个数据库中根据不同表的访问操作需求可以选择不同的存储引擎。</p>
+<h3 id="InnoDB引擎"><a href="#InnoDB引擎" class="headerlink" title="InnoDB引擎"></a>InnoDB引擎</h3><p><strong>InnoDB引擎主要面对OLTP类应用</strong>。 </p>
+<p>InnoDB引擎在mysql中处于文件和文件系统的上层，管理着对InnoDB引擎表的访问和更新。</p>
+<h4 id="InnoDB引擎逻辑存储结构"><a href="#InnoDB引擎逻辑存储结构" class="headerlink" title="InnoDB引擎逻辑存储结构"></a>InnoDB引擎逻辑存储结构</h4><p>数据需要在一定的数据结构和组织结构下才能进行有效的管理。InnoDB表中的每行数据是基于B+树存储的，其中B+树中的顺序依据是主键的顺序，称为索引组织表。B+树存储在数据文件中，在B+树之外，InnoDB对数据文件中数据的管理和组织定义一个新的逻辑结构如下图所示：<br><img src="http://static.johnlw.cn/blog_innodb_structure.png" alt="这里写图片描述"><br>所有的数据都被逻辑地存放在表空间中，对于整个数据库中的InnoDB表，可以共用一个表空间，也可以将表空间拆分为共享表空间和各个表私有的表空间。拆分后，私有表空间仅存储该表的数据、索引、和插入缓冲BitMap页，其他类的数据如回滚（undo）信息、系统事务信息等还是存储在共享表空间里。<br>共享表空间文件格式：<br><img src="http://static.johnlw.cn/blog_ibdata1_file.png" alt="这里写图片描述"><br>私有表空间文件格式：<br><img src="http://static.johnlw.cn/blog_ibdfile.png" alt="这里写图片描述"><br>表空间中的数据分类为各个段：数据段、索引段、回滚段等。为了 便于管理，在各个段中继续拆分为区，区再细化拆分为连续的页，<strong>页是InnoDB磁盘管理的最小单位</strong>（即InnoDB从磁盘读取和写入都是以页为单位进行的）。页中<strong>按关系表中的行</strong>来存储实际的关系数据。</p>
+<p>在InnoDB中，表的数据均存储在B+树的叶子节点上，数据也是索引的一部分，即聚集索引。</p>
+<p>InnoDB索引页的文件格式：<br><img src="http://static.johnlw.cn/blog_innodb_index.png" alt="这里写图片描述"></p>
+<p>先看FIL Header：<br><img src="http://static.johnlw.cn/blog_innodb_fil.png" alt="这里写图片描述"><br>FIL Header中包含了索引页作为文件的信息。存储了指向上个页和下个页的指针，即索引页之间是通过链表连接起来的；同时还存储了该页的LSN（Log Squence Number），用于支持CheckPoint。</p>
+<p>再看INDEX Header:<br><img src="http://static.johnlw.cn/blog_innodb_index_header.png" alt="这里写图片描述"><br>INDEX Header中包含了对于索引页作为索引的信息。存储了索引页中记录的数量，索引节点的类型（根节点、非叶结点、叶结点），页目录槽数（Page Directory）等信息。</p>
+<p>然后就是User Records行记录了，存储了B+树索引非叶节点数据和叶结点数据，从图中可以看出<strong>User Records在物理上并不有序，但是逻辑上是以单链表有序的，顺序为主键顺序</strong>。</p>
+<p>最后来看页目录（Page Directory）。User Records是以单链表组织的，一个页的大小是16K，最多可以存储近8000行数据，查询某一个行时需要顺序遍历所有行，引入Page Directory对User Records进行二分查找，提高页内数据查询效率，如下图所示：<br><img src="http://static.johnlw.cn/blog_innodb_page_directory.png" alt="这里写图片描述"></p>
+<p>最终，以表、段、区、页的逻辑结构为载体，构建出InnoDB表B+树的逻辑结构如下图：<br><img src="http://static.johnlw.cn/blog_innodb_b+tree.png" alt="这里写图片描述"></p>
+<h4 id="Mysql相关文件"><a href="#Mysql相关文件" class="headerlink" title="Mysql相关文件"></a>Mysql相关文件</h4><h6 id="参数文件"><a href="#参数文件" class="headerlink" title="参数文件"></a>参数文件</h6><p>mysql数据库的配置文件，包含了各类系统参数。</p>
+<h6 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h6><p>mysql中常见的日志文件：</p>
 <ul>
-<li>堆中没有该类的实例</li>
-<li>加载该类的ClassLoader已被回收</li>
-<li>该类对应的Class对象未被引用</li>
+<li>error log:记录了mysql启动、运行、关闭过程。</li>
+<li>binary log:记录了对mysql数据库执行更改（不包含查询）的所有操作。</li>
+<li>slow query log:记录执行超过指定时间值的SQL语句。</li>
+<li>query log:记录所有对mysql数据库请求的信息。<h6 id="表结构文件"><a href="#表结构文件" class="headerlink" title="表结构文件"></a>表结构文件</h6>无论选用什么存储引擎，mysql会对定义的表和视图生成（表名.frm）文件用以存储表和视图的结构定义。</li>
 </ul>
-<h3 id="如何回收？"><a href="#如何回收？" class="headerlink" title="如何回收？"></a>如何回收？</h3><h5 id="Mark-Sweep"><a href="#Mark-Sweep" class="headerlink" title="Mark-Sweep"></a>Mark-Sweep</h5><ul>
-<li>思路：先标记，再清理。标记可以通过可达性分析做到，清理时是原地清理。</li>
-<li>优缺点：原地清理后磁盘碎片多，生成大对象时容易再次触发GC<h5 id="Copying"><a href="#Copying" class="headerlink" title="Copying"></a>Copying</h5></li>
-<li>思路：使用内存时，每次仅使用一半，GC将存活的对象直接复制到另外一半，然后将原来的一半空间清除。</li>
-<li>优缺点：整体清除磁盘碎片少，简单高效；但是每次仅用一半内存，资源利用率低<h5 id="Mark-Compact"><a href="#Mark-Compact" class="headerlink" title="Mark-Compact"></a>Mark-Compact</h5></li>
-<li>思路：先标记，再整理。标记阶段与标记-清理算法一样，整理阶段时将存活的对象集中在一块，然后将剩下的内存清理。</li>
-<li>优缺点：整理阶段相对标记清理算法的清理阶段耗时</li>
+<p>以下为InnoDB引擎的文件：</p>
+<h6 id="表空间文件"><a href="#表空间文件" class="headerlink" title="表空间文件"></a>表空间文件</h6><ul>
+<li>共享表空间文件：ibdata1</li>
+<li>私有表空间文件：表名.ibd<h6 id="redo-log文件"><a href="#redo-log文件" class="headerlink" title="redo log文件"></a>redo log文件</h6>ib_logfile0 与 ib_logfile1，用于支持事务的持久性。</li>
 </ul>
-<table>
-<thead>
-<tr>
-<th>比较项</th>
-<th>mark-sweep</th>
-<th>copying</th>
-<th>mark-compact</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>速度</td>
-<td>中等</td>
-<td>最快</td>
-<td>最慢</td>
-</tr>
-<tr>
-<td>空间</td>
-<td>少，会积累碎片</td>
-<td>需要存活对象的两倍大小空间</td>
-<td>少，不积累碎片</td>
-</tr>
-<tr>
-<td>时间</td>
-<td>mark正比存活对象，sweep正比堆大小</td>
-<td>正比存活对象</td>
-<td>mark和compact都正比存活对象</td>
-</tr>
-<tr>
-<td>移动对象</td>
-<td>否</td>
-<td>是</td>
-<td>是</td>
-</tr>
-</tbody>
-</table>
-<h5 id="Generational-Collection"><a href="#Generational-Collection" class="headerlink" title="Generational Collection"></a>Generational Collection</h5><h6 id="分代"><a href="#分代" class="headerlink" title="分代"></a>分代</h6><p>主要是依据对象的存活周期将内存划分为几个部分，然后根据各个部分的对象存活特点针对性的使用GC算法进行GC。</p>
-<p>hotspot将Java堆划分为年轻代和老年代：</p>
-<table>
-<thead>
-<tr>
-<th>年代</th>
-<th>特点</th>
-<th>回收算法</th>
-<th>空间担保</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>年轻代</td>
-<td>朝生夕死，存活率低</td>
-<td>Copying</td>
-<td>老年代</td>
-</tr>
-<tr>
-<td>老年代</td>
-<td>存活率高</td>
-<td>mark-sweep/mark-compact</td>
-<td>无</td>
-</tr>
-</tbody>
-</table>
-<p>由于复制算法需要额外的内存空间，在年轻代中分了Eden和survivor空间（From与To），分代布局图如下：<br><img src="http://static.johnlw.cn/blog_gc_generation.png" alt="这里写图片描述"></p>
-<h6 id="晋升"><a href="#晋升" class="headerlink" title="晋升"></a>晋升</h6><p>1、给对象分配内存时，分配空间顺序为：栈、TLAB、Eden<br>2、大对象将直接在老年代中分配内存<br>3、在Young GC后，存活的对象年龄+1，同时它们和survivor0(survivor1)区的对象被复制到survivor1(survivor0)区，在以下三种情况下，将发生晋升：</p>
-<ul>
-<li>survivor1(survivo0)区空间不足</li>
-<li>对象的年龄到了一定程度（默认15岁）</li>
-<li>survivor空间中同年龄的对象占到了survivor空间的50% </li>
-</ul>
-<h6 id="空间担保"><a href="#空间担保" class="headerlink" title="空间担保"></a>空间担保</h6><p>在发生Young GC之前，虚拟机会检查老年代的最大可用连续空间是否大于新生代所有对象总空间，如果这个条件成立，最坏的情况下，年轻代全部晋升老年代，内存空间也够用。如果不成立，虚拟机在允许担保失败的情况下检查老年代空间是否大于历次新生代晋升时所需的平均空间，如果大于则先进行一次Young GC。如果不允许担保失败或者已经担保失败，将进行Full GC。</p>
-<h3 id="hotspot-GC实现"><a href="#hotspot-GC实现" class="headerlink" title="hotspot GC实现"></a>hotspot GC实现</h3><h5 id="定位存活对象"><a href="#定位存活对象" class="headerlink" title="定位存活对象"></a>定位存活对象</h5><p>hotspot定位存活对象基于可达性分析的结果。我们以虚拟机栈为GC Roots出发说明hotspot的可达性分析实现原理。</p>
-<p>在虚拟机栈上不仅有对象引用，还有各类操作符、方法返回信息等，从栈上出发寻找引用，首先要知道栈上哪些位置是对象引用，然后从这些引用出发，找到堆中的对象再向下搜索的时候，要知道对象数据中在哪些位置是字段引用，才能继续向下展开搜索。</p>
-<p>这里关键问题是，栈上的引用位置信息和对象内部的引用位置信息如何获取？</p>
-<p>一般可以通过引用自己打上tag的方式或者额外辅助信息的方式，hotspot采用了后者，引入了OopMap：在栈上，通过OopMap可以直接获知哪些位置上是引用，在对象中，通过OopMap可以直接获知哪些位置是字段引用。可以理解OopMap将内存地址与引用类型构建成了键值对的关系，通过读取OopMap就可以直接知道哪些内存地址上是引用，进而进行引用的下一步搜索。</p>
-<p>那么OopMap是谁生成的呢？</p>
-<p>在堆中的对象自己的OopMap，需要类加载器生成，类加载器持有对象的类型信息，可以获知对象在什么位置上是字段引用，从而为对象生成OopMap；在栈上的OopMap，需要解释器和编译器的支持，程序执行的时候，解释器和编译器知道在栈上或者寄存器里什么位置是引用类型。</p>
-<p>在OopMap的支持下，可达性分析的效率就大大提高了，到这一步就是引用图的遍历了。</p>
-<p>然而如果为栈上每条指令都生成OopMap的话，将耗费大量的空间和时间，虚拟机选定了一些特定的位置生成OopMap（基本上是以是否具备让程序长时间运行为基准选定的，对象图比较稳定），这些位置被称为safepoint：</p>
-<ul>
-<li>循环结束</li>
-<li>异常抛出点</li>
-<li>方法调用/返回处</li>
-</ul>
-<p>也就是说程序需要执行到safepoint，才能进行GC Roots枚举。</p>
-<p>在多线程环境下，GC与其他线程之前的配合关系是：</p>
-<ol>
-<li>对于发起GC时没有跑到safepoint的线程，GC需要等待。</li>
-<li>对于处于WAITING或者BLOCKED状态的线程，需要safe region（某个区域引用关系都不会变化，拓展版safepoint）的支持：进入safe region后才能GC，GC完成其需要的工作后线程才能出safe region。</li>
-</ol>
-<h5 id="定位对象中的一致性问题"><a href="#定位对象中的一致性问题" class="headerlink" title="定位对象中的一致性问题"></a>定位对象中的一致性问题</h5><p>垃圾回收必须与其他程序对某一时刻上的对象图保持一致性。<br>举个例子：如果有对象A、B、C，A独立，B引用了C，垃圾回收器由A扫描到B，此时其他程序将C赋给了A，那么垃圾回收器会认为C不可达，而实际上在其他程序的对象图里，C是可达的。<br>垃圾回收在确认对象图这一阶段，需要暂停其他程序执行，即Stop The World。</p>
-<p>解决了存活对象定位的问题，接下来就是如何回收的问题了。hotspot基于分代回收策略，针对不同的年代实现了不同的垃圾回收器。</p>
-<h5 id="hotspot垃圾回收器"><a href="#hotspot垃圾回收器" class="headerlink" title="hotspot垃圾回收器"></a>hotspot垃圾回收器</h5><p>hotspot垃圾回收器概览：<br><img src="http://static.johnlw.cn/blog_gc_collector.png" alt="这里写图片描述"></p>
-<p>hotspot垃圾回收器的演进过程可以说是<strong>由单线程到多线程、由多线程到可并发、由不可控到可控</strong>的发展过程，垃圾回收系统效率越来越高，越来越可靠，也越来越精细。</p>
-<h5 id="CMS"><a href="#CMS" class="headerlink" title="CMS"></a>CMS</h5><p>在CMS之前的垃圾回收器，都无法提供与其他程序并发运行，CMS带来了更低的停顿（STW）时间和并发执行的实现。</p>
-<p>那么，CMS是如何实现的呢？</p>
-<p>分析一下mark-sweep的过程，其中sweep的过程在确定了存活对象的情况下，可以独立运行完成，那这一部分的工作就可以拆分出来并发执行；另外，CMS是针对老年代的，老年代有什么特点？空间大、对象存活率高、一般程序执行过程中变动较小！那么在mark过程中如果直接一步到位将会比较慢，因为需要遍历整个老年代对象图。因此，CMS再次做了拆分，将标记阶段拆分为三个阶段：initial making,concurrent making,remaking。</p>
-<p>首先initial making阶段需要STW，然后标记GC Roots能直接关联的老年代对象，这个阶段很快就能完成（毕竟只有少数对象）；然后进入concurrent making，这个阶段并发执行，即此时仅在initial making获取的结果的基础上继续标记，其他程序继续执行；在concurrent making阶段，垃圾回收对象图和其他程序对象图会出现不一致的情况（比如有新的新生代的对象引用了老年代的对象、有对象晋升到了老年代等），此时需要再来一次STW，对对象图产生变动的地方进行重新标记—即remking。</p>
-<p>由此来看，CMS将mark-sweep过程做了更细化的拆分，尽可能将不需要在STW期间做的工作移出STW而并发执行，减少了STW的时间，提高了响应速度。</p>
-<p>CMS的缺点：</p>
-<ol>
-<li>CPU敏感：CMS的响应速度来源于并发，如果CPU只有少量的核心，将无法提供真正的并发性，反而会因为更多的线程切换而降低效率</li>
-<li>无法处理浮动垃圾：在remking以后就已经确定了本次Old GC会处理的垃圾，sweep阶段是并发执行的，可能会有新的对象晋升老年代，如果预留空间不足将触发SerialOld FullGC，将带来较长的停顿时间。对策是合理设置CMS启动阈值。</li>
-<li>碎片处理：CMS基于mark-sweep，随着运行时间的增加，碎片将越来越多，最后不得不触发FullGC进行整理。可以根据应用特点调整碎片整理的频率和时机。</li>
-</ol>
-<h3 id="G1"><a href="#G1" class="headerlink" title="G1"></a>G1</h3><p>相比于CMS在算法执行过程中做拆分，<strong>G1在堆内存的布局上做拆分</strong>：将原来的堆内存不再严格分为大块的Eden、survivor和Tenured，而是将整个堆拆分为一个个小的Region，如下图：<br><img src="http://static.johnlw.cn/blog_g1_1.png" alt="这里写图片描述"></p>
-<p>大致上，在G1下Young GC的工作为将存活的对象复制到另外的Region上并释放原空间；Old GC与CMS类似大致分为initial making,concurrent making,remaing,copying/cleanup几个阶段。</p>
-<p>G1收集器将堆拆分为Region来管理，不仅提供了并发、低停顿，而且：</p>
-<ul>
-<li>利于在Young/Old GC时使用copying算法，不会产生内存碎片</li>
-<li>利于评估各个垃圾块的价值，在后台维护一个优先列表，根据用户允许的停顿时间，优先收集价值最大的垃圾块，使停顿可控。</li>
-</ul>
-<p>以下为Oracle官网上的G1垃圾回收逻辑图：</p>
-<p>在G1下Young GC的逻辑图如下：<br><img src="http://static.johnlw.cn/blog_g1_2.png" alt="这里写图片描述"><br><img src="http://static.johnlw.cn/blog_g1_3.png" alt="这里写图片描述"><br><img src="http://static.johnlw.cn/blog_g1_4.png" alt="这里写图片描述"><br>Old GC 逻辑图：<br><img src="http://static.johnlw.cn/blog_g1_5.png" alt="这里写图片描述"><br>注：G1的初识标记阶段会伴随着一次Young GC。<br><img src="http://static.johnlw.cn/blog_g1_6.png" alt="这里写图片描述"><br>注：并发标记阶段如果发现有Region中没有存活对象，则直接将该Region清理掉<br><img src="http://static.johnlw.cn/blog_g1_7.png" alt="这里写图片描述"><br><img src="http://static.johnlw.cn/blog_g1_8.png" alt="这里写图片描述"><br><img src="http://static.johnlw.cn/blog_g1_9.png" alt="这里写图片描述"></p>
 <blockquote>
-<p><a href="http://rednaxelafx.iteye.com/blog/1044951" target="_blank" rel="noopener">http://rednaxelafx.iteye.com/blog/1044951</a><br><a href="http://hllvm.group.iteye.com/group/topic/38223#" target="_blank" rel="noopener">http://hllvm.group.iteye.com/group/topic/38223#</a> post-248757<br>《深入理解Java虚拟机》<br>《hotspot》实战<br><a href="https://www.jianshu.com/p/2a1b2f17d3e4" target="_blank" rel="noopener">https://www.jianshu.com/p/2a1b2f17d3e4</a><br><a href="http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html" target="_blank" rel="noopener">http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html</a><br><a href="https://blog.csdn.net/qqqqq1993qqqqq/article/details/71882733" target="_blank" rel="noopener">https://blog.csdn.net/qqqqq1993qqqqq/article/details/71882733</a><br><a href="https://blog.csdn.net/fei33423/article/details/70941939" target="_blank" rel="noopener">https://blog.csdn.net/fei33423/article/details/70941939</a></p>
+<p>MySQL技术内幕 InnoDB存储引擎 第2版<br><a href="https://blog.jcole.us/innodb/" target="_blank" rel="noopener">https://blog.jcole.us/innodb/</a><br>mysql 官方手册</p>
 </blockquote>
 
           
@@ -592,7 +472,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -635,7 +515,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">25</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>

@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在 深入理解JVM–JVM类加载机制（上） 中，只写到Java类加载机制的加载阶段，在类的生命周期中，还有后面的验证、准备、解析、初始化、使用和卸载这些阶段。 验证验证阶段的主要工作是为了确保Class文件流中包含的内容符合虚拟机的要求，而且不会威胁到虚拟机自身的安全，主要有以下几个方面：  文件格式验证：验证Class文件格式 元数据验证：Java语言级语义分析 字节码验证：验证方法体不会危害虚">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM--JVM类加载机制（下）">
+<meta property="og:url" content="http://yoursite.com/2018/04/18/JVM--JVM类加载机制（下）/index.html">
+<meta property="og:site_name" content="John What">
+<meta property="og:description" content="在 深入理解JVM–JVM类加载机制（上） 中，只写到Java类加载机制的加载阶段，在类的生命周期中，还有后面的验证、准备、解析、初始化、使用和卸载这些阶段。 验证验证阶段的主要工作是为了确保Class文件流中包含的内容符合虚拟机的要求，而且不会威胁到虚拟机自身的安全，主要有以下几个方面：  文件格式验证：验证Class文件格式 元数据验证：Java语言级语义分析 字节码验证：验证方法体不会危害虚">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-01-25T06:35:40.088Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM--JVM类加载机制（下）">
+<meta name="twitter:description" content="在 深入理解JVM–JVM类加载机制（上） 中，只写到Java类加载机制的加载阶段，在类的生命周期中，还有后面的验证、准备、解析、初始化、使用和卸载这些阶段。 验证验证阶段的主要工作是为了确保Class文件流中包含的内容符合虚拟机的要求，而且不会威胁到虚拟机自身的安全，主要有以下几个方面：  文件格式验证：验证Class文件格式 元数据验证：Java语言级语义分析 字节码验证：验证方法体不会危害虚">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/18/JVM--JVM类加载机制（下）/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>JVM--JVM类加载机制（下） | John What</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">John What</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/18/JVM--JVM类加载机制（下）/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM--JVM类加载机制（下）
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2018-04-18 16:56:53" itemprop="dateCreated datePublished" datetime="2018-04-18T16:56:53+08:00">2018-04-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Edited on</span>
+                
+                <time title="Modified: 2019-01-25 14:35:40" itemprop="dateModified" datetime="2019-01-25T14:35:40+08:00">2019-01-25</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在 深入理解JVM–JVM类加载机制（上） 中，只写到Java类加载机制的加载阶段，在类的生命周期中，还有后面的验证、准备、解析、初始化、使用和卸载这些阶段。</p>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>验证阶段的主要工作是为了确保Class文件流中包含的内容符合虚拟机的要求，而且不会威胁到虚拟机自身的安全，主要有以下几个方面：</p>
+<ul>
+<li>文件格式验证：验证Class文件格式</li>
+<li>元数据验证：Java语言级语义分析</li>
+<li>字节码验证：验证方法体不会危害虚拟机自身</li>
+<li>符号引用验证：确保符号引用是可匹配的</li>
+</ul>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>准备阶段主要为<strong>类变量</strong> 在<strong>方法区</strong>中分配内存并设置其<strong>初始值</strong>，此时的初始值为各种变量的默认零值。</p>
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>解析阶段主要是将Class文件中常量池内的符号引用替换为直接引用。</p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><h5 id="初始化触发条件"><a href="#初始化触发条件" class="headerlink" title="初始化触发条件"></a>初始化触发条件</h5><p>类的初始化是类加载过程的最后一步，<strong>在且仅在</strong>以下情况下，将触发类的初始化，它们是：</p>
+<ol>
+<li>遇到new、getstatic、putstatic、invokestatic这4条字节码指令时，如果类没有初始化，则必须先初始化类。反映在Java源代码中即：使用new新建对象，访问类静态变量和静态方法时</li>
+<li>使用反射调用某个类时</li>
+<li>子类初始化时父类尚未初始化，触发其父类的初始化</li>
+<li>含有main方法的类优先初始化</li>
+<li>使用MethodHandle调用类的静态方法时，如果类没有初始化，则触发其初始化</li>
+</ol>
+<p>以上5种情况统称为对类的<strong>主动引用</strong>，对类的主动引用将触发类的初始化。其余情况对类的引用称为对类的被动引用。<br>以下被动引用不会触发类的初始化：</p>
+<ol>
+<li>通过子类引用父类的静态字段，不会触发子类的初始化</li>
+<li>通过数组定义引用类类型，不会触发引用类的初始化</li>
+<li>对常量型静态字段的引用不会触发类的初始化，因为常量入了常量池，对该字段的引用变为对常量池中该字段的引用</li>
+</ol>
+<h5 id="初始化主要工作"><a href="#初始化主要工作" class="headerlink" title="初始化主要工作"></a>初始化主要工作</h5><p>这一步的主要工作为<strong>生成并执行&lt;clinit&gt;()方法</strong>。</p>
+<h6 id="生成"><a href="#生成" class="headerlink" title="生成"></a>生成</h6><p>&lt;clinit&gt;()方法由编译器收集类中所有<strong>类变量的赋值动作和静态语句块</strong>合并而成，其顺序即类变量和静态语句块在Java源文件中出现的顺序。静态语句块中的代码可以提前赋值给其后面的类变量，但是提前不能访问。</p>
+<h6 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h6><p>初始化子类前会初始化父类。虚拟机会优先执行父类的&lt;clinit&gt;()方法，再执行子类的&lt;clinit&gt;()方法。</p>
+<h3 id="实例化"><a href="#实例化" class="headerlink" title="实例化"></a>实例化</h3><p>初始化阶段完成后，就是类的使用了，如果使用创建了类的实例对象，就涉及到类的实例化了。</p>
+<h5 id="实例化方式"><a href="#实例化方式" class="headerlink" title="实例化方式"></a>实例化方式</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">方式</th>
+<th style="text-align:center">是否调用构造函数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">new关键字</td>
+<td style="text-align:center">是</td>
+</tr>
+<tr>
+<td style="text-align:center">Constructor类的newInstance方法</td>
+<td style="text-align:center">是</td>
+</tr>
+<tr>
+<td style="text-align:center">clone方法</td>
+<td style="text-align:center">否</td>
+</tr>
+<tr>
+<td style="text-align:center">反序列化</td>
+<td style="text-align:center">否</td>
+</tr>
+</tbody>
+</table>
+<p>PS：Class类的newInstance方法是Constructor类的newInstance方法支撑的。</p>
+<p>在调用构造函数来实例化对象的过程中，满足类初始化的触发条件，将会触发类的初始化，再进行实例化。</p>
+<h5 id="实例化过程"><a href="#实例化过程" class="headerlink" title="实例化过程"></a>实例化过程</h5><p>注：静态变量和静态代码块的初始化在类的初始化过程已经执行了，这里将不再赘述。</p>
+<p>对象的实例化操作在字节码层面分为两步：1、使用new关键字在堆上分配内存，创建对象。2、执行&lt;init&gt;()方法进行实例变量等的初始化工作。<br>我们定义一个Father类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class Father &#123;</span><br><span class="line">	public Father()&#123;</span><br><span class="line">		System.out.println(&quot;no param&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public Father(String s)&#123;</span><br><span class="line">		System.out.println(&quot;param s&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Father f = new Father();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其对应字节码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">// class version 51.0 (51)</span><br><span class="line">// access flags 0x21</span><br><span class="line">public class cn/john/test/Father &#123;</span><br><span class="line"></span><br><span class="line">  // compiled from: Father.java</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  //对应无参构造函数Father()</span><br><span class="line">  public &lt;init&gt;()V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 31 L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    //Father继承自Object，优先调用Object的&lt;init&gt;方法</span><br><span class="line">    INVOKESPECIAL java/lang/Object.&lt;init&gt; ()V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 32 L1</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    //再执行Father()中的剩余初始化逻辑</span><br><span class="line">    LDC &quot;no param&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 33 L2</span><br><span class="line">    RETURN</span><br><span class="line">   L3</span><br><span class="line">    LOCALVARIABLE this Lcn/john/test/Father; L0 L3 0</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 1</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  //对应有参构造函数Father(String s)</span><br><span class="line">  public &lt;init&gt;(Ljava/lang/String;)V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 35 L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    INVOKESPECIAL java/lang/Object.&lt;init&gt; ()V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 36 L1</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    LDC &quot;param s&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 37 L2</span><br><span class="line">    RETURN</span><br><span class="line">   L3</span><br><span class="line">    LOCALVARIABLE this Lcn/john/test/Father; L0 L3 0</span><br><span class="line">    LOCALVARIABLE s Ljava/lang/String; L0 L3 1</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line"></span><br><span class="line">  // access flags 0x9</span><br><span class="line">  public static main([Ljava/lang/String;)V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 40 L0</span><br><span class="line">    //新建对象，首先通过NEW关键字新建Father对象</span><br><span class="line">    NEW cn/john/test/Father</span><br><span class="line">    DUP</span><br><span class="line">    //调用Father类的构造函数进行初始化工作</span><br><span class="line">    INVOKESPECIAL cn/john/test/Father.&lt;init&gt; ()V</span><br><span class="line">    ASTORE 1</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 41 L1</span><br><span class="line">    RETURN</span><br><span class="line">   L2</span><br><span class="line">    LOCALVARIABLE args [Ljava/lang/String; L0 L2 0</span><br><span class="line">    LOCALVARIABLE f Lcn/john/test/Father; L1 L2 1</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由此我们可知，调用Father的构造函数新建Father类的实例，会先通过NEW关键字分配内存新建一个对象，然后优先调用Object的&lt;init&gt;()方法<strong>进行初始化工作</strong>（<strong>不是实例化一个父类</strong>），再执行构造函数剩下的逻辑，相当于将<strong>直接父类的初始化逻辑插入到子类的初始化逻辑之前</strong>。</p>
+<p>再来看Son类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Son extends Father&#123;</span><br><span class="line">	private String name = new String(&quot;son&quot;);</span><br><span class="line">	&#123;</span><br><span class="line">		System.out.println(&quot;construct block&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public Son()&#123;</span><br><span class="line">		System.out.println(&quot;son no param&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public Son(String s)&#123;</span><br><span class="line">		System.out.println(&quot;son param s&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Son s = new Son();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其对应的字节码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">// class version 51.0 (51)</span><br><span class="line">// access flags 0x21</span><br><span class="line">public class cn/john/test/Son extends cn/john/test/Father  &#123;</span><br><span class="line"></span><br><span class="line">  // compiled from: Son.java</span><br><span class="line"></span><br><span class="line">  // access flags 0x2</span><br><span class="line">  private Ljava/lang/String; name</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  //对应无参构造器</span><br><span class="line">  public &lt;init&gt;()V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 38 L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    //优先调用父类初始化方法&lt;init&gt;</span><br><span class="line">    INVOKESPECIAL cn/john/test/Father.&lt;init&gt; ()V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 32 L1</span><br><span class="line">    ALOAD 0</span><br><span class="line">    NEW java/lang/String</span><br><span class="line">    DUP</span><br><span class="line">    //初始化实例变量</span><br><span class="line">    LDC &quot;son&quot;</span><br><span class="line">    INVOKESPECIAL java/lang/String.&lt;init&gt; (Ljava/lang/String;)V</span><br><span class="line">    PUTFIELD cn/john/test/Son.name : Ljava/lang/String;</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 35 L2</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    //调用构造代码块</span><br><span class="line">    LDC &quot;construct block&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L3</span><br><span class="line">    LINENUMBER 39 L3</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    //执行构造函数逻辑</span><br><span class="line">    LDC &quot;son no param&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L4</span><br><span class="line">    LINENUMBER 40 L4</span><br><span class="line">    RETURN</span><br><span class="line">   L5</span><br><span class="line">    LOCALVARIABLE this Lcn/john/test/Son; L0 L5 0</span><br><span class="line">    MAXSTACK = 4</span><br><span class="line">    MAXLOCALS = 1</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  //对应有参构造函数</span><br><span class="line">  public &lt;init&gt;(Ljava/lang/String;)V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 42 L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    //为什么这里调用的是父类无参构造方法&lt;init&gt;，下文再作说明</span><br><span class="line">    INVOKESPECIAL cn/john/test/Father.&lt;init&gt; ()V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 32 L1</span><br><span class="line">    ALOAD 0</span><br><span class="line">    NEW java/lang/String</span><br><span class="line">    DUP</span><br><span class="line">    LDC &quot;son&quot;</span><br><span class="line">    INVOKESPECIAL java/lang/String.&lt;init&gt; (Ljava/lang/String;)V</span><br><span class="line">    PUTFIELD cn/john/test/Son.name : Ljava/lang/String;</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 35 L2</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    LDC &quot;construct block&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L3</span><br><span class="line">    LINENUMBER 43 L3</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    LDC &quot;son param s&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L4</span><br><span class="line">    LINENUMBER 44 L4</span><br><span class="line">    RETURN</span><br><span class="line">   L5</span><br><span class="line">    LOCALVARIABLE this Lcn/john/test/Son; L0 L5 0</span><br><span class="line">    LOCALVARIABLE s Ljava/lang/String; L0 L5 1</span><br><span class="line">    MAXSTACK = 4</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line"></span><br><span class="line">  // access flags 0x9</span><br><span class="line">  public static main([Ljava/lang/String;)V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 48 L0</span><br><span class="line">    NEW cn/john/test/Son</span><br><span class="line">    DUP</span><br><span class="line">    INVOKESPECIAL cn/john/test/Son.&lt;init&gt; ()V</span><br><span class="line">    ASTORE 1</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 49 L1</span><br><span class="line">    RETURN</span><br><span class="line">   L2</span><br><span class="line">    LOCALVARIABLE args [Ljava/lang/String; L0 L2 0</span><br><span class="line">    LOCALVARIABLE s Lcn/john/test/Son; L1 L2 1</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看过这两个例子，可见实例化的过程实际上分两步：</p>
+<ol>
+<li>new分配内存创建对象</li>
+<li>执行对象的初始化方法（即构造方法）</li>
+</ol>
+<p>这里执行对象的初始化方法顺序为：先执行父类的构造方法，再执行本类的构造代码块，再执行本类的构造方法。</p>
+<p>至此，在通过构造函数实例化对象过程中，实际上按照顺序发生了如下操作：</p>
+<ol>
+<li>父类静态变量的初始化与静态代码块的执行（按书写顺序）</li>
+<li>子类静态变量的初始化与静态代码块的执行（按书写顺序）</li>
+<li>父类实例变量初始化</li>
+<li>父类构造代码块执行</li>
+<li>父类相应构造方法执行</li>
+<li>子类实例变量初始化</li>
+<li>子类构造代码块执行</li>
+<li>子类相应构造方法执行</li>
+</ol>
+<p>其中1~2为类加载过程中的类初始化，3~8为实例化过程中的初始化。</p>
+<h5 id="构造代码块，this与super"><a href="#构造代码块，this与super" class="headerlink" title="构造代码块，this与super"></a>构造代码块，this与super</h5><p>构造代码块存在的意义是抽取了类中多个构造函数的公共部分或需要提前执行初始化的部分<strong>优先执行</strong>，更加优雅，实际上跟将构造代码块分散到各个构造函数的<strong>最前部分</strong>是一致的，从字节码的结果可以看到编译器实际上也是这么做的。</p>
+<p>this关键字为在类的构造函数之间互相调用提供了条件，同样是更加优雅的书写构造函数的方式。注意在构造代码块和this同时存在的情况下构造代码块只会执行一次，同时this调用必须位于使用它的构造函数的第一行。</p>
+<p>super关键字可以调用父类构造器。上文分析字节码时可以看到子类在初始化过程中总是优先调用父类的初始化方法，这里可以看成子类的构造函数在第一行加入了super()，调用了父类的无参构造器。当然，也可以指定调用有参构造器super(Type …args)，只是在没有写明的情况下，编译器默认调用的是父类的无参构造器。</p>
+<p>最后，类的生命周期中卸载问题，就是GC的事了。</p>
+<blockquote>
+<p>深入理解Java虚拟机</p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/17/JVM--JVM类加载机制（上）/" rel="next" title="JVM--JVM类加载机制（上）">
+                <i class="fa fa-chevron-left"></i> JVM--JVM类加载机制（上）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/23/JVM--解析、分派、重载与重写/" rel="prev" title="JVM--解析、分派、重载与重写">
+                JVM--解析、分派、重载与重写 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#验证"><span class="nav-number">1.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备"><span class="nav-number">2.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析"><span class="nav-number">3.</span> <span class="nav-text">解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化"><span class="nav-number">4.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#初始化触发条件"><span class="nav-number">4.0.1.</span> <span class="nav-text">初始化触发条件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#初始化主要工作"><span class="nav-number">4.0.2.</span> <span class="nav-text">初始化主要工作</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#生成"><span class="nav-number">4.0.2.1.</span> <span class="nav-text">生成</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#执行"><span class="nav-number">4.0.2.2.</span> <span class="nav-text">执行</span></a></li></ol></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#实例化"><span class="nav-number">5.</span> <span class="nav-text">实例化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#实例化方式"><span class="nav-number">5.0.1.</span> <span class="nav-text">实例化方式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实例化过程"><span class="nav-number">5.0.2.</span> <span class="nav-text">实例化过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#构造代码块，this与super"><span class="nav-number">5.0.3.</span> <span class="nav-text">构造代码块，this与super</span></a></li></ol></li></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

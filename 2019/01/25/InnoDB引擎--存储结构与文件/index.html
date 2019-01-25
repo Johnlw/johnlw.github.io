@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=6.7.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.7.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="数据库是数据的集合，数据库管理系统（DBMS）是操作和管理数据库的应用程序。数据库应用主要有两类：OLAP（联机分析处理）和OLTP（联机事务处理）。OLAP的主要特点是:  实时性要求不高 数据量大 并发量小  OLTP的主要特点是:  实时性要求高 数据量小 高并发 要求满足ACID  Mysql体系架构mysql是一种DBMS，其体系架构如下图所示：mysql中集成的是插件式的存储引擎，In">
+<meta property="og:type" content="article">
+<meta property="og:title" content="InnoDB引擎--存储结构与文件">
+<meta property="og:url" content="http://yoursite.com/2019/01/25/InnoDB引擎--存储结构与文件/index.html">
+<meta property="og:site_name" content="John What">
+<meta property="og:description" content="数据库是数据的集合，数据库管理系统（DBMS）是操作和管理数据库的应用程序。数据库应用主要有两类：OLAP（联机分析处理）和OLTP（联机事务处理）。OLAP的主要特点是:  实时性要求不高 数据量大 并发量小  OLTP的主要特点是:  实时性要求高 数据量小 高并发 要求满足ACID  Mysql体系架构mysql是一种DBMS，其体系架构如下图所示：mysql中集成的是插件式的存储引擎，In">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://static.johnlw.cn/blog_mysql_arch.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_innodb_structure.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_ibdata1_file.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_ibdfile.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_innodb_index.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_innodb_fil.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_innodb_index_header.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_innodb_page_directory.png">
+<meta property="og:image" content="http://static.johnlw.cn/blog_innodb_b+tree.png">
+<meta property="og:updated_time" content="2019-01-25T06:51:09.939Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="InnoDB引擎--存储结构与文件">
+<meta name="twitter:description" content="数据库是数据的集合，数据库管理系统（DBMS）是操作和管理数据库的应用程序。数据库应用主要有两类：OLAP（联机分析处理）和OLTP（联机事务处理）。OLAP的主要特点是:  实时性要求不高 数据量大 并发量小  OLTP的主要特点是:  实时性要求高 数据量小 高并发 要求满足ACID  Mysql体系架构mysql是一种DBMS，其体系架构如下图所示：mysql中集成的是插件式的存储引擎，In">
+<meta name="twitter:image" content="http://static.johnlw.cn/blog_mysql_arch.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/25/InnoDB引擎--存储结构与文件/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>InnoDB引擎--存储结构与文件 | John What</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">John What</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="Toggle navigation bar">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/25/InnoDB引擎--存储结构与文件/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="John What">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">InnoDB引擎--存储结构与文件
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+
+              
+                
+              
+
+              <time title="Created: 2019-01-25 14:38:00 / Modified: 14:51:09" itemprop="dateCreated datePublished" datetime="2019-01-25T14:38:00+08:00">2019-01-25</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>数据库是数据的集合，数据库管理系统（DBMS）是操作和管理数据库的应用程序。数据库应用主要有两类：OLAP（联机分析处理）和OLTP（联机事务处理）。<br>OLAP的主要特点是:</p>
+<ul>
+<li>实时性要求不高</li>
+<li>数据量大</li>
+<li>并发量小</li>
+</ul>
+<p>OLTP的主要特点是:</p>
+<ul>
+<li>实时性要求高</li>
+<li>数据量小</li>
+<li>高并发</li>
+<li>要求满足ACID</li>
+</ul>
+<h3 id="Mysql体系架构"><a href="#Mysql体系架构" class="headerlink" title="Mysql体系架构"></a>Mysql体系架构</h3><p>mysql是一种DBMS，其体系架构如下图所示：<br><img src="http://static.johnlw.cn/blog_mysql_arch.png" alt="这里写图片描述"><br>mysql中集成的是插件式的存储引擎，InnoDB引擎是其中之一。<strong>存储引擎基于表而不是数据库</strong>：同一个数据库中根据不同表的访问操作需求可以选择不同的存储引擎。</p>
+<h3 id="InnoDB引擎"><a href="#InnoDB引擎" class="headerlink" title="InnoDB引擎"></a>InnoDB引擎</h3><p><strong>InnoDB引擎主要面对OLTP类应用</strong>。 </p>
+<p>InnoDB引擎在mysql中处于文件和文件系统的上层，管理着对InnoDB引擎表的访问和更新。</p>
+<h4 id="InnoDB引擎逻辑存储结构"><a href="#InnoDB引擎逻辑存储结构" class="headerlink" title="InnoDB引擎逻辑存储结构"></a>InnoDB引擎逻辑存储结构</h4><p>数据需要在一定的数据结构和组织结构下才能进行有效的管理。InnoDB表中的每行数据是基于B+树存储的，其中B+树中的顺序依据是主键的顺序，称为索引组织表。B+树存储在数据文件中，在B+树之外，InnoDB对数据文件中数据的管理和组织定义一个新的逻辑结构如下图所示：<br><img src="http://static.johnlw.cn/blog_innodb_structure.png" alt="这里写图片描述"><br>所有的数据都被逻辑地存放在表空间中，对于整个数据库中的InnoDB表，可以共用一个表空间，也可以将表空间拆分为共享表空间和各个表私有的表空间。拆分后，私有表空间仅存储该表的数据、索引、和插入缓冲BitMap页，其他类的数据如回滚（undo）信息、系统事务信息等还是存储在共享表空间里。<br>共享表空间文件格式：<br><img src="http://static.johnlw.cn/blog_ibdata1_file.png" alt="这里写图片描述"><br>私有表空间文件格式：<br><img src="http://static.johnlw.cn/blog_ibdfile.png" alt="这里写图片描述"><br>表空间中的数据分类为各个段：数据段、索引段、回滚段等。为了 便于管理，在各个段中继续拆分为区，区再细化拆分为连续的页，<strong>页是InnoDB磁盘管理的最小单位</strong>（即InnoDB从磁盘读取和写入都是以页为单位进行的）。页中<strong>按关系表中的行</strong>来存储实际的关系数据。</p>
+<p>在InnoDB中，表的数据均存储在B+树的叶子节点上，数据也是索引的一部分，即聚集索引。</p>
+<p>InnoDB索引页的文件格式：<br><img src="http://static.johnlw.cn/blog_innodb_index.png" alt="这里写图片描述"></p>
+<p>先看FIL Header：<br><img src="http://static.johnlw.cn/blog_innodb_fil.png" alt="这里写图片描述"><br>FIL Header中包含了索引页作为文件的信息。存储了指向上个页和下个页的指针，即索引页之间是通过链表连接起来的；同时还存储了该页的LSN（Log Squence Number），用于支持CheckPoint。</p>
+<p>再看INDEX Header:<br><img src="http://static.johnlw.cn/blog_innodb_index_header.png" alt="这里写图片描述"><br>INDEX Header中包含了对于索引页作为索引的信息。存储了索引页中记录的数量，索引节点的类型（根节点、非叶结点、叶结点），页目录槽数（Page Directory）等信息。</p>
+<p>然后就是User Records行记录了，存储了B+树索引非叶节点数据和叶结点数据，从图中可以看出<strong>User Records在物理上并不有序，但是逻辑上是以单链表有序的，顺序为主键顺序</strong>。</p>
+<p>最后来看页目录（Page Directory）。User Records是以单链表组织的，一个页的大小是16K，最多可以存储近8000行数据，查询某一个行时需要顺序遍历所有行，引入Page Directory对User Records进行二分查找，提高页内数据查询效率，如下图所示：<br><img src="http://static.johnlw.cn/blog_innodb_page_directory.png" alt="这里写图片描述"></p>
+<p>最终，以表、段、区、页的逻辑结构为载体，构建出InnoDB表B+树的逻辑结构如下图：<br><img src="http://static.johnlw.cn/blog_innodb_b+tree.png" alt="这里写图片描述"></p>
+<h4 id="Mysql相关文件"><a href="#Mysql相关文件" class="headerlink" title="Mysql相关文件"></a>Mysql相关文件</h4><h6 id="参数文件"><a href="#参数文件" class="headerlink" title="参数文件"></a>参数文件</h6><p>mysql数据库的配置文件，包含了各类系统参数。</p>
+<h6 id="日志文件"><a href="#日志文件" class="headerlink" title="日志文件"></a>日志文件</h6><p>mysql中常见的日志文件：</p>
+<ul>
+<li>error log:记录了mysql启动、运行、关闭过程。</li>
+<li>binary log:记录了对mysql数据库执行更改（不包含查询）的所有操作。</li>
+<li>slow query log:记录执行超过指定时间值的SQL语句。</li>
+<li>query log:记录所有对mysql数据库请求的信息。<h6 id="表结构文件"><a href="#表结构文件" class="headerlink" title="表结构文件"></a>表结构文件</h6>无论选用什么存储引擎，mysql会对定义的表和视图生成（表名.frm）文件用以存储表和视图的结构定义。</li>
+</ul>
+<p>以下为InnoDB引擎的文件：</p>
+<h6 id="表空间文件"><a href="#表空间文件" class="headerlink" title="表空间文件"></a>表空间文件</h6><ul>
+<li>共享表空间文件：ibdata1</li>
+<li>私有表空间文件：表名.ibd<h6 id="redo-log文件"><a href="#redo-log文件" class="headerlink" title="redo log文件"></a>redo log文件</h6>ib_logfile0 与 ib_logfile1，用于支持事务的持久性。</li>
+</ul>
+<blockquote>
+<p>MySQL技术内幕 InnoDB存储引擎 第2版<br><a href="https://blog.jcole.us/innodb/" target="_blank" rel="noopener">https://blog.jcole.us/innodb/</a><br>mysql 官方手册</p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/03/InnoDB引擎--事务隔离性/" rel="next" title="InnoDB引擎--事务隔离性">
+                <i class="fa fa-chevron-left"></i> InnoDB引擎--事务隔离性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">John</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">25</span>
+                    <span class="site-state-item-name">posts</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql体系架构"><span class="nav-number">1.</span> <span class="nav-text">Mysql体系架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB引擎"><span class="nav-number">2.</span> <span class="nav-text">InnoDB引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#InnoDB引擎逻辑存储结构"><span class="nav-number">2.1.</span> <span class="nav-text">InnoDB引擎逻辑存储结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mysql相关文件"><span class="nav-number">2.2.</span> <span class="nav-text">Mysql相关文件</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#参数文件"><span class="nav-number">2.2.0.1.</span> <span class="nav-text">参数文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#日志文件"><span class="nav-number">2.2.0.2.</span> <span class="nav-text">日志文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#表结构文件"><span class="nav-number">2.2.0.3.</span> <span class="nav-text">表结构文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#表空间文件"><span class="nav-number">2.2.0.4.</span> <span class="nav-text">表空间文件</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#redo-log文件"><span class="nav-number">2.2.0.5.</span> <span class="nav-text">redo log文件</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=6.7.0"></script>
+
+  <script src="/js/src/motion.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=6.7.0"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
+<script src="/js/src/post-details.js?v=6.7.0"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
+
+
+
+  
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

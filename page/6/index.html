@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/19/排序算法汇总/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/18/JVM--JVM类加载机制（下）/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/03/19/排序算法汇总/" class="post-title-link" itemprop="url">排序算法汇总</a>
+                <a href="/2018/04/18/JVM--JVM类加载机制（下）/" class="post-title-link" itemprop="url">JVM--JVM类加载机制（下）</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2018-03-19 15:27:47" itemprop="dateCreated datePublished" datetime="2018-03-19T15:27:47+08:00">2018-03-19</time>
+              <time title="Created: 2018-04-18 16:56:53" itemprop="dateCreated datePublished" datetime="2018-04-18T16:56:53+08:00">2018-04-18</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 13:44:46" itemprop="dateModified" datetime="2019-01-25T13:44:46+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 14:35:40" itemprop="dateModified" datetime="2019-01-25T14:35:40+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,110 +399,97 @@
       
         
           
-            <h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><p>算法思想：比较+交换。从数组第一个元素开始，两两比较相邻元素，将较大者后移，直到最后一个元素。重复此操作，直到数组中所有元素有序。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class BubbleSort &#123;</span><br><span class="line">	public static void sort(int[] arr) &#123;</span><br><span class="line">	//重复N-1次</span><br><span class="line">		for (int i = 0; i &lt; arr.length - 1; i++) &#123;</span><br><span class="line">		//优化方案，如果有一轮比较中没有发生交换，则表示数据已经有序，避免无用循环</span><br><span class="line">			boolean swaped = false;</span><br><span class="line">			//从第一个元素开始两两比较，如果前者大于后者，则交换位置</span><br><span class="line">			for (int j = 0; j &lt; arr.length - i - 1; j++) &#123;</span><br><span class="line">				if (arr[j] &gt; arr[j + 1]) &#123;</span><br><span class="line">					int tmp = arr[j];</span><br><span class="line">					arr[j] = arr[j + 1];</span><br><span class="line">					arr[j + 1] = tmp;</span><br><span class="line">					swaped = true;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			if (!swaped) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>复杂度分析：最坏情况下，输入全逆序数组，需要进行N-1轮比较交换，比较交换最多为N-1次，最少1次，总比较次数为N(N-1)/2，平均比较次数为N/2，则最坏时间复杂度O（N（N-1）/2） = O(N^2)。空间复杂度：算法只需要存储临时变量tmp的固定存储空间，空间复杂度为O（1）。</p>
-<h3 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h3><p>算法思路：在未排序的数组中找到最小元素，交换到未排序数组的起始位置；然后在剩余未排序的数组中找到最小元素，交换到未排序数组的起始位置，以此类推，直到数组有序。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] arr) &#123;</span><br><span class="line">		for (int i = 0; i &lt; arr.length-1; i++) &#123;</span><br><span class="line">			int minIndex = i;</span><br><span class="line">			for (int j = i + 1; j &lt; arr.length; j++) &#123;</span><br><span class="line">				if (arr[j] &lt; arr[minIndex]) &#123;</span><br><span class="line">					minIndex = j;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			if (minIndex != i) &#123;</span><br><span class="line">				int tmp = arr[i];</span><br><span class="line">				arr[i] = arr[minIndex];</span><br><span class="line">				arr[minIndex] = tmp;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>算法分析：外层循环共N-1次，内层比较最多比较N-1次，最少比较1次，平均比较N/2次，时间复杂度为O（N^2）。排序过程中只需要固定的存储空间存储临时变量，空间复杂度为O（1）。</p>
-<h3 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h3><p>算法思想：构建有序序列，对于未排序的数据，在有序序列中从后向前查找，找到合适的位置插入（也可以边找边插入），直到输入数组有序。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">for (int i = 1; i &lt; arr.length; i++) &#123;</span><br><span class="line">			int tmp = arr[i];</span><br><span class="line">			for (int j = i; j &gt;= 1; j--) &#123;</span><br><span class="line">				if (tmp &lt; arr[j - 1]) &#123;</span><br><span class="line">					arr[j] = arr[j - 1];</span><br><span class="line">					arr[j - 1] = tmp;</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					break;//已经找到合适位置，不需要继续向前比较了</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
-<p>算法分析：最坏情况下，外层循环需要插入N-1个数，内层循环最多需要比较N-1次，最少需要比较1次，平均比较N/2次，时间复杂度O（N^2），空间复杂度O（1）。如果输入序列本身有序，则时间复杂度为O（N）。</p>
-<h3 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h3><p>希尔排序是最早突破O（N^2）时间复杂度的排序算法之一，是插入排序的改进版，它通过比较相距一定距离的元素来工作。<br>算法思想：希尔排序使用一个增量序列来每次对相隔一定距离的元素进行插入排序，随着增量值的减小，数据逐渐大部分有序，直到数据全部有序。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] arr) &#123;</span><br><span class="line">		for (int gap = arr.length / 2; gap &gt;= 1; gap /= 2) &#123;</span><br><span class="line">		//从gap开始，后面的每一个数进行子序列插入排序</span><br><span class="line">			for (int i = gap; i &lt; arr.length; i++) &#123;</span><br><span class="line">			//按增量gap插入排序</span><br><span class="line">				for (int j = i; j &gt;= gap; j -= gap) &#123;</span><br><span class="line">					if (arr[j] &lt; arr[j - gap]) &#123;</span><br><span class="line">						int tmp = arr[j];</span><br><span class="line">						arr[j] = arr[j - gap];</span><br><span class="line">						arr[j - gap] = tmp;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>算法分析：定理：通过交换相邻元素进行排序的任何算法都需要O（N^2）时间复杂度。排序算法通过消除逆序得以向前工作，为了使一个排序算法以亚二次时间复杂度运行，必须执行一些比较，特别是要对相距较远的元素进行交换，这些交换必须每次消除不止一个逆序。使用hibbard增量的希尔排序最坏时间复杂度为O（N^3/2）</p>
-<h3 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h3><p>算法思想：快速排序算法体现了分治的思想。选取一个枢纽元，将小于枢纽元的元素放在其左边，将大于枢纽元的放在其右边，则枢纽元本身的位置已确定。然后再对左边子序列和右子序列分别应用这种策略，直至数组有序。</p>
-<h5 id="第一步：选取枢纽元"><a href="#第一步：选取枢纽元" class="headerlink" title="第一步：选取枢纽元"></a>第一步：选取枢纽元</h5><p>枢纽元的选择通常有三种方式：</p>
+            <p>在 深入理解JVM–JVM类加载机制（上） 中，只写到Java类加载机制的加载阶段，在类的生命周期中，还有后面的验证、准备、解析、初始化、使用和卸载这些阶段。</p>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>验证阶段的主要工作是为了确保Class文件流中包含的内容符合虚拟机的要求，而且不会威胁到虚拟机自身的安全，主要有以下几个方面：</p>
 <ul>
-<li>选取第一个元素：这种方式在输入序列有序的情况下效率比较低，如果输入是随机的，可以选择这种方式</li>
-<li>随机选择一个元素：这种方式每次都要根据输入随机生成一个数字，生成随机数效率并不是很高</li>
-<li>选取输入的中值：一般来说输入的中值不容易计算，一般采用将输入左端、右端、和中心位置上的中值来作为枢纽元。</li>
+<li>文件格式验证：验证Class文件格式</li>
+<li>元数据验证：Java语言级语义分析</li>
+<li>字节码验证：验证方法体不会危害虚拟机自身</li>
+<li>符号引用验证：确保符号引用是可匹配的</li>
 </ul>
-<h5 id="第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分"><a href="#第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分" class="headerlink" title="第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分"></a>第二步：遍历剩余数据，将数据分割为小于枢纽元和大于枢纽元的两部分</h5><p>分割策略均采用两端向中间逼近的方式。<br>针对选取第一个元素为枢纽元的情况，分割策略如下：</p>
-<p>取游标i,j，i从左端开始，j从右端开始。首先从j向左遍历，遇到小于枢纽元的元素则与枢纽元交换位置，然后交换遍历方向，由i向右端遍历，遇到大于枢纽元的元素再与枢纽元交换位置…以此类推，交替遍历，我们可以看到静止的游标位置即枢纽元的位置，最终遍历到i=j时所有数据都遍历完毕，分割完成。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] arr, int start, int end) &#123;</span><br><span class="line">		</span><br><span class="line">		if (start &gt;= end) &#123;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		int pivot = arr[start];</span><br><span class="line">		</span><br><span class="line">		int i = start;</span><br><span class="line">		int j = end;</span><br><span class="line">		while (i &lt; j) &#123;</span><br><span class="line">			while (i &lt; j &amp;&amp; arr[j] &gt;= pivot) &#123;</span><br><span class="line">				j--;</span><br><span class="line">			&#125;</span><br><span class="line">			swap(arr, i, j);</span><br><span class="line">			while (i &lt; j &amp;&amp; arr[i] &lt;= pivot) &#123;</span><br><span class="line">				i++;</span><br><span class="line">			&#125;</span><br><span class="line">			swap(arr, i, j);</span><br><span class="line">		&#125;</span><br><span class="line">		sort(arr, start, i - 1);</span><br><span class="line">		sort(arr, i + 1, end);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>针对选取中值作为枢纽元的情况，分割策略稍微复杂一些（假设数据互异）：<br>第一步：选取枢纽元，我们采用冒泡排序先为三个元素排序，再选取中间值。注意此时对于选取的中值来说，数组的第一个和最后一个元素已经是分割完成了的。<br>第二步：对剩余未分割的元素进行分割。首先，对于数组[left…right]，先将枢纽元放在right-1的位置，取游标i,j，i从[left+1]从左向右遍历，j从[right-2]从右向左遍历，i碰到大于枢纽元的元素时停止，j碰到小于枢纽元的元素时停止，当两者都停止时且i小于j时，交换i和j的元素，然后继续相向遍历….直到i&gt;=j时所有数据都遍历完毕，此时j停在一个小于枢纽元的元素上，i停在一个大于枢纽元的元素上，将枢纽元和i交换则分割完毕。</p>
-<p>对于相等的元素，我们选择让两个游标都停下来进行交换，而不是继续前进，以便最大可能获取均衡的的分割。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] arr, int start, int end) &#123;</span><br><span class="line"></span><br><span class="line">	if (start &gt;= end) &#123;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	int piovt = getPivotIndex(arr, start, end);</span><br><span class="line"></span><br><span class="line">	int i = start, j = end - 1;</span><br><span class="line">	for (;;) &#123;</span><br><span class="line"></span><br><span class="line">		while (arr[++i] &lt; arr[piovt]) &#123;</span><br><span class="line">		&#125;</span><br><span class="line">		//j的下限</span><br><span class="line">		while (j &gt; start &amp;&amp; arr[--j] &gt; arr[piovt]) &#123;</span><br><span class="line">		&#125;</span><br><span class="line">		//关于游标这里有一个错误写法：</span><br><span class="line">		/*while(arr[i]&lt;arr[piovt]) i++;</span><br><span class="line">		while(j&gt;start&amp;&amp;arr[j]&gt;arr[piovt]) j--;*/</span><br><span class="line">		//这个写法在arr[i] = arr[j] = arr[piovt]时，游标将无法前进，陷入无限循环</span><br><span class="line">		if (i &lt; j) &#123;</span><br><span class="line">			swap(arr, i, j);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			break;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	//i的上限</span><br><span class="line">	if (i &lt; end) &#123;</span><br><span class="line">		swap(arr, i, piovt);</span><br><span class="line">	&#125;</span><br><span class="line">	sort(arr, start, i - 1);</span><br><span class="line">	sort(arr, i + 1, end);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h5 id="算法分析"><a href="#算法分析" class="headerlink" title="算法分析"></a>算法分析</h5><ul>
-<li>最坏情况：枢纽元始终为最小或者最大元素的情况。此时有递推关系T（N）= T（N-1）+cN，cN为遍历时间，时间复杂度为O（N^2）</li>
-<li>最好情况：枢纽元始终平分输入数组。T（N） = 2T（N/2）+cN，时间复杂度为O（NlogN）</li>
-<li>平均情况：时间复杂度O（NlogN）<h5 id="算法优化"><a href="#算法优化" class="headerlink" title="算法优化"></a>算法优化</h5>快速排序在数组长度较小时性能较差，不如插入排序、冒泡排序等，原因在于当数组长度较小时，插入和冒泡的比较和交换会越来越少，而快速排序不论数组多小，选取枢纽元时的比较与交换，都是一样多的，而且选完之后的比较与交换次数也不少，算法可以在数组长度较小时换做插入等排序方式。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">quickSort(int[] arr)&#123;</span><br><span class="line">	if(arr.length&lt;10)&#123;</span><br><span class="line">		insertSort(arr);</span><br><span class="line">	&#125;else&#123;</span><br><span class="line">		quickSort(sub arr);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h3><p>算法思想：归并排序体现了分治的思想。先递归地将输入数组一层层分为两个部分，然后从最底层将两个小部分排好序，归并在一起，再与同一层的另外的部分继续归并，直至数据全部有序。归并排序与快速排序均使用了分治的思想，不过归并排序是“先分再治”，而快速排序是“先治再分”。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public static void sort(int[] tmp, int[] arr, int start, int end) &#123;</span><br><span class="line">		// 基准条件</span><br><span class="line">		if (start &gt;= end) &#123;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		int mid = (start + end) / 2;</span><br><span class="line">		int start0 = start;</span><br><span class="line">		int start1 = mid + 1;</span><br><span class="line">		</span><br><span class="line">		sort(tmp, arr, start, mid);</span><br><span class="line">		sort(tmp, arr, start1, end);</span><br><span class="line"></span><br><span class="line">		int i = 0;</span><br><span class="line">		for (;;) &#123;</span><br><span class="line"></span><br><span class="line">			if (start &gt; mid &amp;&amp; start1 &gt; end) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (start &gt; mid) &#123;</span><br><span class="line">				tmp[i++] = arr[start1++];</span><br><span class="line">				continue;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (start1 &gt; end) &#123;</span><br><span class="line">				tmp[i++] = arr[start++];</span><br><span class="line">				continue;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (arr[start] &lt;= arr[start1]) &#123;</span><br><span class="line">				tmp[i++] = arr[start++];</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				tmp[i++] = arr[start1++];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		for (int j = 0; j &lt; i; j++) &#123;</span><br><span class="line">			arr[start0++] = tmp[j];</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>算法分析：归并排序共需要log2N次归并，归并操作的最少归并2个，最多归并N个，时间复杂度为O（N），则归并排序的时间复杂度为O（NlogN）。空间上需要O（N）的辅助存储空间。</p>
-<h3 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h3><p>算法思想：根据堆序性质，首先将输入数据构建一个堆，然后依次出堆，输出序列就是有序状态。构建堆的时间复杂度为O（N），每次出堆的时间复杂度为O（logN），N个元素则堆排序的时间复杂度为O（NlogN）+O（N） = O（NlogN）。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><table>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>准备阶段主要为<strong>类变量</strong> 在<strong>方法区</strong>中分配内存并设置其<strong>初始值</strong>，此时的初始值为各种变量的默认零值。</p>
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>解析阶段主要是将Class文件中常量池内的符号引用替换为直接引用。</p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><h5 id="初始化触发条件"><a href="#初始化触发条件" class="headerlink" title="初始化触发条件"></a>初始化触发条件</h5><p>类的初始化是类加载过程的最后一步，<strong>在且仅在</strong>以下情况下，将触发类的初始化，它们是：</p>
+<ol>
+<li>遇到new、getstatic、putstatic、invokestatic这4条字节码指令时，如果类没有初始化，则必须先初始化类。反映在Java源代码中即：使用new新建对象，访问类静态变量和静态方法时</li>
+<li>使用反射调用某个类时</li>
+<li>子类初始化时父类尚未初始化，触发其父类的初始化</li>
+<li>含有main方法的类优先初始化</li>
+<li>使用MethodHandle调用类的静态方法时，如果类没有初始化，则触发其初始化</li>
+</ol>
+<p>以上5种情况统称为对类的<strong>主动引用</strong>，对类的主动引用将触发类的初始化。其余情况对类的引用称为对类的被动引用。<br>以下被动引用不会触发类的初始化：</p>
+<ol>
+<li>通过子类引用父类的静态字段，不会触发子类的初始化</li>
+<li>通过数组定义引用类类型，不会触发引用类的初始化</li>
+<li>对常量型静态字段的引用不会触发类的初始化，因为常量入了常量池，对该字段的引用变为对常量池中该字段的引用</li>
+</ol>
+<h5 id="初始化主要工作"><a href="#初始化主要工作" class="headerlink" title="初始化主要工作"></a>初始化主要工作</h5><p>这一步的主要工作为<strong>生成并执行&lt;clinit&gt;()方法</strong>。</p>
+<h6 id="生成"><a href="#生成" class="headerlink" title="生成"></a>生成</h6><p>&lt;clinit&gt;()方法由编译器收集类中所有<strong>类变量的赋值动作和静态语句块</strong>合并而成，其顺序即类变量和静态语句块在Java源文件中出现的顺序。静态语句块中的代码可以提前赋值给其后面的类变量，但是提前不能访问。</p>
+<h6 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h6><p>初始化子类前会初始化父类。虚拟机会优先执行父类的&lt;clinit&gt;()方法，再执行子类的&lt;clinit&gt;()方法。</p>
+<h3 id="实例化"><a href="#实例化" class="headerlink" title="实例化"></a>实例化</h3><p>初始化阶段完成后，就是类的使用了，如果使用创建了类的实例对象，就涉及到类的实例化了。</p>
+<h5 id="实例化方式"><a href="#实例化方式" class="headerlink" title="实例化方式"></a>实例化方式</h5><table>
 <thead>
 <tr>
-<th>算法名称</th>
-<th>平均情况</th>
-<th>最坏情况</th>
-<th>最好情况</th>
-<th>辅助空间</th>
-<th>稳定性</th>
+<th style="text-align:center">方式</th>
+<th style="text-align:center">是否调用构造函数</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>冒泡排序</td>
-<td>O（N^2）</td>
-<td>O（N^2）</td>
-<td>O（N）</td>
-<td>O（1）</td>
-<td>稳定</td>
+<td style="text-align:center">new关键字</td>
+<td style="text-align:center">是</td>
 </tr>
 <tr>
-<td>选择排序</td>
-<td>O（N^2）</td>
-<td>O（N^2）</td>
-<td>O（N^2）</td>
-<td>O（1）</td>
-<td>不稳定</td>
+<td style="text-align:center">Constructor类的newInstance方法</td>
+<td style="text-align:center">是</td>
 </tr>
 <tr>
-<td>插入排序</td>
-<td>O（N^2）</td>
-<td>O（N^2）</td>
-<td>O（N）</td>
-<td>O（1）</td>
-<td>稳定</td>
+<td style="text-align:center">clone方法</td>
+<td style="text-align:center">否</td>
 </tr>
 <tr>
-<td>希尔排序</td>
-<td></td>
-<td>O（N^3/2）</td>
-<td></td>
-<td>O（1）</td>
-<td>不稳定</td>
-</tr>
-<tr>
-<td>快速排序</td>
-<td>O（NlogN）</td>
-<td>O（N^2）</td>
-<td>O（NlogN）</td>
-<td>O（1）</td>
-<td>不稳定</td>
-</tr>
-<tr>
-<td>归并排序</td>
-<td>O（NlogN）</td>
-<td>O（NlogN）</td>
-<td>O（NlogN）</td>
-<td>O（N）</td>
-<td>稳定</td>
-</tr>
-<tr>
-<td>堆排序</td>
-<td>O（NlogN）</td>
-<td>O（NlogN）</td>
-<td>O（NlogN）</td>
-<td>O（1）</td>
-<td>不稳定</td>
+<td style="text-align:center">反序列化</td>
+<td style="text-align:center">否</td>
 </tr>
 </tbody>
 </table>
+<p>PS：Class类的newInstance方法是Constructor类的newInstance方法支撑的。</p>
+<p>在调用构造函数来实例化对象的过程中，满足类初始化的触发条件，将会触发类的初始化，再进行实例化。</p>
+<h5 id="实例化过程"><a href="#实例化过程" class="headerlink" title="实例化过程"></a>实例化过程</h5><p>注：静态变量和静态代码块的初始化在类的初始化过程已经执行了，这里将不再赘述。</p>
+<p>对象的实例化操作在字节码层面分为两步：1、使用new关键字在堆上分配内存，创建对象。2、执行&lt;init&gt;()方法进行实例变量等的初始化工作。<br>我们定义一个Father类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class Father &#123;</span><br><span class="line">	public Father()&#123;</span><br><span class="line">		System.out.println(&quot;no param&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public Father(String s)&#123;</span><br><span class="line">		System.out.println(&quot;param s&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Father f = new Father();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其对应字节码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">// class version 51.0 (51)</span><br><span class="line">// access flags 0x21</span><br><span class="line">public class cn/john/test/Father &#123;</span><br><span class="line"></span><br><span class="line">  // compiled from: Father.java</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  //对应无参构造函数Father()</span><br><span class="line">  public &lt;init&gt;()V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 31 L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    //Father继承自Object，优先调用Object的&lt;init&gt;方法</span><br><span class="line">    INVOKESPECIAL java/lang/Object.&lt;init&gt; ()V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 32 L1</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    //再执行Father()中的剩余初始化逻辑</span><br><span class="line">    LDC &quot;no param&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 33 L2</span><br><span class="line">    RETURN</span><br><span class="line">   L3</span><br><span class="line">    LOCALVARIABLE this Lcn/john/test/Father; L0 L3 0</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 1</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  //对应有参构造函数Father(String s)</span><br><span class="line">  public &lt;init&gt;(Ljava/lang/String;)V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 35 L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    INVOKESPECIAL java/lang/Object.&lt;init&gt; ()V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 36 L1</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    LDC &quot;param s&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 37 L2</span><br><span class="line">    RETURN</span><br><span class="line">   L3</span><br><span class="line">    LOCALVARIABLE this Lcn/john/test/Father; L0 L3 0</span><br><span class="line">    LOCALVARIABLE s Ljava/lang/String; L0 L3 1</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line"></span><br><span class="line">  // access flags 0x9</span><br><span class="line">  public static main([Ljava/lang/String;)V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 40 L0</span><br><span class="line">    //新建对象，首先通过NEW关键字新建Father对象</span><br><span class="line">    NEW cn/john/test/Father</span><br><span class="line">    DUP</span><br><span class="line">    //调用Father类的构造函数进行初始化工作</span><br><span class="line">    INVOKESPECIAL cn/john/test/Father.&lt;init&gt; ()V</span><br><span class="line">    ASTORE 1</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 41 L1</span><br><span class="line">    RETURN</span><br><span class="line">   L2</span><br><span class="line">    LOCALVARIABLE args [Ljava/lang/String; L0 L2 0</span><br><span class="line">    LOCALVARIABLE f Lcn/john/test/Father; L1 L2 1</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由此我们可知，调用Father的构造函数新建Father类的实例，会先通过NEW关键字分配内存新建一个对象，然后优先调用Object的&lt;init&gt;()方法<strong>进行初始化工作</strong>（<strong>不是实例化一个父类</strong>），再执行构造函数剩下的逻辑，相当于将<strong>直接父类的初始化逻辑插入到子类的初始化逻辑之前</strong>。</p>
+<p>再来看Son类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Son extends Father&#123;</span><br><span class="line">	private String name = new String(&quot;son&quot;);</span><br><span class="line">	&#123;</span><br><span class="line">		System.out.println(&quot;construct block&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public Son()&#123;</span><br><span class="line">		System.out.println(&quot;son no param&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public Son(String s)&#123;</span><br><span class="line">		System.out.println(&quot;son param s&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Son s = new Son();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其对应的字节码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line">// class version 51.0 (51)</span><br><span class="line">// access flags 0x21</span><br><span class="line">public class cn/john/test/Son extends cn/john/test/Father  &#123;</span><br><span class="line"></span><br><span class="line">  // compiled from: Son.java</span><br><span class="line"></span><br><span class="line">  // access flags 0x2</span><br><span class="line">  private Ljava/lang/String; name</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  //对应无参构造器</span><br><span class="line">  public &lt;init&gt;()V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 38 L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    //优先调用父类初始化方法&lt;init&gt;</span><br><span class="line">    INVOKESPECIAL cn/john/test/Father.&lt;init&gt; ()V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 32 L1</span><br><span class="line">    ALOAD 0</span><br><span class="line">    NEW java/lang/String</span><br><span class="line">    DUP</span><br><span class="line">    //初始化实例变量</span><br><span class="line">    LDC &quot;son&quot;</span><br><span class="line">    INVOKESPECIAL java/lang/String.&lt;init&gt; (Ljava/lang/String;)V</span><br><span class="line">    PUTFIELD cn/john/test/Son.name : Ljava/lang/String;</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 35 L2</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    //调用构造代码块</span><br><span class="line">    LDC &quot;construct block&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L3</span><br><span class="line">    LINENUMBER 39 L3</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    //执行构造函数逻辑</span><br><span class="line">    LDC &quot;son no param&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L4</span><br><span class="line">    LINENUMBER 40 L4</span><br><span class="line">    RETURN</span><br><span class="line">   L5</span><br><span class="line">    LOCALVARIABLE this Lcn/john/test/Son; L0 L5 0</span><br><span class="line">    MAXSTACK = 4</span><br><span class="line">    MAXLOCALS = 1</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  //对应有参构造函数</span><br><span class="line">  public &lt;init&gt;(Ljava/lang/String;)V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 42 L0</span><br><span class="line">    ALOAD 0</span><br><span class="line">    //为什么这里调用的是父类无参构造方法&lt;init&gt;，下文再作说明</span><br><span class="line">    INVOKESPECIAL cn/john/test/Father.&lt;init&gt; ()V</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 32 L1</span><br><span class="line">    ALOAD 0</span><br><span class="line">    NEW java/lang/String</span><br><span class="line">    DUP</span><br><span class="line">    LDC &quot;son&quot;</span><br><span class="line">    INVOKESPECIAL java/lang/String.&lt;init&gt; (Ljava/lang/String;)V</span><br><span class="line">    PUTFIELD cn/john/test/Son.name : Ljava/lang/String;</span><br><span class="line">   L2</span><br><span class="line">    LINENUMBER 35 L2</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    LDC &quot;construct block&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L3</span><br><span class="line">    LINENUMBER 43 L3</span><br><span class="line">    GETSTATIC java/lang/System.out : Ljava/io/PrintStream;</span><br><span class="line">    LDC &quot;son param s&quot;</span><br><span class="line">    INVOKEVIRTUAL java/io/PrintStream.println (Ljava/lang/String;)V</span><br><span class="line">   L4</span><br><span class="line">    LINENUMBER 44 L4</span><br><span class="line">    RETURN</span><br><span class="line">   L5</span><br><span class="line">    LOCALVARIABLE this Lcn/john/test/Son; L0 L5 0</span><br><span class="line">    LOCALVARIABLE s Ljava/lang/String; L0 L5 1</span><br><span class="line">    MAXSTACK = 4</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line"></span><br><span class="line">  // access flags 0x9</span><br><span class="line">  public static main([Ljava/lang/String;)V</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 48 L0</span><br><span class="line">    NEW cn/john/test/Son</span><br><span class="line">    DUP</span><br><span class="line">    INVOKESPECIAL cn/john/test/Son.&lt;init&gt; ()V</span><br><span class="line">    ASTORE 1</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 49 L1</span><br><span class="line">    RETURN</span><br><span class="line">   L2</span><br><span class="line">    LOCALVARIABLE args [Ljava/lang/String; L0 L2 0</span><br><span class="line">    LOCALVARIABLE s Lcn/john/test/Son; L1 L2 1</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看过这两个例子，可见实例化的过程实际上分两步：</p>
+<ol>
+<li>new分配内存创建对象</li>
+<li>执行对象的初始化方法（即构造方法）</li>
+</ol>
+<p>这里执行对象的初始化方法顺序为：先执行父类的构造方法，再执行本类的构造代码块，再执行本类的构造方法。</p>
+<p>至此，在通过构造函数实例化对象过程中，实际上按照顺序发生了如下操作：</p>
+<ol>
+<li>父类静态变量的初始化与静态代码块的执行（按书写顺序）</li>
+<li>子类静态变量的初始化与静态代码块的执行（按书写顺序）</li>
+<li>父类实例变量初始化</li>
+<li>父类构造代码块执行</li>
+<li>父类相应构造方法执行</li>
+<li>子类实例变量初始化</li>
+<li>子类构造代码块执行</li>
+<li>子类相应构造方法执行</li>
+</ol>
+<p>其中1~2为类加载过程中的类初始化，3~8为实例化过程中的初始化。</p>
+<h5 id="构造代码块，this与super"><a href="#构造代码块，this与super" class="headerlink" title="构造代码块，this与super"></a>构造代码块，this与super</h5><p>构造代码块存在的意义是抽取了类中多个构造函数的公共部分或需要提前执行初始化的部分<strong>优先执行</strong>，更加优雅，实际上跟将构造代码块分散到各个构造函数的<strong>最前部分</strong>是一致的，从字节码的结果可以看到编译器实际上也是这么做的。</p>
+<p>this关键字为在类的构造函数之间互相调用提供了条件，同样是更加优雅的书写构造函数的方式。注意在构造代码块和this同时存在的情况下构造代码块只会执行一次，同时this调用必须位于使用它的构造函数的第一行。</p>
+<p>super关键字可以调用父类构造器。上文分析字节码时可以看到子类在初始化过程中总是优先调用父类的初始化方法，这里可以看成子类的构造函数在第一行加入了super()，调用了父类的无参构造器。当然，也可以指定调用有参构造器super(Type …args)，只是在没有写明的情况下，编译器默认调用的是父类的无参构造器。</p>
+<p>最后，类的生命周期中卸载问题，就是GC的事了。</p>
+<blockquote>
+<p>深入理解Java虚拟机</p>
+</blockquote>
 
           
         
@@ -548,7 +535,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/5/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/7/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -591,7 +578,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">25</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>

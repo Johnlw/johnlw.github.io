@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/13/Session与Cookie/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/29/JVM--JVM内存布局与Java对象的定义/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/03/13/Session与Cookie/" class="post-title-link" itemprop="url">Session与Cookie</a>
+                <a href="/2018/03/29/JVM--JVM内存布局与Java对象的定义/" class="post-title-link" itemprop="url">JVM--JVM内存布局与Java对象的定义</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2018-03-13 10:46:59" itemprop="dateCreated datePublished" datetime="2018-03-13T10:46:59+08:00">2018-03-13</time>
+              <time title="Created: 2018-03-29 12:46:41" itemprop="dateCreated datePublished" datetime="2018-03-29T12:46:41+08:00">2018-03-29</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 13:33:15" itemprop="dateModified" datetime="2019-01-25T13:33:15+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 14:24:47" itemprop="dateModified" datetime="2019-01-25T14:24:47+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,24 +399,29 @@
       
         
           
-            <h3 id="cookie技术"><a href="#cookie技术" class="headerlink" title="cookie技术"></a>cookie技术</h3><p>http协议是无状态的，服务器无法判断某一个简单http请求来自于谁。这里我们可以利用cookie技术，当一个用户第一次登录服务器时，http request中不带有cookie字段，服务器通过http response中set-cookie字段设置浏览器访问该网站的cookie，然后该用户第二次访问服务器时，由于服务器设置了cookie，浏览器会自动将关联该服务器的cookie中的内容添加在http request请求头中一并发给服务器，这时服务器通过cookie的内容就知道了这个请求来自于该用户。</p>
-<p>cookie本质上是一些键值对组成的表，它还包括了过期时间，路径和域。</p>
-<h3 id="session技术"><a href="#session技术" class="headerlink" title="session技术"></a>session技术</h3><p>服务器虽然可以简单的通过cookie技术识别用户，但是cookie本身安全性不好，容易被其他人读取。session技术是在服务端保存用户信息，而再向用户浏览器set-cookie时，设置一个sessionId，再次访问服务器时，通过sessionId来识别用户。</p>
-<h3 id="session与cookie的关系"><a href="#session与cookie的关系" class="headerlink" title="session与cookie的关系"></a>session与cookie的关系</h3><p>两者都用于解决http协议无状态的问题，cookie基于客户端，session基于服务端，同时session依赖于cookie。因此，当浏览器禁用cookie的时候，session也将随之失效。</p>
-<h3 id="session与cookie的生命周期"><a href="#session与cookie的生命周期" class="headerlink" title="session与cookie的生命周期"></a>session与cookie的生命周期</h3><h4 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h4><ul>
-<li>cookie在服务端返回http响应时可以设置有效时间，cookie在该时间范围内有效，过期即失效。cookie会持久化在硬盘上，即使浏览器关闭也可以再次读取，直至失效。</li>
-<li>服务端返回时未设置有效时间，则cookie在浏览器关闭后即失效。<h4 id="session"><a href="#session" class="headerlink" title="session"></a>session</h4></li>
-<li>创建：在服务端调用HttpServletRequest.getSession(true)时为该用户创建session（ps:java服务端）</li>
-<li>有效期：默认有效期30分钟，可以自行调整。</li>
-<li>失效：1、session超时失效。2、调用invalidate()方法。3、服务器关闭或重启，这里如果session做了持久化，服务器重启之后依然可以从持久化的记录中重建session。<h3 id="session原理简述（tomcat）"><a href="#session原理简述（tomcat）" class="headerlink" title="session原理简述（tomcat）"></a>session原理简述（tomcat）</h3>这是tomcat下session包源码结构：<br><img src="http://static.johnlw.cn/blog_tomcat_session.png" alt="这里写图片描述"><br>session本身是一个接口，是servlet中HttpSession接口的外观模式，阅读session的标准实现类StandardSession源码，我们可以发现本质上其通过ConcurrentHashMap来保存存在其中的各属性值，记录了创建时间和上次访问时间用于表征生命周期状态等<br><img src="http://static.johnlw.cn/blog_session_code1.png" alt="这里写图片描述"></li>
+            <h3 id="JVM内存基本布局"><a href="#JVM内存基本布局" class="headerlink" title="JVM内存基本布局"></a>JVM内存基本布局</h3><p>如图所示：<br><img src="http://static.johnlw.cn/blog_jvm_mem_layout.png" alt="这里写图片描述"></p>
+<h3 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h3><p>Java虚拟机定义了若干种程序运行时会用到的运行时数据区。</p>
+<h6 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h6><p>每个Java线程都拥有自己的程序计数器，字节码执行游标。</p>
+<h6 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h6><p>每个Java线程都拥有自己的虚拟机栈，在线程创建时同时创建，用于存储栈帧。栈帧是用来存储数据和部分过程结果的数据结构，用来处理动态链接，方法返回和异常分派。栈帧随着方法的调用而创建，随着方法的返回（正常或抛异常）而销毁，栈帧中含有本地变量表，操作数栈，和指向当前方法的类的运行期常量池引用。栈溢出抛StackOverFlowError。</p>
+<h6 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h6><p>功能上类似虚拟机栈，作用于本地方法</p>
+<h6 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h6><p>方法区是线程共享的内存区域。类似于传统语言中的编译代码存储区，它主要存储每个类的结构信息和JIT编译后的代码等。方法区溢出抛OOM。</p>
+<h6 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h6><p>堆区是线程共享的内存区域，类实例以及数组对象都在堆区存储。堆溢出抛OOM。</p>
+<h6 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h6><p>运行时常量池主要存放编译器生成的各种字面量和符号引用。</p>
+<h3 id="hotspot中的运行时常量池和方法区"><a href="#hotspot中的运行时常量池和方法区" class="headerlink" title="hotspot中的运行时常量池和方法区"></a>hotspot中的运行时常量池和方法区</h3><p>hotspot在jdk7以前运行时常量池在方法区分配，jdk7以后运行时常量池移到了堆区，主要影响为String.intern()方法不用像之前在方法区重新生成新的对象，而转为在堆中直接持有对象引用，并避免了方法区内存溢出。</p>
+<p>hotspot在jdk8以后将方法区由原PermSpace移至MetaSpace，在本地内存分配，其大小上限取决于系统本地内存大小。此后对于Proxy、CGLIB和JSP等大量动态生成Class的情况下，方法区内存将更为充足。<br>对于僵死的类及类加载器的垃圾回收将在元数据使用到“MaxMeta-spaceSize”参数的设定值时进行。测试虚拟机启动需要的MetaSpace大小后，可以调整MaxMetaspaceSize参数来减少GC的次数。</p>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p>Hotspot虚拟机使用OOP-Klass二分模型，即将一个java对象分成该对象的实例数据部分和该类的类型信息部分，具体如下：</p>
+<ul>
+<li>OOP :即普通对象指针，描述对象实例信息。</li>
+<li>Klass:java类的c++对等体，用来描述该对象的Java类。</li>
 </ul>
-<p>对于整个web服务器来说，需要一个session容器来对session进行管理，这个容器对应的接口就是Manager接口，其抽象实现类ManagerBase中实现了对session生命周期的管理（创建、计时、销毁），其容器也是ConcurrentHashMap，其key值通常为jsessionId<br><img src="http://static.johnlw.cn/blog_session_code2.png" alt="这里写图片描述"></p>
-<h3 id="负载均衡下session共享问题"><a href="#负载均衡下session共享问题" class="headerlink" title="负载均衡下session共享问题"></a>负载均衡下session共享问题</h3><ul>
-<li>session保持：通过session保持，LB进行请求转发的时候保证每个客户端固定地访问到集群的同一台服务器。显然，session保持并不能保证真正的负载均衡</li>
-<li>session复制：将每台服务器上的session信息复制给其他服务器，使得每台服务器都有一份session信息</li>
-<li>session共享：将session信息放在统一的地方统一访问，将session信息放在redis或Memcached这类KV数据库里</li>
-</ul>
-<h3 id="cookie禁用问题"><a href="#cookie禁用问题" class="headerlink" title="cookie禁用问题"></a>cookie禁用问题</h3><p>可以用时URL重写，将sessionId附在url之后</p>
+<p>对象内存布局主要分为三个部分：对象头、实例数据和对齐填充。其中，对齐填充主要方便内存管理，没有特别意义。如图：<br><img src="http://static.johnlw.cn/blog_object_head.png" alt="这里写图片描述"><br>注：如果是普通对象，则没有数组长度部分；如果是数组对象就需要加上数组长度。</p>
+<p>MarkWord的设计类似于网络协议报文头，将MarkWord划分为多个bit区间用于表示不同的信息。主要用于存储对象自身的运行时数据：hashcode、GC分代年龄、锁状态标志、锁记录指针、锁线程ID等。</p>
+<p>对象头中的元数据指针用来指向对象的类信息，虚拟机需要这个指针来定位位于方法区中的对象类型信息。实例数据即类定义中的各个字段内容。</p>
+<p>我们通过HSDB实际观察一下Eclipse的主线程对象：_mark（MarkWord），_metadata_compressed_Klass(元数据指针)和下面的实例数据。<br><img src="http://static.johnlw.cn/blog_object_metadata.png" alt="这里写图片描述"></p>
+<h3 id="对象的访问机制"><a href="#对象的访问机制" class="headerlink" title="对象的访问机制"></a>对象的访问机制</h3><p>在方法执行过程中，我们通过栈上的变量引用来访问堆中的对象实例，再通过类型指针来访问实例的类型数据，下图体现了hotspot中对象的访问机制。<br><img src="http://static.johnlw.cn/blog_object_reference.png" alt="这里写图片描述"></p>
+<blockquote>
+<p>《深入理解Java虚拟机》<br>《hotspot实战》<br>《实战Java虚拟机》<br><a href="https://www.javacodegeeks.com/2013/02/java-8-from-permgen-to-metaspace.html" target="_blank" rel="noopener">https://www.javacodegeeks.com/2013/02/java-8-from-permgen-to-metaspace.html</a></p>
+</blockquote>
 
           
         
@@ -462,7 +467,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -505,7 +510,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">25</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>

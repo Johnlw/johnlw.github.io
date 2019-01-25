@@ -302,7 +302,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/29/JVM--JVM内存布局与Java对象的定义/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/03/InnoDB引擎--事务隔离性/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John">
@@ -322,7 +322,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/03/29/JVM--JVM内存布局与Java对象的定义/" class="post-title-link" itemprop="url">JVM--JVM内存布局与Java对象的定义</a>
+                <a href="/2018/06/03/InnoDB引擎--事务隔离性/" class="post-title-link" itemprop="url">InnoDB引擎--事务隔离性</a>
               
             
           </h1>
@@ -347,7 +347,7 @@
                 
               
 
-              <time title="Created: 2018-03-29 12:46:41" itemprop="dateCreated datePublished" datetime="2018-03-29T12:46:41+08:00">2018-03-29</time>
+              <time title="Created: 2018-06-03 17:21:44" itemprop="dateCreated datePublished" datetime="2018-06-03T17:21:44+08:00">2018-06-03</time>
             
 
             
@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 14:24:47" itemprop="dateModified" datetime="2019-01-25T14:24:47+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 15:01:10" itemprop="dateModified" datetime="2019-01-25T15:01:10+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,29 +399,46 @@
       
         
           
-            <h3 id="JVM内存基本布局"><a href="#JVM内存基本布局" class="headerlink" title="JVM内存基本布局"></a>JVM内存基本布局</h3><p>如图所示：<br><img src="http://static.johnlw.cn/blog_jvm_mem_layout.png" alt="这里写图片描述"></p>
-<h3 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h3><p>Java虚拟机定义了若干种程序运行时会用到的运行时数据区。</p>
-<h6 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h6><p>每个Java线程都拥有自己的程序计数器，字节码执行游标。</p>
-<h6 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h6><p>每个Java线程都拥有自己的虚拟机栈，在线程创建时同时创建，用于存储栈帧。栈帧是用来存储数据和部分过程结果的数据结构，用来处理动态链接，方法返回和异常分派。栈帧随着方法的调用而创建，随着方法的返回（正常或抛异常）而销毁，栈帧中含有本地变量表，操作数栈，和指向当前方法的类的运行期常量池引用。栈溢出抛StackOverFlowError。</p>
-<h6 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h6><p>功能上类似虚拟机栈，作用于本地方法</p>
-<h6 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h6><p>方法区是线程共享的内存区域。类似于传统语言中的编译代码存储区，它主要存储每个类的结构信息和JIT编译后的代码等。方法区溢出抛OOM。</p>
-<h6 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h6><p>堆区是线程共享的内存区域，类实例以及数组对象都在堆区存储。堆溢出抛OOM。</p>
-<h6 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h6><p>运行时常量池主要存放编译器生成的各种字面量和符号引用。</p>
-<h3 id="hotspot中的运行时常量池和方法区"><a href="#hotspot中的运行时常量池和方法区" class="headerlink" title="hotspot中的运行时常量池和方法区"></a>hotspot中的运行时常量池和方法区</h3><p>hotspot在jdk7以前运行时常量池在方法区分配，jdk7以后运行时常量池移到了堆区，主要影响为String.intern()方法不用像之前在方法区重新生成新的对象，而转为在堆中直接持有对象引用，并避免了方法区内存溢出。</p>
-<p>hotspot在jdk8以后将方法区由原PermSpace移至MetaSpace，在本地内存分配，其大小上限取决于系统本地内存大小。此后对于Proxy、CGLIB和JSP等大量动态生成Class的情况下，方法区内存将更为充足。<br>对于僵死的类及类加载器的垃圾回收将在元数据使用到“MaxMeta-spaceSize”参数的设定值时进行。测试虚拟机启动需要的MetaSpace大小后，可以调整MaxMetaspaceSize参数来减少GC的次数。</p>
-<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p>Hotspot虚拟机使用OOP-Klass二分模型，即将一个java对象分成该对象的实例数据部分和该类的类型信息部分，具体如下：</p>
-<ul>
-<li>OOP :即普通对象指针，描述对象实例信息。</li>
-<li>Klass:java类的c++对等体，用来描述该对象的Java类。</li>
+            <p>事务将数据库从一个一致状态转换至另外一个一致状态，若某个事务看到了另外一个事务在状态转换过程中的中间态数据（不一致状态），将有可能导致另外一个事务的操作基于一个不一致的数据库状态，进而数据库失去一致性。事务隔离性主要用于处理数据库的并发访问问题。</p>
+<h3 id="事务隔离性级别"><a href="#事务隔离性级别" class="headerlink" title="事务隔离性级别"></a>事务隔离性级别</h3><p>事务隔离性分为4个级别，可以在事务的一致性与并发性上的做出权衡。另外，不同的隔离级别也有不同的问题存在。</p>
+<h6 id="读未提交（Read-Uncommitted）"><a href="#读未提交（Read-Uncommitted）" class="headerlink" title="读未提交（Read Uncommitted）"></a>读未提交（Read Uncommitted）</h6><p>读未提交允许<strong>读取未提交</strong>的数据，这实际上并没有提供隔离性–事务之间可以完全可以看到彼此的修改。读取未提交的数据也称为<strong>脏读</strong>。</p>
+<h6 id="读已提交（Read-Committed）"><a href="#读已提交（Read-Committed）" class="headerlink" title="读已提交（Read Committed）"></a>读已提交（Read Committed）</h6><p>读已提交<strong>只允许读已提交</strong>的数据，避免了脏读现象。但是存在以下情况：在事务T1内，读取了数据D值为D1，然后T1执行其他SQL，事务T2更新了D为D2并提交，此时T1再次读取D时值为D2。这种情况称为<strong>不可重复读</strong>。</p>
+<h6 id="可重复读（Read-Repeatable）"><a href="#可重复读（Read-Repeatable）" class="headerlink" title="可重复读（Read Repeatable）"></a>可重复读（Read Repeatable）</h6><p>可重复读只允许读已提交数据，而且<strong>在一个事务两次读取一个数据项期间，其他事务不得更新该数据</strong>，避免了不可重复读现象。虽然其他事务不得更新该数据，但是并未禁止不得插入新数据，这使得在一个事务内，两次同样的SELECT语句读取的记录数量是不一致的，这种情况称为<strong>幻读</strong>。</p>
+<h6 id="可串行化（Serializable）"><a href="#可串行化（Serializable）" class="headerlink" title="可串行化（Serializable）"></a>可串行化（Serializable）</h6><p>可串行化保证事务的调度都是可串行化调度。可以避免幻读现象。</p>
+<p>简要说明一些可串行化的概念：事务按顺序一个一个执行是串行调度，但是串行调度效率较低（比如读事务可以并发执行），可以对调度中的指令重排序形成新的调度，新的调度执行结果与串行执行结果是一致的，效率也更高。两个指令中有一个为写指令时两者是冲突的，顺序不能打乱，在一个串行调度中，保证冲突的指令顺序不打乱，其他指令的顺序可以调整以提高效率，即为可串行化调度。</p>
+<p>隔离性级别与问题表：Y-可能，N-不可能<br>|隔离性级别|丢失更新|脏读|不可重复读|幻读|<br>|:-:|-|-|-|<br>|RU|N|Y|Y|Y|<br>|RC|N|N|Y|Y|<br>|RR|N|N|N|Y|<br>|S|N|N|N|N|</p>
+<p><strong>事务的隔离性主要靠锁和MVCC支持。</strong></p>
+<h3 id="事务中的锁-基础理论"><a href="#事务中的锁-基础理论" class="headerlink" title="事务中的锁-基础理论"></a>事务中的锁-基础理论</h3><p>确保隔离性的方法之一就是要求对数据项以互斥的方式访问，当一个事务访问一个数据项时，其他任何事务都不能修改该数据项。最常见的方法就是只允许事务访问其持有锁的数据项。</p>
+<h4 id="锁的类型"><a href="#锁的类型" class="headerlink" title="锁的类型"></a>锁的类型</h4><h5 id="排它锁与共享锁"><a href="#排它锁与共享锁" class="headerlink" title="排它锁与共享锁"></a>排它锁与共享锁</h5><p>排他锁与共享锁的相容函数：<br>|相容性|S|X|<br>|-|-|<br>|S|true|false|<br>|X|false|false|</p>
+<h5 id="多粒度"><a href="#多粒度" class="headerlink" title="多粒度"></a>多粒度</h5><p>上文所描述的并发控制机制均是基于单个的数据项的，但是在数据库中有时需要更大的控制粒度（如DDL中的ALTER TABLE操作），如果此时还是按照数据项的粒度去挨个加锁，效率将是极低的，引入多粒度加锁以解决这个问题。</p>
+<p><img src="http://static.johnlw.cn/blog_innodb_lock_multi-granularity.png" alt="这里写图片描述"></p>
+<p>如上图所示，有的事务需要锁住整个数据库，有的只需要锁住表，有的只需要锁住一条记录即可。</p>
+<p>多粒度封锁协议引入新的锁类型–<strong>意向锁</strong>（Intension Lock）来实现多粒度加锁，意向锁用来<strong>表示事务在加锁的数据项（各种粒度）上的操作意向</strong>。意向锁分为共享意向锁和排他意向锁，其与共享锁、排他锁的相容性矩阵如下表所示：<br>|相容性|IS|IX|S|X|<br>|-|-|-|-|-|<br>|IS|true|true|true|false|<br>|IX|true|true|false|false|<br>|S|true|false|true|false|<br>|X|false|false|false|false|<br><strong>多粒度封锁协议要求加锁按自顶向下的顺序（根到叶），解锁按照自底向上的顺序（叶到根）。</strong>如对某个记录加共享锁，需要先对根（数据库）加共享意向锁，再对表加共享意向锁，最后对该记录加共享锁；释放时，先释放该记录的共享锁，再释放在表上的共享意向锁，最后释放数据库上的共享意向锁。</p>
+<p>多粒度封锁协议增强了并发性，减小了锁的开销。</p>
+<h4 id="封锁的实现"><a href="#封锁的实现" class="headerlink" title="封锁的实现"></a>封锁的实现</h4><p>封锁通过锁管理器实现事务加解锁的管理，锁管理器通过维护一个锁表实现该功能。锁表如下图所示，图中I表示数据项，T表示事务。<br><img src="http://static.johnlw.cn/blog_innodb_lock.png" alt="这里写图片描述"></p>
+<p>锁管理器为目前所有已经加锁的数据项I维护一个链表，每个请求T为链表中的一条记录，按请求到达的顺序排序（防止饿死）。数据项通过散列表来维护。</p>
+<p>在InnoDB中的锁是行级锁（但其实际锁住的不是记录本身，而是索引），并支持多粒度封锁协议。InnoDB即时锁信息可以在Information_schema中的INNODB_TRX、INNODB_LOCKS、INNODB_LOCK_WAITS三张表中查询。</p>
+<h5 id="Two-Parse-Locking"><a href="#Two-Parse-Locking" class="headerlink" title="Two Parse Locking"></a>Two Parse Locking</h5><p>TPL将事务的锁操作分为加锁和解锁两个阶段，加锁阶段事务只能加锁而不能解锁，解锁阶段事务只能解锁而不能加新锁。</p>
+<p>通常TPL配合锁转换以避免级联回滚问题。即加锁阶段读锁可以升级为写锁，解锁阶段写锁降级为读锁而不是直接释放。</p>
+<p>TPL进一步提高了并发效率，事务在将数据库由一个一致性状态转换至新的一致状态之间，将部分一致的状态对其他事务可见。</p>
+<h5 id="InnoDB三种加锁方式"><a href="#InnoDB三种加锁方式" class="headerlink" title="InnoDB三种加锁方式"></a>InnoDB三种加锁方式</h5><ul>
+<li>Record Lock：记录锁，锁住记录的索引</li>
+<li>Gap Lock：间隙锁，锁住一个范围，但不包含记录本身</li>
+<li>Next-key Lock：Record Lock+Gap Lock，锁定一个记录范围，并且锁定记录本身</li>
 </ul>
-<p>对象内存布局主要分为三个部分：对象头、实例数据和对齐填充。其中，对齐填充主要方便内存管理，没有特别意义。如图：<br><img src="http://static.johnlw.cn/blog_object_head.png" alt="这里写图片描述"><br>注：如果是普通对象，则没有数组长度部分；如果是数组对象就需要加上数组长度。</p>
-<p>MarkWord的设计类似于网络协议报文头，将MarkWord划分为多个bit区间用于表示不同的信息。主要用于存储对象自身的运行时数据：hashcode、GC分代年龄、锁状态标志、锁记录指针、锁线程ID等。</p>
-<p>对象头中的元数据指针用来指向对象的类信息，虚拟机需要这个指针来定位位于方法区中的对象类型信息。实例数据即类定义中的各个字段内容。</p>
-<p>我们通过HSDB实际观察一下Eclipse的主线程对象：_mark（MarkWord），_metadata_compressed_Klass(元数据指针)和下面的实例数据。<br><img src="http://static.johnlw.cn/blog_object_metadata.png" alt="这里写图片描述"></p>
-<h3 id="对象的访问机制"><a href="#对象的访问机制" class="headerlink" title="对象的访问机制"></a>对象的访问机制</h3><p>在方法执行过程中，我们通过栈上的变量引用来访问堆中的对象实例，再通过类型指针来访问实例的类型数据，下图体现了hotspot中对象的访问机制。<br><img src="http://static.johnlw.cn/blog_object_reference.png" alt="这里写图片描述"></p>
-<blockquote>
-<p>《深入理解Java虚拟机》<br>《hotspot实战》<br>《实战Java虚拟机》<br><a href="https://www.javacodegeeks.com/2013/02/java-8-from-permgen-to-metaspace.html" target="_blank" rel="noopener">https://www.javacodegeeks.com/2013/02/java-8-from-permgen-to-metaspace.html</a></p>
-</blockquote>
+<p><strong>当sql语句通过唯一性索引查询某唯一行时，不会产生Gap Lock。此唯一性索引包括主键、普通唯一索引、联合唯一索引。</strong></p>
+<p><strong>在查询中字段没有索引或者不是唯一索引时，都会产生Gap Lock。</strong></p>
+<p>因为有Next-key lock的存在，在InnoDB中的RR隔离级别下，事务中的锁定读可能存在的幻读问题不再存在。Next-key lock锁定了记录周围的域，使得插入操作阻塞，保证了查询范围内的一致性。</p>
+<p>PS：这里陈述的查询语句都是锁定读，手动加锁如SELECT .. FOR UPDATE，SELECT .. LOCK IN SHARED MODE。不涉及下文将要提到的MVCC非锁定一致性读</p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h3><p>目前的封锁协议无法完全避免死锁的发生。处理死锁主要有两种方式：一是在申请资源前进行死锁检测；而是在发生死锁后，进行回滚。一适用于死锁发生频繁的场景，二适用于死锁发生概率较小的场景。</p>
+<h3 id="丢失更新问题"><a href="#丢失更新问题" class="headerlink" title="丢失更新问题"></a>丢失更新问题</h3><p>前面的事务隔离性级别问题表中，丢失更新问题在任何一个隔离级别下的单纯更新操作事务中都不都可能发生，即使是在RU隔离级别下，对行数据的DML操作都会加X锁，最多降级为S锁，直到事务提交，另外的事务才能更新新的数据，所以不存在在一个事务内部，尚未提交的更新数据被另外一个事务的更新操作所覆盖。</p>
+<p>但是如果一个事务是先读后更新，分为两步操作，在操作间隙可能被另外的事务读取数据再更新，情况就不一样了。</p>
+<p>例如：业务逻辑A，T1读取数据D，然后更新D为D1。业务逻辑B，T2读取数据D，然后T2更新D为D2。</p>
+<p>如果T2读取D的时机在T1更新D之前，那么A和B更新操作都是基于数据D，D1的值将被D2覆盖。如果D代表了银行余额，A和B都是转账操作，那么明显数据库将不会处于一致状态。</p>
+<p>这时的丢失更新问题需要将<strong>读写操作作为一个整体</strong>来解决，即在SELECT时就要手动加锁SELECT….FOR UPDATE，在读的时候直接加X锁。</p>
+<h3 id="MVCC（Multi-version-Concurrency-Control）"><a href="#MVCC（Multi-version-Concurrency-Control）" class="headerlink" title="MVCC（Multi-version Concurrency Control）"></a>MVCC（Multi-version Concurrency Control）</h3><p>在业务场景中，不能读到数据与读到数据后但是更新失败给用户的体验是不一样的，大多数业务中读数据的请求都远远多于写数据的请求。在仅有锁控制的并发控制下，读事务仅在共享锁时可以并发读，而在排他锁时被阻塞，MVCC使得数据库在排他锁时，读事务依然不会阻塞，极大的提高了数据读并发处理能力。</p>
+<p>MVCC，多版本并发控制，提供了数据库非锁定读的能力，在InnoDB中，MVCC由Undo Log支持。<br><img src="http://static.johnlw.cn/blog_innodb_mvcc.png" alt="这里写图片描述"></p>
+<p>在查询事务查询时如果数据项被加排他锁，则查询事务不会被阻塞而是读取该数据项的快照数据。不同的隔离级别对快照数据的轻易不一样，<strong>在RR级别下，事务总是读取事务刚开始读取的那个版本；在RC级别下，事务总是读取数据项最新的那个版本。</strong></p>
 
           
         
@@ -467,7 +484,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -510,7 +527,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">25</span>
                     <span class="site-state-item-name">posts</span>
                   </a>
                 </div>
