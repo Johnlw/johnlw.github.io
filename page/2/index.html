@@ -364,7 +364,7 @@
                 
                   <span class="post-meta-item-text">Edited on</span>
                 
-                <time title="Modified: 2019-01-25 14:04:12" itemprop="dateModified" datetime="2019-01-25T14:04:12+08:00">2019-01-25</time>
+                <time title="Modified: 2019-01-25 14:24:47" itemprop="dateModified" datetime="2019-01-25T14:24:47+08:00">2019-01-25</time>
               
             
           </span>
@@ -399,17 +399,17 @@
       
         
           
-            <p>###JVM内存基本布局<br>如图所示：<br><img src="http://static.johnlw.cn/blog_jvm_mem_layout.png" alt="这里写图片描述"></p>
-<p>###运行时数据区<br>Java虚拟机定义了若干种程序运行时会用到的运行时数据区。</p>
-<p>######程序计数器<br>每个Java线程都拥有自己的程序计数器，字节码执行游标。</p>
-<p>######虚拟机栈<br>每个Java线程都拥有自己的虚拟机栈，在线程创建时同时创建，用于存储栈帧。栈帧是用来存储数据和部分过程结果的数据结构，用来处理动态链接，方法返回和异常分派。栈帧随着方法的调用而创建，随着方法的返回（正常或抛异常）而销毁，栈帧中含有本地变量表，操作数栈，和指向当前方法的类的运行期常量池引用。栈溢出抛StackOverFlowError。</p>
-<p>######本地方法栈<br>功能上类似虚拟机栈，作用于本地方法</p>
-<p>######方法区<br>方法区是线程共享的内存区域。类似于传统语言中的编译代码存储区，它主要存储每个类的结构信息和JIT编译后的代码等。方法区溢出抛OOM。</p>
-<p>######堆<br>堆区是线程共享的内存区域，类实例以及数组对象都在堆区存储。堆溢出抛OOM。</p>
-<p>######运行时常量池<br>运行时常量池主要存放编译器生成的各种字面量和符号引用。</p>
-<p>###hotspot中的运行时常量池和方法区<br>hotspot在jdk7以前运行时常量池在方法区分配，jdk7以后运行时常量池移到了堆区，主要影响为String.intern()方法不用像之前在方法区重新生成新的对象，而转为在堆中直接持有对象引用，并避免了方法区内存溢出。</p>
+            <h3 id="JVM内存基本布局"><a href="#JVM内存基本布局" class="headerlink" title="JVM内存基本布局"></a>JVM内存基本布局</h3><p>如图所示：<br><img src="http://static.johnlw.cn/blog_jvm_mem_layout.png" alt="这里写图片描述"></p>
+<h3 id="运行时数据区"><a href="#运行时数据区" class="headerlink" title="运行时数据区"></a>运行时数据区</h3><p>Java虚拟机定义了若干种程序运行时会用到的运行时数据区。</p>
+<h6 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h6><p>每个Java线程都拥有自己的程序计数器，字节码执行游标。</p>
+<h6 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h6><p>每个Java线程都拥有自己的虚拟机栈，在线程创建时同时创建，用于存储栈帧。栈帧是用来存储数据和部分过程结果的数据结构，用来处理动态链接，方法返回和异常分派。栈帧随着方法的调用而创建，随着方法的返回（正常或抛异常）而销毁，栈帧中含有本地变量表，操作数栈，和指向当前方法的类的运行期常量池引用。栈溢出抛StackOverFlowError。</p>
+<h6 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h6><p>功能上类似虚拟机栈，作用于本地方法</p>
+<h6 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h6><p>方法区是线程共享的内存区域。类似于传统语言中的编译代码存储区，它主要存储每个类的结构信息和JIT编译后的代码等。方法区溢出抛OOM。</p>
+<h6 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h6><p>堆区是线程共享的内存区域，类实例以及数组对象都在堆区存储。堆溢出抛OOM。</p>
+<h6 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h6><p>运行时常量池主要存放编译器生成的各种字面量和符号引用。</p>
+<h3 id="hotspot中的运行时常量池和方法区"><a href="#hotspot中的运行时常量池和方法区" class="headerlink" title="hotspot中的运行时常量池和方法区"></a>hotspot中的运行时常量池和方法区</h3><p>hotspot在jdk7以前运行时常量池在方法区分配，jdk7以后运行时常量池移到了堆区，主要影响为String.intern()方法不用像之前在方法区重新生成新的对象，而转为在堆中直接持有对象引用，并避免了方法区内存溢出。</p>
 <p>hotspot在jdk8以后将方法区由原PermSpace移至MetaSpace，在本地内存分配，其大小上限取决于系统本地内存大小。此后对于Proxy、CGLIB和JSP等大量动态生成Class的情况下，方法区内存将更为充足。<br>对于僵死的类及类加载器的垃圾回收将在元数据使用到“MaxMeta-spaceSize”参数的设定值时进行。测试虚拟机启动需要的MetaSpace大小后，可以调整MaxMetaspaceSize参数来减少GC的次数。</p>
-<p>###对象的内存布局<br>Hotspot虚拟机使用OOP-Klass二分模型，即将一个java对象分成该对象的实例数据部分和该类的类型信息部分，具体如下：</p>
+<h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p>Hotspot虚拟机使用OOP-Klass二分模型，即将一个java对象分成该对象的实例数据部分和该类的类型信息部分，具体如下：</p>
 <ul>
 <li>OOP :即普通对象指针，描述对象实例信息。</li>
 <li>Klass:java类的c++对等体，用来描述该对象的Java类。</li>
@@ -418,7 +418,7 @@
 <p>MarkWord的设计类似于网络协议报文头，将MarkWord划分为多个bit区间用于表示不同的信息。主要用于存储对象自身的运行时数据：hashcode、GC分代年龄、锁状态标志、锁记录指针、锁线程ID等。</p>
 <p>对象头中的元数据指针用来指向对象的类信息，虚拟机需要这个指针来定位位于方法区中的对象类型信息。实例数据即类定义中的各个字段内容。</p>
 <p>我们通过HSDB实际观察一下Eclipse的主线程对象：_mark（MarkWord），_metadata_compressed_Klass(元数据指针)和下面的实例数据。<br><img src="http://static.johnlw.cn/blog_object_metadata.png" alt="这里写图片描述"></p>
-<p>###对象的访问机制<br>在方法执行过程中，我们通过栈上的变量引用来访问堆中的对象实例，再通过类型指针来访问实例的类型数据，下图体现了hotspot中对象的访问机制。<br><img src="http://static.johnlw.cn/blog_object_reference.png" alt="这里写图片描述"></p>
+<h3 id="对象的访问机制"><a href="#对象的访问机制" class="headerlink" title="对象的访问机制"></a>对象的访问机制</h3><p>在方法执行过程中，我们通过栈上的变量引用来访问堆中的对象实例，再通过类型指针来访问实例的类型数据，下图体现了hotspot中对象的访问机制。<br><img src="http://static.johnlw.cn/blog_object_reference.png" alt="这里写图片描述"></p>
 <blockquote>
 <p>《深入理解Java虚拟机》<br>《hotspot实战》<br>《实战Java虚拟机》<br><a href="https://www.javacodegeeks.com/2013/02/java-8-from-permgen-to-metaspace.html" target="_blank" rel="noopener">https://www.javacodegeeks.com/2013/02/java-8-from-permgen-to-metaspace.html</a></p>
 </blockquote>
