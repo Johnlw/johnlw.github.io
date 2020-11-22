@@ -1,125 +1,47 @@
 <!DOCTYPE html>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-<html class="theme-next gemini use-motion" lang="en">
-<head><meta name="generator" content="Hexo 3.8.0">
+<html lang="en">
+<head>
   <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
-
-<link rel="stylesheet" href="/css/main.css?v=6.7.0">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
-
-
-
-
-
-
-
-<script id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Gemini',
-    version: '6.7.0',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: false,
-    fastclick: false,
-    lazyload: false,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-  
-
-
-
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
 
   <meta name="description" content="方法调用最关键的问题就是要确定具体调用哪个版本的方法。在Java虚拟机里共有5条方法调用字节码指令：  invokestatic:调用静态方法 invokespecial:调用实例构造方法，私有方法和父类方法 invokevirtual:调用虚方法 invokeinterface:调用接口方法，在运行时确定一个实现此接口的对象 invokedynamic  静态解析通过invokestatic和i">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JVM--解析、分派、重载与重写">
-<meta property="og:url" content="http://yoursite.com/2018/04/23/JVM--解析、分派、重载与重写/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/04/23/JVM--%E8%A7%A3%E6%9E%90%E3%80%81%E5%88%86%E6%B4%BE%E3%80%81%E9%87%8D%E8%BD%BD%E4%B8%8E%E9%87%8D%E5%86%99/index.html">
 <meta property="og:site_name" content="John What">
 <meta property="og:description" content="方法调用最关键的问题就是要确定具体调用哪个版本的方法。在Java虚拟机里共有5条方法调用字节码指令：  invokestatic:调用静态方法 invokespecial:调用实例构造方法，私有方法和父类方法 invokevirtual:调用虚方法 invokeinterface:调用接口方法，在运行时确定一个实现此接口的对象 invokedynamic  静态解析通过invokestatic和i">
-<meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2019-01-25T09:27:56.000Z">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-04-23T07:08:20.000Z">
+<meta property="article:modified_time" content="2019-01-25T09:27:56.000Z">
+<meta property="article:author" content="John">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JVM--解析、分派、重载与重写">
-<meta name="twitter:description" content="方法调用最关键的问题就是要确定具体调用哪个版本的方法。在Java虚拟机里共有5条方法调用字节码指令：  invokestatic:调用静态方法 invokespecial:调用实例构造方法，私有方法和父类方法 invokevirtual:调用虚方法 invokeinterface:调用接口方法，在运行时确定一个实现此接口的对象 invokedynamic  静态解析通过invokestatic和i">
+
+<link rel="canonical" href="http://yoursite.com/2018/04/23/JVM--%E8%A7%A3%E6%9E%90%E3%80%81%E5%88%86%E6%B4%BE%E3%80%81%E9%87%8D%E8%BD%BD%E4%B8%8E%E9%87%8D%E5%86%99/">
 
 
-
-
-
-
-  <link rel="canonical" href="http://yoursite.com/2018/04/23/JVM--解析、分派、重载与重写/">
-
-
-
-<script id="page.configurations">
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
   };
 </script>
 
@@ -131,15 +53,8 @@
 
 
 
-
-
-
-
-
-
   <noscript>
   <style>
-  .use-motion .motion-element,
   .use-motion .brand,
   .use-motion .menu-item,
   .sidebar-inner,
@@ -148,9 +63,8 @@
   .use-motion .comments,
   .use-motion .post-header,
   .use-motion .post-body,
-  .use-motion .collection-title { opacity: initial; }
+  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .logo,
   .use-motion .site-title,
   .use-motion .site-subtitle {
     opacity: initial;
@@ -164,129 +78,63 @@
 
 </head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
-
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">John What</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
-    
-    
   </div>
 
-  <div class="site-nav-toggle">
-    <button aria-label="Toggle navigation bar">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">John What</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
   </div>
 </div>
 
 
 
+
 <nav class="site-nav">
-  
-    <ul id="menu" class="menu">
-      
-        
-        
-        
-          
-          <li class="menu-item menu-item-home">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-about">
+        <li class="menu-item menu-item-about">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-categories">
+        <li class="menu-item menu-item-categories">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-archives">
+        <li class="menu-item menu-item-archives">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
 
   </li>
-
-      
-      
-    </ul>
-  
-
-  
-
-  
+  </ul>
 </nav>
 
-
-
-  
 
 
 
@@ -294,143 +142,75 @@
     </header>
 
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
 
-    <main id="main" class="main">
+    <main class="main">
       <div class="main-inner">
         <div class="content-wrap">
           
+
+          <div class="content post posts-expand">
             
 
-          
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
     
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/23/JVM--%E8%A7%A3%E6%9E%90%E3%80%81%E5%88%86%E6%B4%BE%E3%80%81%E9%87%8D%E8%BD%BD%E4%B8%8E%E9%87%8D%E5%86%99/">
 
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/23/JVM--解析、分派、重载与重写/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="John">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="John What">
     </span>
-
-    
       <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">JVM--解析、分派、重载与重写
-
-              
-            
-          </h1>
-        
+        <h1 class="post-title" itemprop="name headline">
+          JVM--解析、分派、重载与重写
+        </h1>
 
         <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
+            <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="far fa-calendar"></i>
               </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
+              <span class="post-meta-item-text">Posted on</span>
 
               <time title="Created: 2018-04-23 15:08:20" itemprop="dateCreated datePublished" datetime="2018-04-23T15:08:20+08:00">2018-04-23</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-01-25 17:27:56" itemprop="dateModified" datetime="2019-01-25T17:27:56+08:00">2019-01-25</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a></span>
-
-                
-                
-              
             </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-01-25 17:27:56" itemprop="dateModified" datetime="2019-01-25T17:27:56+08:00">2019-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index"><span itemprop="name">JVM</span></a>
+                </span>
+            </span>
 
           
 
         </div>
       </header>
-    
 
     
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-      
 
       
         <p>方法调用最关键的问题就是要确定具体调用哪个版本的方法。在Java虚拟机里共有5条方法调用字节码指令：</p>
@@ -451,285 +231,169 @@
 <li>动态分派：通过变量实际类型来定位方法版本，在重写中应用</li>
 </ul>
 <p>这里静与动的意思分别指的是编译期和运行时，变量定义时的静态类型在编译期是可知的，而变量的实际类型是编译期不可确定的。如以下情况：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">B,C extends A</span><br><span class="line">A a = null;//静态类型可知</span><br><span class="line">if(condition)&#123;</span><br><span class="line">	a = new B();</span><br><span class="line">&#125;else&#123;</span><br><span class="line">	a = new C();</span><br><span class="line">&#125;</span><br><span class="line">//实际类型要在运行时才能确定</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">B,C extends A</span><br><span class="line">A a &#x3D; null;&#x2F;&#x2F;静态类型可知</span><br><span class="line">if(condition)&#123;</span><br><span class="line">	a &#x3D; new B();</span><br><span class="line">&#125;else&#123;</span><br><span class="line">	a &#x3D; new C();</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;实际类型要在运行时才能确定</span><br></pre></td></tr></table></figure>
+
 <h5 id="静态分派"><a href="#静态分派" class="headerlink" title="静态分派"></a>静态分派</h5><p>通过一段代码来说明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">public class Dispatch &#123;</span><br><span class="line">	</span><br><span class="line">	public static void test(Chinese c)&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public static void test(People p)&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	static class People &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	static class Chinese extends People &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	static class English extends People &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void speak(People p) &#123;</span><br><span class="line">		System.out.println(&quot;undefined&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void speak(Chinese c) &#123;</span><br><span class="line">		System.out.println(&quot;人&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void speak(English e) &#123;</span><br><span class="line">		System.out.println(&quot;people&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Dispatch d = new Dispatch();</span><br><span class="line">		//定义变量p，其静态类型为People，动态类型也为People。</span><br><span class="line">		People p = new People();</span><br><span class="line">		//同上</span><br><span class="line">		Chinese c = new Chinese();</span><br><span class="line">		//同上</span><br><span class="line">		English e = new English();</span><br><span class="line">		// speak方法为Dispatch上的重载方法，通过传入不同静态类型的变量，看编译期如何选择</span><br><span class="line">		d.speak(p);</span><br><span class="line">		//将c的静态类型强制转换为People</span><br><span class="line">		d.speak((People)c);</span><br><span class="line">		d.speak(c);</span><br><span class="line">		//将e的静态类型强制转换为People</span><br><span class="line">		d.speak((People)e);</span><br><span class="line">		d.speak(e);</span><br><span class="line">		</span><br><span class="line">		//将静态类型为People的p的实际类型转换为Chinese</span><br><span class="line">		p = c;</span><br><span class="line">		d.speak(p);</span><br><span class="line">		p = e;</span><br><span class="line">		d.speak(p);</span><br><span class="line">		</span><br><span class="line">		Dispatch.test(p);//静态方法的选择</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">public class Dispatch &#123;</span><br><span class="line">	</span><br><span class="line">	public static void test(Chinese c)&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	public static void test(People p)&#123;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	static class People &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	static class Chinese extends People &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	static class English extends People &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void speak(People p) &#123;</span><br><span class="line">		System.out.println(&quot;undefined&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void speak(Chinese c) &#123;</span><br><span class="line">		System.out.println(&quot;人&quot;);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void speak(English e) &#123;</span><br><span class="line">		System.out.println(&quot;people&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		Dispatch d &#x3D; new Dispatch();</span><br><span class="line">		&#x2F;&#x2F;定义变量p，其静态类型为People，动态类型也为People。</span><br><span class="line">		People p &#x3D; new People();</span><br><span class="line">		&#x2F;&#x2F;同上</span><br><span class="line">		Chinese c &#x3D; new Chinese();</span><br><span class="line">		&#x2F;&#x2F;同上</span><br><span class="line">		English e &#x3D; new English();</span><br><span class="line">		&#x2F;&#x2F; speak方法为Dispatch上的重载方法，通过传入不同静态类型的变量，看编译期如何选择</span><br><span class="line">		d.speak(p);</span><br><span class="line">		&#x2F;&#x2F;将c的静态类型强制转换为People</span><br><span class="line">		d.speak((People)c);</span><br><span class="line">		d.speak(c);</span><br><span class="line">		&#x2F;&#x2F;将e的静态类型强制转换为People</span><br><span class="line">		d.speak((People)e);</span><br><span class="line">		d.speak(e);</span><br><span class="line">		</span><br><span class="line">		&#x2F;&#x2F;将静态类型为People的p的实际类型转换为Chinese</span><br><span class="line">		p &#x3D; c;</span><br><span class="line">		d.speak(p);</span><br><span class="line">		p &#x3D; e;</span><br><span class="line">		d.speak(p);</span><br><span class="line">		</span><br><span class="line">		Dispatch.test(p);&#x2F;&#x2F;静态方法的选择</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>输出为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">undefined//静态类型为People</span><br><span class="line">undefined//c的静态类型被强制转换为People</span><br><span class="line">人//静态类型为Chinese</span><br><span class="line">undefined//e的静态类型被强制转换为People</span><br><span class="line">people//静态类型为English</span><br><span class="line">undefined// 不论实际类型怎么变化，p的静态类型始终为People</span><br><span class="line">undefined</span><br><span class="line">undefined//静态方法的选择一样</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">undefined&#x2F;&#x2F;静态类型为People</span><br><span class="line">undefined&#x2F;&#x2F;c的静态类型被强制转换为People</span><br><span class="line">人&#x2F;&#x2F;静态类型为Chinese</span><br><span class="line">undefined&#x2F;&#x2F;e的静态类型被强制转换为People</span><br><span class="line">people&#x2F;&#x2F;静态类型为English</span><br><span class="line">undefined&#x2F;&#x2F; 不论实际类型怎么变化，p的静态类型始终为People</span><br><span class="line">undefined</span><br><span class="line">undefined&#x2F;&#x2F;静态方法的选择一样</span><br></pre></td></tr></table></figure>
+
 <p>可以看到，在选择重载方法的版本时，编译器依据的是传入参数的<strong>静态类型</strong>（当然也与入参的数量有关），而与其实际类型无关。静态类型是编译期可知的，所以，在静态方法和私有方法的重载中，在编译期也是可以确定调用版本的。</p>
 <h5 id="动态分派"><a href="#动态分派" class="headerlink" title="动态分派"></a>动态分派</h5><p>还是上文中的代码，添加如下部分：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">static class DispatchSon extends Dispatch &#123;</span><br><span class="line">		public void speak(People p) &#123;</span><br><span class="line">			System.out.println(&quot;son undefined&quot;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		public void speak(Chinese c) &#123;</span><br><span class="line">			System.out.println(&quot;son 人&quot;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		public void speak(English e) &#123;</span><br><span class="line">			System.out.println(&quot;son people&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 <p>main方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">		Dispatch d = new Dispatch();</span><br><span class="line">		People p = new People();</span><br><span class="line">		Chinese c = new Chinese();</span><br><span class="line">		English e = new English();</span><br><span class="line">		</span><br><span class="line">		d.speak(p);</span><br><span class="line">		d.speak(c);</span><br><span class="line">		d.speak(e);</span><br><span class="line">		//将变量d的实际类型改变为DispatchSon类型</span><br><span class="line">		d = new DispatchSon();</span><br><span class="line">		d.speak(p);</span><br><span class="line">		d.speak(c);</span><br><span class="line">		d.speak(e);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">		Dispatch d &#x3D; new Dispatch();</span><br><span class="line">		People p &#x3D; new People();</span><br><span class="line">		Chinese c &#x3D; new Chinese();</span><br><span class="line">		English e &#x3D; new English();</span><br><span class="line">		</span><br><span class="line">		d.speak(p);</span><br><span class="line">		d.speak(c);</span><br><span class="line">		d.speak(e);</span><br><span class="line">		&#x2F;&#x2F;将变量d的实际类型改变为DispatchSon类型</span><br><span class="line">		d &#x3D; new DispatchSon();</span><br><span class="line">		d.speak(p);</span><br><span class="line">		d.speak(c);</span><br><span class="line">		d.speak(e);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 <p>输出：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">undefined</span><br><span class="line">人</span><br><span class="line">people</span><br><span class="line">//改变实际类型后调用了子类重写的方法</span><br><span class="line">son undefined</span><br><span class="line">son 人</span><br><span class="line">son people</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">undefined</span><br><span class="line">人</span><br><span class="line">people</span><br><span class="line">&#x2F;&#x2F;改变实际类型后调用了子类重写的方法</span><br><span class="line">son undefined</span><br><span class="line">son 人</span><br><span class="line">son people</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>可以看到，在选择重写的方法时，依据是变量（对象）的实际类型，而不是静态类型。</p>
 <h5 id="示例代码字节码"><a href="#示例代码字节码" class="headerlink" title="示例代码字节码"></a>示例代码字节码</h5><p>接下来我们在字节码层面看一下，为什么会像上文那样选择，字节码很长，省略了部分代码，将main方法改为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">		Dispatch d = new Dispatch();</span><br><span class="line">		People p = new People();</span><br><span class="line">		Chinese c = new Chinese();</span><br><span class="line"></span><br><span class="line">		d.speak(p);</span><br><span class="line">		d.speak((People) c);</span><br><span class="line">		d.speak(c);</span><br><span class="line"></span><br><span class="line">		p = c;</span><br><span class="line">		d.speak(p);</span><br><span class="line"></span><br><span class="line">		Dispatch.staticSpeak(p);</span><br><span class="line">		</span><br><span class="line">		d.speak(p);</span><br><span class="line">		d = new DispatchSon();</span><br><span class="line">		d.speak(p);</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>部分字节码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">// class version 51.0 (51)</span><br><span class="line">// access flags 0x21</span><br><span class="line">public class Dispatch &#123;</span><br><span class="line">  // access flags 0x1</span><br><span class="line">  public speak(Dispatch$People) : void</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 53 L0</span><br><span class="line">    GETSTATIC System.out : PrintStream</span><br><span class="line">    LDC &quot;undefined&quot;</span><br><span class="line">    INVOKEVIRTUAL PrintStream.println (String) : void</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 54 L1</span><br><span class="line">    RETURN</span><br><span class="line">   L2</span><br><span class="line">    LOCALVARIABLE this Dispatch L0 L2 0</span><br><span class="line">    LOCALVARIABLE p Dispatch$People L0 L2 1</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line"></span><br><span class="line">  // access flags 0x1</span><br><span class="line">  public speak(Dispatch$Chinese) : void</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 57 L0</span><br><span class="line">    GETSTATIC System.out : PrintStream</span><br><span class="line">    LDC &quot;\u4eba&quot;</span><br><span class="line">    INVOKEVIRTUAL PrintStream.println (String) : void</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 58 L1</span><br><span class="line">    RETURN</span><br><span class="line">   L2</span><br><span class="line">    LOCALVARIABLE this Dispatch L0 L2 0</span><br><span class="line">    LOCALVARIABLE c Dispatch$Chinese L0 L2 1</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 2</span><br><span class="line"></span><br><span class="line">  // access flags 0x9</span><br><span class="line">  public static main(String[]) : void</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 79 L0</span><br><span class="line">    NEW Dispatch</span><br><span class="line">    DUP</span><br><span class="line">    //构造方法调用指令invokespecial</span><br><span class="line">    INVOKESPECIAL Dispatch.&lt;init&gt; () : void</span><br><span class="line">    ASTORE 1</span><br><span class="line">    </span><br><span class="line">   L3</span><br><span class="line">    LINENUMBER 83 L3</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    //普通方法调用invokevirtual</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L4</span><br><span class="line">    LINENUMBER 84 L4</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 3: c</span><br><span class="line">	//这里对应强制转换，可以看到此处调用时speak方法的入参类型为People类型</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L5</span><br><span class="line">    LINENUMBER 85 L5</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 3: c</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$Chinese) : void</span><br><span class="line">   L6</span><br><span class="line">    LINENUMBER 87 L6</span><br><span class="line">    ALOAD 3: c</span><br><span class="line">    ASTORE 2: p</span><br><span class="line">   L7</span><br><span class="line">    LINENUMBER 88 L7</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L8</span><br><span class="line">    LINENUMBER 90 L8</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    //静态方法调用指令invokestatic</span><br><span class="line">    INVOKESTATIC Dispatch.staticSpeak (Dispatch$People) : void</span><br><span class="line">   L9</span><br><span class="line">    LINENUMBER 92 L9</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    //实际类型为Dispatch时的调用</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L10</span><br><span class="line">    LINENUMBER 93 L10</span><br><span class="line">    NEW Dispatch$DispatchSon</span><br><span class="line">    DUP</span><br><span class="line">    INVOKESPECIAL Dispatch$DispatchSon.&lt;init&gt; () : void</span><br><span class="line">    ASTORE 1: d</span><br><span class="line">   L11</span><br><span class="line">    LINENUMBER 94 L11</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    //实际类型为DispatchSon时的调用</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L12</span><br><span class="line">    LINENUMBER 96 L12</span><br><span class="line">    RETURN</span><br><span class="line">   L13</span><br><span class="line">    LOCALVARIABLE args String[] L0 L13 0</span><br><span class="line">    LOCALVARIABLE d Dispatch L1 L13 1</span><br><span class="line">    LOCALVARIABLE p Dispatch$People L2 L13 2</span><br><span class="line">    LOCALVARIABLE c Dispatch$Chinese L3 L13 3</span><br><span class="line">    MAXSTACK = 2</span><br><span class="line">    MAXLOCALS = 4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">		Dispatch d &#x3D; new Dispatch();</span><br><span class="line">		People p &#x3D; new People();</span><br><span class="line">		Chinese c &#x3D; new Chinese();</span><br><span class="line"></span><br><span class="line">		d.speak(p);</span><br><span class="line">		d.speak((People) c);</span><br><span class="line">		d.speak(c);</span><br><span class="line"></span><br><span class="line">		p &#x3D; c;</span><br><span class="line">		d.speak(p);</span><br><span class="line"></span><br><span class="line">		Dispatch.staticSpeak(p);</span><br><span class="line">		</span><br><span class="line">		d.speak(p);</span><br><span class="line">		d &#x3D; new DispatchSon();</span><br><span class="line">		d.speak(p);</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>部分字节码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; class version 51.0 (51)</span><br><span class="line">&#x2F;&#x2F; access flags 0x21</span><br><span class="line">public class Dispatch &#123;</span><br><span class="line">  &#x2F;&#x2F; access flags 0x1</span><br><span class="line">  public speak(Dispatch$People) : void</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 53 L0</span><br><span class="line">    GETSTATIC System.out : PrintStream</span><br><span class="line">    LDC &quot;undefined&quot;</span><br><span class="line">    INVOKEVIRTUAL PrintStream.println (String) : void</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 54 L1</span><br><span class="line">    RETURN</span><br><span class="line">   L2</span><br><span class="line">    LOCALVARIABLE this Dispatch L0 L2 0</span><br><span class="line">    LOCALVARIABLE p Dispatch$People L0 L2 1</span><br><span class="line">    MAXSTACK &#x3D; 2</span><br><span class="line">    MAXLOCALS &#x3D; 2</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; access flags 0x1</span><br><span class="line">  public speak(Dispatch$Chinese) : void</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 57 L0</span><br><span class="line">    GETSTATIC System.out : PrintStream</span><br><span class="line">    LDC &quot;\u4eba&quot;</span><br><span class="line">    INVOKEVIRTUAL PrintStream.println (String) : void</span><br><span class="line">   L1</span><br><span class="line">    LINENUMBER 58 L1</span><br><span class="line">    RETURN</span><br><span class="line">   L2</span><br><span class="line">    LOCALVARIABLE this Dispatch L0 L2 0</span><br><span class="line">    LOCALVARIABLE c Dispatch$Chinese L0 L2 1</span><br><span class="line">    MAXSTACK &#x3D; 2</span><br><span class="line">    MAXLOCALS &#x3D; 2</span><br><span class="line"></span><br><span class="line">  &#x2F;&#x2F; access flags 0x9</span><br><span class="line">  public static main(String[]) : void</span><br><span class="line">   L0</span><br><span class="line">    LINENUMBER 79 L0</span><br><span class="line">    NEW Dispatch</span><br><span class="line">    DUP</span><br><span class="line">    &#x2F;&#x2F;构造方法调用指令invokespecial</span><br><span class="line">    INVOKESPECIAL Dispatch.&lt;init&gt; () : void</span><br><span class="line">    ASTORE 1</span><br><span class="line">    </span><br><span class="line">   L3</span><br><span class="line">    LINENUMBER 83 L3</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    &#x2F;&#x2F;普通方法调用invokevirtual</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L4</span><br><span class="line">    LINENUMBER 84 L4</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 3: c</span><br><span class="line">	&#x2F;&#x2F;这里对应强制转换，可以看到此处调用时speak方法的入参类型为People类型</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L5</span><br><span class="line">    LINENUMBER 85 L5</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 3: c</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$Chinese) : void</span><br><span class="line">   L6</span><br><span class="line">    LINENUMBER 87 L6</span><br><span class="line">    ALOAD 3: c</span><br><span class="line">    ASTORE 2: p</span><br><span class="line">   L7</span><br><span class="line">    LINENUMBER 88 L7</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L8</span><br><span class="line">    LINENUMBER 90 L8</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    &#x2F;&#x2F;静态方法调用指令invokestatic</span><br><span class="line">    INVOKESTATIC Dispatch.staticSpeak (Dispatch$People) : void</span><br><span class="line">   L9</span><br><span class="line">    LINENUMBER 92 L9</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    &#x2F;&#x2F;实际类型为Dispatch时的调用</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L10</span><br><span class="line">    LINENUMBER 93 L10</span><br><span class="line">    NEW Dispatch$DispatchSon</span><br><span class="line">    DUP</span><br><span class="line">    INVOKESPECIAL Dispatch$DispatchSon.&lt;init&gt; () : void</span><br><span class="line">    ASTORE 1: d</span><br><span class="line">   L11</span><br><span class="line">    LINENUMBER 94 L11</span><br><span class="line">    ALOAD 1: d</span><br><span class="line">    ALOAD 2: p</span><br><span class="line">    &#x2F;&#x2F;实际类型为DispatchSon时的调用</span><br><span class="line">    INVOKEVIRTUAL Dispatch.speak (Dispatch$People) : void</span><br><span class="line">   L12</span><br><span class="line">    LINENUMBER 96 L12</span><br><span class="line">    RETURN</span><br><span class="line">   L13</span><br><span class="line">    LOCALVARIABLE args String[] L0 L13 0</span><br><span class="line">    LOCALVARIABLE d Dispatch L1 L13 1</span><br><span class="line">    LOCALVARIABLE p Dispatch$People L2 L13 2</span><br><span class="line">    LOCALVARIABLE c Dispatch$Chinese L3 L13 3</span><br><span class="line">    MAXSTACK &#x3D; 2</span><br><span class="line">    MAXLOCALS &#x3D; 4</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <p>在字节码中实际类型不同的调用字节码却是相同的，如何根据实际类型调用重写的方法呢？答案在invokevirtual指令的内部执行逻辑里：<strong>invokevirtual指令内部的第一步就是确定调用方法的变量的实际类型</strong>，将方法调用的符号引用解析到实际类型的直接引用上。</p>
 <blockquote>
 <p>深入理解Java虚拟机</p>
 </blockquote>
 
-      
     </div>
 
     
-
-    
-    
-    
-
-    
-
-    
-      
     
     
 
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/04/18/JVM--JVM%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%EF%BC%88%E4%B8%8B%EF%BC%89/" rel="prev" title="JVM--JVM类加载机制（下）">
+      <i class="fa fa-chevron-left"></i> JVM--JVM类加载机制（下）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/05/14/InnoDB%E5%BC%95%E6%93%8E--%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%E4%B8%8E%E6%96%87%E4%BB%B6/" rel="next" title="InnoDB引擎--存储结构与文件">
+      InnoDB引擎--存储结构与文件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
     
-
-    <footer class="post-footer">
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2018/04/18/JVM--JVM类加载机制（下）/" rel="next" title="JVM--JVM类加载机制（下）">
-                <i class="fa fa-chevron-left"></i> JVM--JVM类加载机制（下）
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/05/14/InnoDB引擎--存储结构与文件/" rel="prev" title="InnoDB引擎--存储结构与文件">
-                InnoDB引擎--存储结构与文件 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
   </article>
+  
+  
+  
 
-
-  </div>
 
 
           </div>
           
-
-  
-
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-            
-              <p class="site-author-name" itemprop="name">John</p>
-              <p class="site-description motion-element" itemprop="description"></p>
-          </div>
-
-          
-            <nav class="site-state motion-element">
-              
-                <div class="site-state-item site-state-posts">
-                
-                  <a href="/archives/">
-                
-                    <span class="site-state-item-count">28</span>
-                    <span class="site-state-item-name">posts</span>
-                  </a>
-                </div>
-              
-
-              
-                
-                
-                <div class="site-state-item site-state-categories">
-                  <a href="/categories/index.html">
-                    
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">8</span>
-                    <span class="site-state-item-name">categories</span>
-                  </a>
-                </div>
-              
-
-              
-            </nav>
-          
-
-          
-
-          
-
-          
-
-          
-          
-
-          
-            
-          
-          
-
-        </div>
-      </div>
-
-      
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#静态解析"><span class="nav-number">1.</span> <span class="nav-text">静态解析</span></a></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#分派"><span class="nav-number"></span> <span class="nav-text">分派</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#静态分派"><span class="nav-number">1.</span> <span class="nav-text">静态分派</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#动态分派"><span class="nav-number">2.</span> <span class="nav-text">动态分派</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#示例代码字节码"><span class="nav-number">3.</span> <span class="nav-text">示例代码字节码</span></a></li></ol></li></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John</span>
-
-  
-
-  
-</div>
-
-
-  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
-
-
-
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
-
-
-
-
-        
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-    
-
-    
-
-    
-  </div>
-
-  
 
 <script>
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
   }
 </script>
 
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E8%A7%A3%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">静态解析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E6%B4%BE"><span class="nav-number"></span> <span class="nav-text">分派</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%B4%BE"><span class="nav-number">1.</span> <span class="nav-text">静态分派</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE"><span class="nav-number">2.</span> <span class="nav-text">动态分派</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81%E5%AD%97%E8%8A%82%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">示例代码字节码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
 
 
 
@@ -738,100 +402,43 @@
 
 
 
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/schemes/pisces.js"></script>
 
 
-
-
-
-
-
-
-
-
-
+<script src="/js/next-boot.js"></script>
 
 
 
 
   
-  <script src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-
-  
-
-
-  <script src="/js/src/utils.js?v=6.7.0"></script>
-
-  <script src="/js/src/motion.js?v=6.7.0"></script>
-
-
-
-  
-  
-
-
-  <script src="/js/src/affix.js?v=6.7.0"></script>
-
-  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
-
-
-
-
-  
-  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
-<script src="/js/src/post-details.js?v=6.7.0"></script>
-
-
-
-  
-
-
-  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
-
-
-
-  
-  
 
 
 
 
 
-  
 
 
 
 
 
-  
 
-  
 
-  
 
-  
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
 

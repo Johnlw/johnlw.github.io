@@ -1,128 +1,50 @@
 <!DOCTYPE html>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-<html class="theme-next gemini use-motion" lang="en">
-<head><meta name="generator" content="Hexo 3.8.0">
+<html lang="en">
+<head>
   <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
-
-<link rel="stylesheet" href="/css/main.css?v=6.7.0">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
-
-
-
-
-
-
-
-<script id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Gemini',
-    version: '6.7.0',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: false,
-    fastclick: false,
-    lazyload: false,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-  
-
-
-
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
 
   <meta name="description" content="AVL树AVL树是带有平衡条件的二叉查找树。平衡条件为：某节点左右子树的高度差不超过1。 平衡操作-旋转在AVL树的插入和删除操作中，需要更新树节点的高度信息以检查AVL树的平衡状态，如果插入和删除后出现了不平衡，还需要通过旋转操作来修正AVL树的平衡状态。 插入后平衡假设插入后非平衡节点为N，4种情况和修正方案：  向N的左儿子的左子树插入：右旋 向N的右儿子的右子树插入：左旋 向N的左儿子的右">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AVL树图解和Java实现">
-<meta property="og:url" content="http://yoursite.com/2018/03/27/AVL树图解和Java实现/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/03/27/AVL%E6%A0%91%E5%9B%BE%E8%A7%A3%E5%92%8CJava%E5%AE%9E%E7%8E%B0/index.html">
 <meta property="og:site_name" content="John What">
 <meta property="og:description" content="AVL树AVL树是带有平衡条件的二叉查找树。平衡条件为：某节点左右子树的高度差不超过1。 平衡操作-旋转在AVL树的插入和删除操作中，需要更新树节点的高度信息以检查AVL树的平衡状态，如果插入和删除后出现了不平衡，还需要通过旋转操作来修正AVL树的平衡状态。 插入后平衡假设插入后非平衡节点为N，4种情况和修正方案：  向N的左儿子的左子树插入：右旋 向N的右儿子的右子树插入：左旋 向N的左儿子的右">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://static.johnlw.cn/blog_avl_single_rotate.png">
 <meta property="og:image" content="http://static.johnlw.cn/blog_avl_double_rotate.png">
-<meta property="og:updated_time" content="2019-01-25T09:31:42.000Z">
+<meta property="article:published_time" content="2018-03-27T05:33:44.000Z">
+<meta property="article:modified_time" content="2019-01-25T09:31:42.000Z">
+<meta property="article:author" content="John">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AVL树图解和Java实现">
-<meta name="twitter:description" content="AVL树AVL树是带有平衡条件的二叉查找树。平衡条件为：某节点左右子树的高度差不超过1。 平衡操作-旋转在AVL树的插入和删除操作中，需要更新树节点的高度信息以检查AVL树的平衡状态，如果插入和删除后出现了不平衡，还需要通过旋转操作来修正AVL树的平衡状态。 插入后平衡假设插入后非平衡节点为N，4种情况和修正方案：  向N的左儿子的左子树插入：右旋 向N的右儿子的右子树插入：左旋 向N的左儿子的右">
 <meta name="twitter:image" content="http://static.johnlw.cn/blog_avl_single_rotate.png">
 
+<link rel="canonical" href="http://yoursite.com/2018/03/27/AVL%E6%A0%91%E5%9B%BE%E8%A7%A3%E5%92%8CJava%E5%AE%9E%E7%8E%B0/">
 
 
-
-
-
-  <link rel="canonical" href="http://yoursite.com/2018/03/27/AVL树图解和Java实现/">
-
-
-
-<script id="page.configurations">
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
   };
 </script>
 
@@ -134,15 +56,8 @@
 
 
 
-
-
-
-
-
-
   <noscript>
   <style>
-  .use-motion .motion-element,
   .use-motion .brand,
   .use-motion .menu-item,
   .sidebar-inner,
@@ -151,9 +66,8 @@
   .use-motion .comments,
   .use-motion .post-header,
   .use-motion .post-body,
-  .use-motion .collection-title { opacity: initial; }
+  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .logo,
   .use-motion .site-title,
   .use-motion .site-subtitle {
     opacity: initial;
@@ -167,129 +81,63 @@
 
 </head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
-
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">John What</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
-    
-    
   </div>
 
-  <div class="site-nav-toggle">
-    <button aria-label="Toggle navigation bar">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">John What</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
   </div>
 </div>
 
 
 
+
 <nav class="site-nav">
-  
-    <ul id="menu" class="menu">
-      
-        
-        
-        
-          
-          <li class="menu-item menu-item-home">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-about">
+        <li class="menu-item menu-item-about">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-categories">
+        <li class="menu-item menu-item-categories">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-archives">
+        <li class="menu-item menu-item-archives">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
 
   </li>
-
-      
-      
-    </ul>
-  
-
-  
-
-  
+  </ul>
 </nav>
 
-
-
-  
 
 
 
@@ -297,143 +145,75 @@
     </header>
 
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
 
-    <main id="main" class="main">
+    <main class="main">
       <div class="main-inner">
         <div class="content-wrap">
           
+
+          <div class="content post posts-expand">
             
 
-          
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
     
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/27/AVL%E6%A0%91%E5%9B%BE%E8%A7%A3%E5%92%8CJava%E5%AE%9E%E7%8E%B0/">
 
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/27/AVL树图解和Java实现/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="John">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="John What">
     </span>
-
-    
       <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">AVL树图解和Java实现
-
-              
-            
-          </h1>
-        
+        <h1 class="post-title" itemprop="name headline">
+          AVL树图解和Java实现
+        </h1>
 
         <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
+            <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="far fa-calendar"></i>
               </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
+              <span class="post-meta-item-text">Posted on</span>
 
               <time title="Created: 2018-03-27 13:33:44" itemprop="dateCreated datePublished" datetime="2018-03-27T13:33:44+08:00">2018-03-27</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-01-25 17:31:42" itemprop="dateModified" datetime="2019-01-25T17:31:42+08:00">2019-01-25</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Data-Structure-Algorithm/" itemprop="url" rel="index"><span itemprop="name">Data Structure & Algorithm</span></a></span>
-
-                
-                
-              
             </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-01-25 17:31:42" itemprop="dateModified" datetime="2019-01-25T17:31:42+08:00">2019-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Data-Structure-Algorithm/" itemprop="url" rel="index"><span itemprop="name">Data Structure & Algorithm</span></a>
+                </span>
+            </span>
 
           
 
         </div>
       </header>
-    
 
     
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-      
 
       
         <h3 id="AVL树"><a href="#AVL树" class="headerlink" title="AVL树"></a>AVL树</h3><p>AVL树是带有<strong>平衡条件</strong>的<strong>二叉查找树</strong>。平衡条件为：某节点左右子树的高度差不超过1。</p>
@@ -450,7 +230,13 @@
 <ol>
 <li><strong>保存路径信息</strong>。在插入过程中用栈保存路径信息。</li>
 <li><strong>更新高度信息，检查平衡状态</strong>。插入完成后，从栈中依次弹出节点，更新其高度信息，并检查其平衡状态。如果没有遇到不平衡节点，则插入完成；如果遇到非平衡节点，继续弹出一个节点N_other代表树的其余部分。</li>
-<li><strong>旋转</strong>。图中是右旋。比较旋转前后的状态，大致需要五步操作完成。<br>3.1 <strong>确定插入方式</strong>。从非平衡节点N1出发，与新节点N3比较两次即可确定是左左插入。<br>3.2 <strong>周知树其余部分</strong>。更新树其余部分的儿子指向新的节点N2。<br>3.3 <strong>儿子移交</strong>。将N2的右子树移交给N1的左儿子。<br>3.4 <strong>新根上任</strong>。原N1作为N2的右儿子。<br>3.5 <strong>高度信息更新</strong>。观察发现旋转过程中，只有N_other，N1，N2的高度信息可能发生变化，重新为它们计算高度信息。<br>3.6 <strong>总结</strong>。这四步可以分为三步：1、确定插入方式2、更新三个相关节点的左右儿子信息3、更新三个节点的高度信息.</li>
+<li><strong>旋转</strong>。图中是右旋。比较旋转前后的状态，大致需要五步操作完成。</li>
+<li>1 <strong>确定插入方式</strong>。从非平衡节点N1出发，与新节点N3比较两次即可确定是左左插入。</li>
+<li>2 <strong>周知树其余部分</strong>。更新树其余部分的儿子指向新的节点N2。</li>
+<li>3 <strong>儿子移交</strong>。将N2的右子树移交给N1的左儿子。</li>
+<li>4 <strong>新根上任</strong>。原N1作为N2的右儿子。</li>
+<li>5 <strong>高度信息更新</strong>。观察发现旋转过程中，只有N_other，N1，N2的高度信息可能发生变化，重新为它们计算高度信息。</li>
+<li>6 <strong>总结</strong>。这四步可以分为三步：1、确定插入方式2、更新三个相关节点的左右儿子信息3、更新三个节点的高度信息.</li>
 <li><strong>更新路径上余下节点的高度信息</strong>。</li>
 </ol>
 <p>至此一次完整的左左插入过程就完成了。<br>双旋转过程图：<br><img src="http://static.johnlw.cn/blog_avl_double_rotate.png" alt="这里写图片描述"><br>上图是先左后右双旋，先右后左是对称的，略去不表</p>
@@ -472,265 +258,144 @@
 </ol>
 <p>对于删除操作造成的非平衡状态的修正，可以这样理解：对左或者右子树的删除操作相当于对右或者左子树的插入操作，然后再对应上插入的四种情况选择相应的旋转就好了。</p>
 <p>以下为代码实现：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br></pre></td><td class="code"><pre><span class="line">public class AVLBalanceTree&lt;T extends Comparable&lt;T&gt;&gt; &#123;</span><br><span class="line"></span><br><span class="line">	private TreeNode&lt;T&gt; root;</span><br><span class="line"></span><br><span class="line">	public AVLBalanceTree() &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private class TreeNode&lt;E&gt; &#123;</span><br><span class="line">		T element;</span><br><span class="line">		int height;</span><br><span class="line">		TreeNode&lt;T&gt; left;</span><br><span class="line">		TreeNode&lt;T&gt; right;</span><br><span class="line"></span><br><span class="line">		TreeNode(T e) &#123;</span><br><span class="line">			element = e;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		boolean isBalanced() &#123;</span><br><span class="line">			int leftHeight = left == null ? -1 : left.height;</span><br><span class="line">			int rightHeight = right == null ? -1 : right.height;</span><br><span class="line">			return Math.abs(leftHeight - rightHeight) &lt;= 1 ? true : false;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		public String toString() &#123;</span><br><span class="line">			return &quot;Element:&quot; + element + &quot; Height:&quot; + height + &quot; Balanced:&quot; + isBalanced();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private int calHeight(TreeNode&lt;T&gt; node) &#123;</span><br><span class="line">		if (node == null) &#123;</span><br><span class="line">			return -1;</span><br><span class="line">		&#125;</span><br><span class="line">		int leftHeight = node.left == null ? -1 : node.left.height;</span><br><span class="line">		int rightHeight = node.right == null ? -1 : node.right.height;</span><br><span class="line">		return Math.max(leftHeight, rightHeight) + 1;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// 非递归算法部分</span><br><span class="line">	public void insertNonRecursive(T e) &#123;</span><br><span class="line">		LinkedList&lt;TreeNode&lt;T&gt;&gt; trace = new LinkedList&lt;&gt;();</span><br><span class="line">		insertNonRecursive0(e, trace);</span><br><span class="line">		reBalanceAfterInsert(trace, e);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void reBalanceAfterInsert(LinkedList&lt;TreeNode&lt;T&gt;&gt; trace, T e) &#123;</span><br><span class="line">		TreeNode&lt;T&gt; unBalanceNode = null;</span><br><span class="line">		TreeNode&lt;T&gt; unBalNodeParent = null;</span><br><span class="line">		TreeNode&lt;T&gt; n = null;</span><br><span class="line">		while ((n = trace.peek()) != null &amp;&amp; unBalanceNode == null) &#123;</span><br><span class="line">			n = trace.pop();</span><br><span class="line">			n.height = calHeight(n);</span><br><span class="line">			if (!n.isBalanced()) &#123;</span><br><span class="line">				unBalanceNode = n;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		if (trace.peek() != null) &#123;</span><br><span class="line">			unBalNodeParent = trace.pop();</span><br><span class="line">		&#125;</span><br><span class="line">		// 平衡状态 返回</span><br><span class="line">		if (unBalanceNode == null) &#123;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		// 确定插入方式</span><br><span class="line">		int compareInt = unBalanceNode.element.compareTo(e);</span><br><span class="line">		if (compareInt &gt; 0) &#123;</span><br><span class="line">			if (calHeight(unBalanceNode.left.left) - calHeight(unBalanceNode.left.right) &gt; 0) &#123;</span><br><span class="line">				rotateRight(unBalanceNode, unBalNodeParent);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				// 先左旋时，视原非平衡节点的左儿子为非平衡节点</span><br><span class="line">				rotateLeft(unBalanceNode.left, unBalanceNode);</span><br><span class="line">				rotateRight(unBalanceNode, unBalNodeParent);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else if (compareInt &lt; 0) &#123;</span><br><span class="line">			if (calHeight(unBalanceNode.right.left) - calHeight(unBalanceNode.right.right) &lt; 0) &#123;</span><br><span class="line">				rotateLeft(unBalanceNode, unBalNodeParent);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				rotateRight(unBalanceNode.right, unBalanceNode);</span><br><span class="line">				rotateLeft(unBalanceNode, unBalNodeParent);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		// 旋转完毕，旋转子树的高度信息已经更新过了，继续更新非平衡节点以上的高度信息</span><br><span class="line">		while ((n = trace.peek()) != null) &#123;</span><br><span class="line">			n = trace.pop();</span><br><span class="line">			n.height = calHeight(n);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void rotateRight(TreeNode&lt;T&gt; unBalanceNode, TreeNode&lt;T&gt; unBalNodeParent) &#123;</span><br><span class="line">		TreeNode&lt;T&gt; newRoot = unBalanceNode.left;</span><br><span class="line">		TreeNode&lt;T&gt; ubParent = unBalNodeParent;</span><br><span class="line">		// 周知树其余部分</span><br><span class="line">		if (ubParent != null) &#123;</span><br><span class="line">			if (ubParent.left != null &amp;&amp; ubParent.left.equals(unBalanceNode)) &#123;</span><br><span class="line">				ubParent.left = newRoot;</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				ubParent.right = newRoot;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			this.root = newRoot;</span><br><span class="line">		&#125;</span><br><span class="line">		// 儿子移交</span><br><span class="line">		if (newRoot.right != null) &#123;</span><br><span class="line">			unBalanceNode.left = newRoot.right;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			unBalanceNode.left = null;</span><br><span class="line">		&#125;</span><br><span class="line">		// 新根上任，左儿子无需处理</span><br><span class="line">		newRoot.right = unBalanceNode;</span><br><span class="line"></span><br><span class="line">		// 更新三个节点的高度信息</span><br><span class="line">		unBalanceNode.height = calHeight(unBalanceNode);</span><br><span class="line">		newRoot.height = calHeight(newRoot);</span><br><span class="line">		if (ubParent != null) &#123;</span><br><span class="line">			ubParent.height = calHeight(ubParent);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void rotateLeft(TreeNode&lt;T&gt; unBalanceNode, TreeNode&lt;T&gt; unBalNodeParent) &#123;</span><br><span class="line">		TreeNode&lt;T&gt; newRoot = unBalanceNode.right;</span><br><span class="line">		TreeNode&lt;T&gt; ubParent = unBalNodeParent;</span><br><span class="line"></span><br><span class="line">		if (ubParent != null) &#123;</span><br><span class="line">			if (ubParent.left != null &amp;&amp; ubParent.left.equals(unBalanceNode)) &#123;</span><br><span class="line">				ubParent.left = newRoot;</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				ubParent.right = newRoot;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			this.root = newRoot;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		if (newRoot.left != null) &#123;</span><br><span class="line">			unBalanceNode.right = newRoot.left;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			unBalanceNode.right = null;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		newRoot.left = unBalanceNode;</span><br><span class="line"></span><br><span class="line">		unBalanceNode.height = calHeight(unBalanceNode);</span><br><span class="line">		newRoot.height = calHeight(newRoot);</span><br><span class="line">		if (ubParent != null) &#123;</span><br><span class="line">			ubParent.height = calHeight(ubParent);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void insertNonRecursive0(T e, LinkedList&lt;TreeNode&lt;T&gt;&gt; trace) &#123;</span><br><span class="line">		TreeNode&lt;T&gt; node = new TreeNode&lt;&gt;(e);</span><br><span class="line">		if (root == null) &#123;</span><br><span class="line">			root = node;</span><br><span class="line">			root.height = 0;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		TreeNode&lt;T&gt; current = root;</span><br><span class="line">		trace.push(current);</span><br><span class="line">		int compareInt = 0;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			compareInt = current.element.compareTo(e);</span><br><span class="line">			if (compareInt &gt; 0) &#123;</span><br><span class="line">				if (current.left == null) &#123;</span><br><span class="line">					current.left = node;</span><br><span class="line">					trace.push(node);</span><br><span class="line">					return;</span><br><span class="line">				&#125;</span><br><span class="line">				current = current.left;</span><br><span class="line">				trace.push(current);</span><br><span class="line">			&#125; else if (compareInt &lt; 0) &#123;</span><br><span class="line">				if (current.right == null) &#123;</span><br><span class="line">					current.right = node;</span><br><span class="line">					trace.push(node);</span><br><span class="line">					return;</span><br><span class="line">				&#125;</span><br><span class="line">				current = current.right;</span><br><span class="line">				trace.push(current);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				// 相等 不插入</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void removeNonRecursive(T e) &#123;</span><br><span class="line">		LinkedList&lt;TreeNode&lt;T&gt;&gt; trace = new LinkedList&lt;&gt;();</span><br><span class="line">		TreeNode&lt;T&gt; current = root;</span><br><span class="line">		trace.push(current);</span><br><span class="line">		// 尝试删除，该节点没有儿子或者只有一个儿子</span><br><span class="line">		if (tryRemove(e, trace, current)) &#123;</span><br><span class="line">			// 更新节点高度信息，修正平衡状态</span><br><span class="line">			// 此时栈顶为被删除节点的父节点或者空栈</span><br><span class="line">			if (trace.isEmpty()) &#123;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line">			// 弹出栈，更新高度信息并检查平衡</span><br><span class="line">			reBalanceAfterRemove(trace, e);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			// 尝试失败，该节点有两个儿子，此时栈顶元素即为将要删除的节点A</span><br><span class="line">			current = trace.peek();</span><br><span class="line">			// 找到A的右子树中最小的节点B，该节点没有左儿子</span><br><span class="line">			TreeNode&lt;T&gt; rMin = findMin(current.right);</span><br><span class="line">			// 此时删除目标变为最小的右儿子B</span><br><span class="line">			tryRemove(rMin.element, trace, current);</span><br><span class="line">			reBalanceAfterRemove(trace, rMin.element);</span><br><span class="line">			// 删除完成，将B的值替换到原来要删除的节点A上</span><br><span class="line">			current.element = rMin.element;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void reBalanceAfterRemove(LinkedList&lt;TreeNode&lt;T&gt;&gt; trace, T e) &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			TreeNode&lt;T&gt; n = null;</span><br><span class="line">			TreeNode&lt;T&gt; unBalanceNode = null;</span><br><span class="line">			TreeNode&lt;T&gt; unBalNodeParent = null;</span><br><span class="line">			while ((n = trace.peek()) != null &amp;&amp; unBalanceNode == null) &#123;</span><br><span class="line">				n = trace.pop();</span><br><span class="line">				n.height = calHeight(n);</span><br><span class="line">				if (!n.isBalanced()) &#123;</span><br><span class="line">					unBalanceNode = n;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			// 平衡态</span><br><span class="line">			if (unBalanceNode == null) &#123;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			unBalNodeParent = trace.peek();</span><br><span class="line"></span><br><span class="line">			int compareInt = unBalanceNode.element.compareTo(e);</span><br><span class="line"></span><br><span class="line">			// 被删除节点是不平衡节点的左儿子，则右子树高于左子树</span><br><span class="line">			if (compareInt &gt; 0) &#123;</span><br><span class="line">				// 如果不平衡节点的右儿子的左子树高于右子树，则需要先右后左双旋转（相当于右左插入）</span><br><span class="line">				if (calHeight(unBalanceNode.right.left) - calHeight(unBalanceNode.right.right) &gt; 0) &#123;</span><br><span class="line">					rotateRight(unBalanceNode.right, unBalanceNode);</span><br><span class="line">					rotateLeft(unBalanceNode, unBalNodeParent);</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					// 相等和小于的情况 都可以通过左旋平衡</span><br><span class="line">					rotateLeft(unBalanceNode, unBalNodeParent);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				// 相当于左右插入</span><br><span class="line">				if (calHeight(unBalanceNode.left.left) - calHeight(unBalanceNode.left.right) &lt; 0) &#123;</span><br><span class="line">					rotateLeft(unBalanceNode.left, unBalanceNode);</span><br><span class="line">					rotateRight(unBalanceNode, unBalNodeParent);</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					// 相等和大于的情况 都可以通过右旋平衡</span><br><span class="line">					rotateRight(unBalanceNode, unBalNodeParent);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			for (TreeNode&lt;T&gt; n1 : trace) &#123;</span><br><span class="line">				n1.height = calHeight(n1);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private boolean tryRemove(T e, LinkedList&lt;TreeNode&lt;T&gt;&gt; trace, TreeNode&lt;T&gt; current) &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			int compareInt = current.element.compareTo(e);</span><br><span class="line">			if (compareInt &gt; 0) &#123;</span><br><span class="line">				if (current.left == null) &#123;</span><br><span class="line">					// 没有找到节点 直接返回</span><br><span class="line">					return true;</span><br><span class="line">				&#125;</span><br><span class="line">				current = current.left;</span><br><span class="line">				trace.push(current);</span><br><span class="line">			&#125; else if (compareInt &lt; 0) &#123;</span><br><span class="line">				if (current.right == null) &#123;</span><br><span class="line">					// 没有找到节点</span><br><span class="line">					return true;</span><br><span class="line">				&#125;</span><br><span class="line">				current = current.right;</span><br><span class="line">				trace.push(current);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				// 找到元素，情况一：该节点为叶子节点</span><br><span class="line">				if (current.left == null &amp;&amp; current.right == null) &#123;</span><br><span class="line">					// 弹出被删除节点</span><br><span class="line">					trace.pop();</span><br><span class="line">					if (current == root) &#123;</span><br><span class="line">						root = null;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">					TreeNode&lt;T&gt; parent = trace.peek();</span><br><span class="line">					// 查询父节点</span><br><span class="line">					if (parent.left == current) &#123;</span><br><span class="line">						parent.left = null;</span><br><span class="line">						return true;</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						parent.right = null;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				// 找到元素，情况二：该节点只有一个儿子</span><br><span class="line"></span><br><span class="line">				if (current.left == null) &#123;</span><br><span class="line">					trace.pop();// 弹出被删除节点</span><br><span class="line">					TreeNode&lt;T&gt; son = current.right;</span><br><span class="line">					if (current == root) &#123;</span><br><span class="line">						root = son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">					TreeNode&lt;T&gt; parent = trace.peek();</span><br><span class="line">					if (parent.left == current) &#123;</span><br><span class="line">						parent.left = son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						parent.right = son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				if (current.right == null) &#123;</span><br><span class="line">					trace.pop();// 弹出被删除节点</span><br><span class="line">					TreeNode&lt;T&gt; son = current.left;</span><br><span class="line">					if (current == root) &#123;</span><br><span class="line">						root = son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">					TreeNode&lt;T&gt; parent = trace.peek();</span><br><span class="line">					if (parent.left == current) &#123;</span><br><span class="line">						parent.left = son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						parent.right = son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				// 找到节点，情况三：但是节点有两个儿子，返回false</span><br><span class="line">				return false;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br></pre></td><td class="code"><pre><span class="line">public class AVLBalanceTree&lt;T extends Comparable&lt;T&gt;&gt; &#123;</span><br><span class="line"></span><br><span class="line">	private TreeNode&lt;T&gt; root;</span><br><span class="line"></span><br><span class="line">	public AVLBalanceTree() &#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private class TreeNode&lt;E&gt; &#123;</span><br><span class="line">		T element;</span><br><span class="line">		int height;</span><br><span class="line">		TreeNode&lt;T&gt; left;</span><br><span class="line">		TreeNode&lt;T&gt; right;</span><br><span class="line"></span><br><span class="line">		TreeNode(T e) &#123;</span><br><span class="line">			element &#x3D; e;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		boolean isBalanced() &#123;</span><br><span class="line">			int leftHeight &#x3D; left &#x3D;&#x3D; null ? -1 : left.height;</span><br><span class="line">			int rightHeight &#x3D; right &#x3D;&#x3D; null ? -1 : right.height;</span><br><span class="line">			return Math.abs(leftHeight - rightHeight) &lt;&#x3D; 1 ? true : false;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		public String toString() &#123;</span><br><span class="line">			return &quot;Element:&quot; + element + &quot; Height:&quot; + height + &quot; Balanced:&quot; + isBalanced();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private int calHeight(TreeNode&lt;T&gt; node) &#123;</span><br><span class="line">		if (node &#x3D;&#x3D; null) &#123;</span><br><span class="line">			return -1;</span><br><span class="line">		&#125;</span><br><span class="line">		int leftHeight &#x3D; node.left &#x3D;&#x3D; null ? -1 : node.left.height;</span><br><span class="line">		int rightHeight &#x3D; node.right &#x3D;&#x3D; null ? -1 : node.right.height;</span><br><span class="line">		return Math.max(leftHeight, rightHeight) + 1;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; 非递归算法部分</span><br><span class="line">	public void insertNonRecursive(T e) &#123;</span><br><span class="line">		LinkedList&lt;TreeNode&lt;T&gt;&gt; trace &#x3D; new LinkedList&lt;&gt;();</span><br><span class="line">		insertNonRecursive0(e, trace);</span><br><span class="line">		reBalanceAfterInsert(trace, e);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void reBalanceAfterInsert(LinkedList&lt;TreeNode&lt;T&gt;&gt; trace, T e) &#123;</span><br><span class="line">		TreeNode&lt;T&gt; unBalanceNode &#x3D; null;</span><br><span class="line">		TreeNode&lt;T&gt; unBalNodeParent &#x3D; null;</span><br><span class="line">		TreeNode&lt;T&gt; n &#x3D; null;</span><br><span class="line">		while ((n &#x3D; trace.peek()) !&#x3D; null &amp;&amp; unBalanceNode &#x3D;&#x3D; null) &#123;</span><br><span class="line">			n &#x3D; trace.pop();</span><br><span class="line">			n.height &#x3D; calHeight(n);</span><br><span class="line">			if (!n.isBalanced()) &#123;</span><br><span class="line">				unBalanceNode &#x3D; n;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		if (trace.peek() !&#x3D; null) &#123;</span><br><span class="line">			unBalNodeParent &#x3D; trace.pop();</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 平衡状态 返回</span><br><span class="line">		if (unBalanceNode &#x3D;&#x3D; null) &#123;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 确定插入方式</span><br><span class="line">		int compareInt &#x3D; unBalanceNode.element.compareTo(e);</span><br><span class="line">		if (compareInt &gt; 0) &#123;</span><br><span class="line">			if (calHeight(unBalanceNode.left.left) - calHeight(unBalanceNode.left.right) &gt; 0) &#123;</span><br><span class="line">				rotateRight(unBalanceNode, unBalNodeParent);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				&#x2F;&#x2F; 先左旋时，视原非平衡节点的左儿子为非平衡节点</span><br><span class="line">				rotateLeft(unBalanceNode.left, unBalanceNode);</span><br><span class="line">				rotateRight(unBalanceNode, unBalNodeParent);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else if (compareInt &lt; 0) &#123;</span><br><span class="line">			if (calHeight(unBalanceNode.right.left) - calHeight(unBalanceNode.right.right) &lt; 0) &#123;</span><br><span class="line">				rotateLeft(unBalanceNode, unBalNodeParent);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				rotateRight(unBalanceNode.right, unBalanceNode);</span><br><span class="line">				rotateLeft(unBalanceNode, unBalNodeParent);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 旋转完毕，旋转子树的高度信息已经更新过了，继续更新非平衡节点以上的高度信息</span><br><span class="line">		while ((n &#x3D; trace.peek()) !&#x3D; null) &#123;</span><br><span class="line">			n &#x3D; trace.pop();</span><br><span class="line">			n.height &#x3D; calHeight(n);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void rotateRight(TreeNode&lt;T&gt; unBalanceNode, TreeNode&lt;T&gt; unBalNodeParent) &#123;</span><br><span class="line">		TreeNode&lt;T&gt; newRoot &#x3D; unBalanceNode.left;</span><br><span class="line">		TreeNode&lt;T&gt; ubParent &#x3D; unBalNodeParent;</span><br><span class="line">		&#x2F;&#x2F; 周知树其余部分</span><br><span class="line">		if (ubParent !&#x3D; null) &#123;</span><br><span class="line">			if (ubParent.left !&#x3D; null &amp;&amp; ubParent.left.equals(unBalanceNode)) &#123;</span><br><span class="line">				ubParent.left &#x3D; newRoot;</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				ubParent.right &#x3D; newRoot;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			this.root &#x3D; newRoot;</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 儿子移交</span><br><span class="line">		if (newRoot.right !&#x3D; null) &#123;</span><br><span class="line">			unBalanceNode.left &#x3D; newRoot.right;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			unBalanceNode.left &#x3D; null;</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F; 新根上任，左儿子无需处理</span><br><span class="line">		newRoot.right &#x3D; unBalanceNode;</span><br><span class="line"></span><br><span class="line">		&#x2F;&#x2F; 更新三个节点的高度信息</span><br><span class="line">		unBalanceNode.height &#x3D; calHeight(unBalanceNode);</span><br><span class="line">		newRoot.height &#x3D; calHeight(newRoot);</span><br><span class="line">		if (ubParent !&#x3D; null) &#123;</span><br><span class="line">			ubParent.height &#x3D; calHeight(ubParent);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void rotateLeft(TreeNode&lt;T&gt; unBalanceNode, TreeNode&lt;T&gt; unBalNodeParent) &#123;</span><br><span class="line">		TreeNode&lt;T&gt; newRoot &#x3D; unBalanceNode.right;</span><br><span class="line">		TreeNode&lt;T&gt; ubParent &#x3D; unBalNodeParent;</span><br><span class="line"></span><br><span class="line">		if (ubParent !&#x3D; null) &#123;</span><br><span class="line">			if (ubParent.left !&#x3D; null &amp;&amp; ubParent.left.equals(unBalanceNode)) &#123;</span><br><span class="line">				ubParent.left &#x3D; newRoot;</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				ubParent.right &#x3D; newRoot;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			this.root &#x3D; newRoot;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		if (newRoot.left !&#x3D; null) &#123;</span><br><span class="line">			unBalanceNode.right &#x3D; newRoot.left;</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			unBalanceNode.right &#x3D; null;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		newRoot.left &#x3D; unBalanceNode;</span><br><span class="line"></span><br><span class="line">		unBalanceNode.height &#x3D; calHeight(unBalanceNode);</span><br><span class="line">		newRoot.height &#x3D; calHeight(newRoot);</span><br><span class="line">		if (ubParent !&#x3D; null) &#123;</span><br><span class="line">			ubParent.height &#x3D; calHeight(ubParent);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void insertNonRecursive0(T e, LinkedList&lt;TreeNode&lt;T&gt;&gt; trace) &#123;</span><br><span class="line">		TreeNode&lt;T&gt; node &#x3D; new TreeNode&lt;&gt;(e);</span><br><span class="line">		if (root &#x3D;&#x3D; null) &#123;</span><br><span class="line">			root &#x3D; node;</span><br><span class="line">			root.height &#x3D; 0;</span><br><span class="line">			return;</span><br><span class="line">		&#125;</span><br><span class="line">		TreeNode&lt;T&gt; current &#x3D; root;</span><br><span class="line">		trace.push(current);</span><br><span class="line">		int compareInt &#x3D; 0;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			compareInt &#x3D; current.element.compareTo(e);</span><br><span class="line">			if (compareInt &gt; 0) &#123;</span><br><span class="line">				if (current.left &#x3D;&#x3D; null) &#123;</span><br><span class="line">					current.left &#x3D; node;</span><br><span class="line">					trace.push(node);</span><br><span class="line">					return;</span><br><span class="line">				&#125;</span><br><span class="line">				current &#x3D; current.left;</span><br><span class="line">				trace.push(current);</span><br><span class="line">			&#125; else if (compareInt &lt; 0) &#123;</span><br><span class="line">				if (current.right &#x3D;&#x3D; null) &#123;</span><br><span class="line">					current.right &#x3D; node;</span><br><span class="line">					trace.push(node);</span><br><span class="line">					return;</span><br><span class="line">				&#125;</span><br><span class="line">				current &#x3D; current.right;</span><br><span class="line">				trace.push(current);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				&#x2F;&#x2F; 相等 不插入</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public void removeNonRecursive(T e) &#123;</span><br><span class="line">		LinkedList&lt;TreeNode&lt;T&gt;&gt; trace &#x3D; new LinkedList&lt;&gt;();</span><br><span class="line">		TreeNode&lt;T&gt; current &#x3D; root;</span><br><span class="line">		trace.push(current);</span><br><span class="line">		&#x2F;&#x2F; 尝试删除，该节点没有儿子或者只有一个儿子</span><br><span class="line">		if (tryRemove(e, trace, current)) &#123;</span><br><span class="line">			&#x2F;&#x2F; 更新节点高度信息，修正平衡状态</span><br><span class="line">			&#x2F;&#x2F; 此时栈顶为被删除节点的父节点或者空栈</span><br><span class="line">			if (trace.isEmpty()) &#123;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line">			&#x2F;&#x2F; 弹出栈，更新高度信息并检查平衡</span><br><span class="line">			reBalanceAfterRemove(trace, e);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			&#x2F;&#x2F; 尝试失败，该节点有两个儿子，此时栈顶元素即为将要删除的节点A</span><br><span class="line">			current &#x3D; trace.peek();</span><br><span class="line">			&#x2F;&#x2F; 找到A的右子树中最小的节点B，该节点没有左儿子</span><br><span class="line">			TreeNode&lt;T&gt; rMin &#x3D; findMin(current.right);</span><br><span class="line">			&#x2F;&#x2F; 此时删除目标变为最小的右儿子B</span><br><span class="line">			tryRemove(rMin.element, trace, current);</span><br><span class="line">			reBalanceAfterRemove(trace, rMin.element);</span><br><span class="line">			&#x2F;&#x2F; 删除完成，将B的值替换到原来要删除的节点A上</span><br><span class="line">			current.element &#x3D; rMin.element;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private void reBalanceAfterRemove(LinkedList&lt;TreeNode&lt;T&gt;&gt; trace, T e) &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			TreeNode&lt;T&gt; n &#x3D; null;</span><br><span class="line">			TreeNode&lt;T&gt; unBalanceNode &#x3D; null;</span><br><span class="line">			TreeNode&lt;T&gt; unBalNodeParent &#x3D; null;</span><br><span class="line">			while ((n &#x3D; trace.peek()) !&#x3D; null &amp;&amp; unBalanceNode &#x3D;&#x3D; null) &#123;</span><br><span class="line">				n &#x3D; trace.pop();</span><br><span class="line">				n.height &#x3D; calHeight(n);</span><br><span class="line">				if (!n.isBalanced()) &#123;</span><br><span class="line">					unBalanceNode &#x3D; n;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			&#x2F;&#x2F; 平衡态</span><br><span class="line">			if (unBalanceNode &#x3D;&#x3D; null) &#123;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			unBalNodeParent &#x3D; trace.peek();</span><br><span class="line"></span><br><span class="line">			int compareInt &#x3D; unBalanceNode.element.compareTo(e);</span><br><span class="line"></span><br><span class="line">			&#x2F;&#x2F; 被删除节点是不平衡节点的左儿子，则右子树高于左子树</span><br><span class="line">			if (compareInt &gt; 0) &#123;</span><br><span class="line">				&#x2F;&#x2F; 如果不平衡节点的右儿子的左子树高于右子树，则需要先右后左双旋转（相当于右左插入）</span><br><span class="line">				if (calHeight(unBalanceNode.right.left) - calHeight(unBalanceNode.right.right) &gt; 0) &#123;</span><br><span class="line">					rotateRight(unBalanceNode.right, unBalanceNode);</span><br><span class="line">					rotateLeft(unBalanceNode, unBalNodeParent);</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					&#x2F;&#x2F; 相等和小于的情况 都可以通过左旋平衡</span><br><span class="line">					rotateLeft(unBalanceNode, unBalNodeParent);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				&#x2F;&#x2F; 相当于左右插入</span><br><span class="line">				if (calHeight(unBalanceNode.left.left) - calHeight(unBalanceNode.left.right) &lt; 0) &#123;</span><br><span class="line">					rotateLeft(unBalanceNode.left, unBalanceNode);</span><br><span class="line">					rotateRight(unBalanceNode, unBalNodeParent);</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					&#x2F;&#x2F; 相等和大于的情况 都可以通过右旋平衡</span><br><span class="line">					rotateRight(unBalanceNode, unBalNodeParent);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			for (TreeNode&lt;T&gt; n1 : trace) &#123;</span><br><span class="line">				n1.height &#x3D; calHeight(n1);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	private boolean tryRemove(T e, LinkedList&lt;TreeNode&lt;T&gt;&gt; trace, TreeNode&lt;T&gt; current) &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			int compareInt &#x3D; current.element.compareTo(e);</span><br><span class="line">			if (compareInt &gt; 0) &#123;</span><br><span class="line">				if (current.left &#x3D;&#x3D; null) &#123;</span><br><span class="line">					&#x2F;&#x2F; 没有找到节点 直接返回</span><br><span class="line">					return true;</span><br><span class="line">				&#125;</span><br><span class="line">				current &#x3D; current.left;</span><br><span class="line">				trace.push(current);</span><br><span class="line">			&#125; else if (compareInt &lt; 0) &#123;</span><br><span class="line">				if (current.right &#x3D;&#x3D; null) &#123;</span><br><span class="line">					&#x2F;&#x2F; 没有找到节点</span><br><span class="line">					return true;</span><br><span class="line">				&#125;</span><br><span class="line">				current &#x3D; current.right;</span><br><span class="line">				trace.push(current);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				&#x2F;&#x2F; 找到元素，情况一：该节点为叶子节点</span><br><span class="line">				if (current.left &#x3D;&#x3D; null &amp;&amp; current.right &#x3D;&#x3D; null) &#123;</span><br><span class="line">					&#x2F;&#x2F; 弹出被删除节点</span><br><span class="line">					trace.pop();</span><br><span class="line">					if (current &#x3D;&#x3D; root) &#123;</span><br><span class="line">						root &#x3D; null;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">					TreeNode&lt;T&gt; parent &#x3D; trace.peek();</span><br><span class="line">					&#x2F;&#x2F; 查询父节点</span><br><span class="line">					if (parent.left &#x3D;&#x3D; current) &#123;</span><br><span class="line">						parent.left &#x3D; null;</span><br><span class="line">						return true;</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						parent.right &#x3D; null;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				&#x2F;&#x2F; 找到元素，情况二：该节点只有一个儿子</span><br><span class="line"></span><br><span class="line">				if (current.left &#x3D;&#x3D; null) &#123;</span><br><span class="line">					trace.pop();&#x2F;&#x2F; 弹出被删除节点</span><br><span class="line">					TreeNode&lt;T&gt; son &#x3D; current.right;</span><br><span class="line">					if (current &#x3D;&#x3D; root) &#123;</span><br><span class="line">						root &#x3D; son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">					TreeNode&lt;T&gt; parent &#x3D; trace.peek();</span><br><span class="line">					if (parent.left &#x3D;&#x3D; current) &#123;</span><br><span class="line">						parent.left &#x3D; son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						parent.right &#x3D; son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				if (current.right &#x3D;&#x3D; null) &#123;</span><br><span class="line">					trace.pop();&#x2F;&#x2F; 弹出被删除节点</span><br><span class="line">					TreeNode&lt;T&gt; son &#x3D; current.left;</span><br><span class="line">					if (current &#x3D;&#x3D; root) &#123;</span><br><span class="line">						root &#x3D; son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">					TreeNode&lt;T&gt; parent &#x3D; trace.peek();</span><br><span class="line">					if (parent.left &#x3D;&#x3D; current) &#123;</span><br><span class="line">						parent.left &#x3D; son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						parent.right &#x3D; son;</span><br><span class="line">						return true;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">				&#x2F;&#x2F; 找到节点，情况三：但是节点有两个儿子，返回false</span><br><span class="line">				return false;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
     </div>
 
     
-
-    
-    
-    
-
-    
-
-    
-      
     
     
 
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/03/22/%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91Java%E5%AE%9E%E7%8E%B0/" rel="prev" title="二叉查找树Java实现">
+      <i class="fa fa-chevron-left"></i> 二叉查找树Java实现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/03/28/Java%E5%B9%B6%E5%8F%91%E6%9C%BA%E5%88%B6%EF%BC%885%EF%BC%89--%E7%BA%BF%E7%A8%8B%E3%80%81%E4%B8%AD%E6%96%AD%E3%80%81Runnable%E3%80%81Callable%E3%80%81Future/" rel="next" title="Java并发机制（5）--线程、中断、Runnable、Callable、Future">
+      Java并发机制（5）--线程、中断、Runnable、Callable、Future <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
     
-
-    <footer class="post-footer">
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2018/03/22/二叉查找树Java实现/" rel="next" title="二叉查找树Java实现">
-                <i class="fa fa-chevron-left"></i> 二叉查找树Java实现
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/03/28/Java并发机制（5）--线程、中断、Runnable、Callable、Future/" rel="prev" title="Java并发机制（5）--线程、中断、Runnable、Callable、Future">
-                Java并发机制（5）--线程、中断、Runnable、Callable、Future <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
   </article>
+  
+  
+  
 
-
-  </div>
 
 
           </div>
           
-
-  
-
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-            
-              <p class="site-author-name" itemprop="name">John</p>
-              <p class="site-description motion-element" itemprop="description"></p>
-          </div>
-
-          
-            <nav class="site-state motion-element">
-              
-                <div class="site-state-item site-state-posts">
-                
-                  <a href="/archives/">
-                
-                    <span class="site-state-item-count">28</span>
-                    <span class="site-state-item-name">posts</span>
-                  </a>
-                </div>
-              
-
-              
-                
-                
-                <div class="site-state-item site-state-categories">
-                  <a href="/categories/index.html">
-                    
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">8</span>
-                    <span class="site-state-item-name">categories</span>
-                  </a>
-                </div>
-              
-
-              
-            </nav>
-          
-
-          
-
-          
-
-          
-
-          
-          
-
-          
-            
-          
-          
-
-        </div>
-      </div>
-
-      
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#AVL树"><span class="nav-number">1.</span> <span class="nav-text">AVL树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#平衡操作-旋转"><span class="nav-number">2.</span> <span class="nav-text">平衡操作-旋转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插入后平衡"><span class="nav-number">3.</span> <span class="nav-text">插入后平衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除后平衡"><span class="nav-number">4.</span> <span class="nav-text">删除后平衡</span></a></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John</span>
-
-  
-
-  
-</div>
-
-
-  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
-
-
-
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
-
-
-
-
-        
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-    
-
-    
-
-    
-  </div>
-
-  
 
 <script>
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
   }
 </script>
 
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#AVL%E6%A0%91"><span class="nav-number">1.</span> <span class="nav-text">AVL树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E6%93%8D%E4%BD%9C-%E6%97%8B%E8%BD%AC"><span class="nav-number">2.</span> <span class="nav-text">平衡操作-旋转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E5%90%8E%E5%B9%B3%E8%A1%A1"><span class="nav-number">3.</span> <span class="nav-text">插入后平衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%90%8E%E5%B9%B3%E8%A1%A1"><span class="nav-number">4.</span> <span class="nav-text">删除后平衡</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
 
 
 
@@ -739,100 +404,43 @@
 
 
 
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/schemes/pisces.js"></script>
 
 
-
-
-
-
-
-
-
-
-
+<script src="/js/next-boot.js"></script>
 
 
 
 
   
-  <script src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-
-  
-
-
-  <script src="/js/src/utils.js?v=6.7.0"></script>
-
-  <script src="/js/src/motion.js?v=6.7.0"></script>
-
-
-
-  
-  
-
-
-  <script src="/js/src/affix.js?v=6.7.0"></script>
-
-  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
-
-
-
-
-  
-  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
-<script src="/js/src/post-details.js?v=6.7.0"></script>
-
-
-
-  
-
-
-  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
-
-
-
-  
-  
 
 
 
 
 
-  
 
 
 
 
 
-  
 
-  
 
-  
 
-  
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
 

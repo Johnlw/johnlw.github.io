@@ -1,127 +1,49 @@
 <!DOCTYPE html>
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-<html class="theme-next gemini use-motion" lang="en">
-<head><meta name="generator" content="Hexo 3.8.0">
+<html lang="en">
+<head>
   <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
-
-<link rel="stylesheet" href="/css/main.css?v=6.7.0">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.7.0">
-
-
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.7.0">
-
-
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.7.0">
-
-
-  <link rel="mask-icon" href="/images/logo.svg?v=6.7.0" color="#222">
-
-
-
-
-
-
-
-<script id="hexo.configurations">
-  var NexT = window.NexT || {};
-  var CONFIG = {
-    root: '/',
-    scheme: 'Gemini',
-    version: '6.7.0',
-    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: false,
-    fastclick: false,
-    lazyload: false,
-    tabs: true,
-    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    algolia: {
-      applicationID: '',
-      apiKey: '',
-      indexName: '',
-      hits: {"per_page":10},
-      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
-    }
-  };
-</script>
-
-
-  
-
-
-
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
 
   <meta name="description" content="Spring AOP相关概念 AOP：Aspect-Oriented Programming，是一种新的模块化机制，用来描述分散在对象、类或者函数中的横切关注点。 Join Point：程序流中被分割为一个个代码单元，单元之间的点即为Join Point。如程序调用栈中，可以按照各个方法将代码执行流分割为一个个方法单元，那么方法调用前后都是Join Point。 Advice：模块化内容，也是增强">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Spring AOP实现原理解析">
-<meta property="og:url" content="http://yoursite.com/2018/07/05/Spring AOP实现原理解析/index.html">
+<meta property="og:url" content="http://yoursite.com/2018/07/05/Spring%20AOP%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="John What">
 <meta property="og:description" content="Spring AOP相关概念 AOP：Aspect-Oriented Programming，是一种新的模块化机制，用来描述分散在对象、类或者函数中的横切关注点。 Join Point：程序流中被分割为一个个代码单元，单元之间的点即为Join Point。如程序调用栈中，可以按照各个方法将代码执行流分割为一个个方法单元，那么方法调用前后都是Join Point。 Advice：模块化内容，也是增强">
-<meta property="og:locale" content="en">
+<meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://static.johnlw.cn/blog_spring_aop_proxyfactorybean.png">
-<meta property="og:updated_time" content="2019-01-25T08:53:30.000Z">
+<meta property="article:published_time" content="2018-07-05T05:39:32.000Z">
+<meta property="article:modified_time" content="2019-01-25T08:53:30.000Z">
+<meta property="article:author" content="John">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring AOP实现原理解析">
-<meta name="twitter:description" content="Spring AOP相关概念 AOP：Aspect-Oriented Programming，是一种新的模块化机制，用来描述分散在对象、类或者函数中的横切关注点。 Join Point：程序流中被分割为一个个代码单元，单元之间的点即为Join Point。如程序调用栈中，可以按照各个方法将代码执行流分割为一个个方法单元，那么方法调用前后都是Join Point。 Advice：模块化内容，也是增强">
 <meta name="twitter:image" content="http://static.johnlw.cn/blog_spring_aop_proxyfactorybean.png">
 
+<link rel="canonical" href="http://yoursite.com/2018/07/05/Spring%20AOP%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
 
 
-
-
-
-  <link rel="canonical" href="http://yoursite.com/2018/07/05/Spring AOP实现原理解析/">
-
-
-
-<script id="page.configurations">
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
   };
 </script>
 
@@ -133,15 +55,8 @@
 
 
 
-
-
-
-
-
-
   <noscript>
   <style>
-  .use-motion .motion-element,
   .use-motion .brand,
   .use-motion .menu-item,
   .sidebar-inner,
@@ -150,9 +65,8 @@
   .use-motion .comments,
   .use-motion .post-header,
   .use-motion .post-body,
-  .use-motion .collection-title { opacity: initial; }
+  .use-motion .collection-header { opacity: initial; }
 
-  .use-motion .logo,
   .use-motion .site-title,
   .use-motion .site-subtitle {
     opacity: initial;
@@ -166,129 +80,63 @@
 
 </head>
 
-<body itemscope="" itemtype="http://schema.org/WebPage" lang="en">
-
-  
-  
-    
-  
-
-  <div class="container sidebar-position-left page-post-detail">
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
     <div class="headband"></div>
 
-    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
-  <div class="site-meta">
-    
-
-    <div class="custom-logo-site-title">
-      <a href="/" class="brand" rel="start">
-        <span class="logo-line-before"><i></i></span>
-        <span class="site-title">John What</span>
-        <span class="logo-line-after"><i></i></span>
-      </a>
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
-    
-    
   </div>
 
-  <div class="site-nav-toggle">
-    <button aria-label="Toggle navigation bar">
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-      <span class="btn-bar"></span>
-    </button>
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">John What</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
   </div>
 </div>
 
 
 
+
 <nav class="site-nav">
-  
-    <ul id="menu" class="menu">
-      
-        
-        
-        
-          
-          <li class="menu-item menu-item-home">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>Home</a>
+    <a href="/" rel="section"><i class="home fa-fw"></i>Home</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-about">
+        <li class="menu-item menu-item-about">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>About</a>
+    <a href="/about/" rel="section"><i class="user fa-fw"></i>About</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-categories">
+        <li class="menu-item menu-item-categories">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>Categories</a>
+    <a href="/categories/" rel="section"><i class="th fa-fw"></i>Categories</a>
 
   </li>
-        
-        
-        
-          
-          <li class="menu-item menu-item-archives">
+        <li class="menu-item menu-item-archives">
 
-    
-    
-    
-      
-    
-
-    
-
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>Archives</a>
+    <a href="/archives/" rel="section"><i class="archive fa-fw"></i>Archives</a>
 
   </li>
-
-      
-      
-    </ul>
-  
-
-  
-
-  
+  </ul>
 </nav>
 
-
-
-  
 
 
 
@@ -296,143 +144,75 @@
     </header>
 
     
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
 
 
-    <main id="main" class="main">
+    <main class="main">
       <div class="main-inner">
         <div class="content-wrap">
           
+
+          <div class="content post posts-expand">
             
 
-          
-          <div id="content" class="content">
-            
-
-  <div id="posts" class="posts-expand">
     
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/05/Spring%20AOP%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/">
 
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/05/Spring AOP实现原理解析/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
       <meta itemprop="name" content="John">
       <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="John What">
     </span>
-
-    
       <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">Spring AOP实现原理解析
-
-              
-            
-          </h1>
-        
+        <h1 class="post-title" itemprop="name headline">
+          Spring AOP实现原理解析
+        </h1>
 
         <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
+            <span class="post-meta-item">
               <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="far fa-calendar"></i>
               </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-
-              
-                
-              
+              <span class="post-meta-item-text">Posted on</span>
 
               <time title="Created: 2018-07-05 13:39:32" itemprop="dateCreated datePublished" datetime="2018-07-05T13:39:32+08:00">2018-07-05</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Edited on</span>
-                
-                <time title="Modified: 2019-01-25 16:53:30" itemprop="dateModified" datetime="2019-01-25T16:53:30+08:00">2019-01-25</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a></span>
-
-                
-                
-              
             </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-01-25 16:53:30" itemprop="dateModified" datetime="2019-01-25T16:53:30+08:00">2019-01-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a>
+                </span>
+            </span>
 
           
 
         </div>
       </header>
-    
 
     
     
     
     <div class="post-body" itemprop="articleBody">
-
-      
-      
 
       
         <h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><h3 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h3><ul>
@@ -452,7 +232,8 @@
 <li>生成代理对象</li>
 </ol>
 <p>以ProxyFactoryBean开始分析，这个FactoryBean的getObject()方法即可获取代理对象。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public Object getObject() throws BeansException &#123;</span><br><span class="line">		//初始化Advisor链</span><br><span class="line">		initializeAdvisorChain();</span><br><span class="line">		//生成代理对象</span><br><span class="line">		if (isSingleton()) &#123;</span><br><span class="line">			return getSingletonInstance();</span><br><span class="line">		&#125;</span><br><span class="line">		else &#123;</span><br><span class="line">			if (this.targetName == null) &#123;</span><br><span class="line">				logger.warn(&quot;Using non-singleton proxies with singleton targets is often undesirable. &quot; +</span><br><span class="line">						&quot;Enable prototype proxies by setting the &apos;targetName&apos; property.&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">			return newPrototypeInstance();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public Object getObject() throws BeansException &#123;</span><br><span class="line">		&#x2F;&#x2F;初始化Advisor链</span><br><span class="line">		initializeAdvisorChain();</span><br><span class="line">		&#x2F;&#x2F;生成代理对象</span><br><span class="line">		if (isSingleton()) &#123;</span><br><span class="line">			return getSingletonInstance();</span><br><span class="line">		&#125;</span><br><span class="line">		else &#123;</span><br><span class="line">			if (this.targetName &#x3D;&#x3D; null) &#123;</span><br><span class="line">				logger.warn(&quot;Using non-singleton proxies with singleton targets is often undesirable. &quot; +</span><br><span class="line">						&quot;Enable prototype proxies by setting the &#39;targetName&#39; property.&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">			return newPrototypeInstance();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
 <p><img src="http://static.johnlw.cn/blog_spring_aop_proxyfactorybean.png" alt="这里写图片描述"><br>这是ProxyFactoryBean的继承关系图，其中<strong>AdvisedSupport父类主要持有Advice相关配置信息，ProxyCreatorSupport父类主要负责代理类的实际生成工作。</strong></p>
 <h5 id="配置信息获取与初始化"><a href="#配置信息获取与初始化" class="headerlink" title="配置信息获取与初始化"></a>配置信息获取与初始化</h5><p>ProxyFactoryBean中配置信息的获取是经由IOC容器获取的，ProxyFactoryBean有一个属性为interceptorNames，需要在IOC容器中配置设置。在此基础上，在调用getObject()方法时，进行Advisor链的初始化。</p>
 <p>Advisor链的初始化主要分两步：</p>
@@ -462,7 +243,8 @@
 </ol>
 <p>其中注册器包装由适配器注册器GlobalAdvisorAdapterRegistry类将IOC配置中的interceptor对象类型（可能是Advisor，或者Advice等）包装为Advisor类型，并过滤不支持的类型。<strong>添加入链表的操作和链表的持有交给了父类AdvisedSupport来完成。</strong></p>
 <p>包装代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public Advisor wrap(Object adviceObject) throws UnknownAdviceTypeException &#123;</span><br><span class="line">	//Bean可以是直接定义好的含有PointCut的Advisor</span><br><span class="line">		if (adviceObject instanceof Advisor) &#123;</span><br><span class="line">			return (Advisor) adviceObject;</span><br><span class="line">		&#125;</span><br><span class="line">		if (!(adviceObject instanceof Advice)) &#123;</span><br><span class="line">			throw new UnknownAdviceTypeException(adviceObject);</span><br><span class="line">		&#125;</span><br><span class="line">		Advice advice = (Advice) adviceObject;</span><br><span class="line">		//可以是Advice的子类MethodInterceptor类型</span><br><span class="line">		if (advice instanceof MethodInterceptor) &#123;</span><br><span class="line">			// So well-known it doesn&apos;t even need an adapter.</span><br><span class="line">			return new DefaultPointcutAdvisor(advice);</span><br><span class="line">		&#125;</span><br><span class="line">		//也可以是各类Advice，如果有适配器支持即可封装，后两者封装的都是默认的PointCutAdvisor。</span><br><span class="line">		for (AdvisorAdapter adapter : this.adapters) &#123;</span><br><span class="line">			// Check that it is supported.</span><br><span class="line">			if (adapter.supportsAdvice(advice)) &#123;</span><br><span class="line">				return new DefaultPointcutAdvisor(advice);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		throw new UnknownAdviceTypeException(advice);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public Advisor wrap(Object adviceObject) throws UnknownAdviceTypeException &#123;</span><br><span class="line">	&#x2F;&#x2F;Bean可以是直接定义好的含有PointCut的Advisor</span><br><span class="line">		if (adviceObject instanceof Advisor) &#123;</span><br><span class="line">			return (Advisor) adviceObject;</span><br><span class="line">		&#125;</span><br><span class="line">		if (!(adviceObject instanceof Advice)) &#123;</span><br><span class="line">			throw new UnknownAdviceTypeException(adviceObject);</span><br><span class="line">		&#125;</span><br><span class="line">		Advice advice &#x3D; (Advice) adviceObject;</span><br><span class="line">		&#x2F;&#x2F;可以是Advice的子类MethodInterceptor类型</span><br><span class="line">		if (advice instanceof MethodInterceptor) &#123;</span><br><span class="line">			&#x2F;&#x2F; So well-known it doesn&#39;t even need an adapter.</span><br><span class="line">			return new DefaultPointcutAdvisor(advice);</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F;也可以是各类Advice，如果有适配器支持即可封装，后两者封装的都是默认的PointCutAdvisor。</span><br><span class="line">		for (AdvisorAdapter adapter : this.adapters) &#123;</span><br><span class="line">			&#x2F;&#x2F; Check that it is supported.</span><br><span class="line">			if (adapter.supportsAdvice(advice)) &#123;</span><br><span class="line">				return new DefaultPointcutAdvisor(advice);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		throw new UnknownAdviceTypeException(advice);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
 <h5 id="生成代理对象"><a href="#生成代理对象" class="headerlink" title="生成代理对象"></a>生成代理对象</h5><p>在父类AdvisedSupport持有了Advisor链表之后，下一步即可进行代理对象的生成工作，这一步交给父类ProxyCreatorSupport来完成，该类持有DefaultAopProxyFactory代理工厂，并通过该工厂生产代理对象。主要有两种代理对象生成方式：</p>
 <ol>
 <li>JDK代理</li>
@@ -471,19 +253,21 @@
 <p>通常目标类是接口的情况下使用JDK代理。其中JDK代理由JdkDynamicAopProxy类支持，CGLIB代理由CglibAopProxy支持。</p>
 <p>JdkDynamicAopProxy类实现了InvocationHandler接口，在其Invoke方法里实现了Advice的织入。</p>
 <p>invoke方法里有两个重要的地方：MethodInterceptor链的生成和增强方法的调用逻辑</p>
-<h6 id="MethodInterceptor链的生成"><a href="#MethodInterceptor链的生成" class="headerlink" title="MethodInterceptor链的生成"></a>MethodInterceptor链的生成</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Object&gt; chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);</span><br></pre></td></tr></table></figure>
+<h6 id="MethodInterceptor链的生成"><a href="#MethodInterceptor链的生成" class="headerlink" title="MethodInterceptor链的生成"></a>MethodInterceptor链的生成</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Object&gt; chain &#x3D; this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);</span><br></pre></td></tr></table></figure>
 <p>这一步由DefaultAdvisorChainFactory支持，该工厂方法用于<strong>从Advisor链生成某个方法的MethodInterceptor链</strong>。这里主要有两部分内容：</p>
 <ol>
 <li>拆出Advisor里的PointCut用于方法的匹配和过滤</li>
 <li>拆出Advisor里的Advice，根据Advice的实际类型来创建对应的MethodInterceptor，并加入链表</li>
 </ol>
 <p>前面我们讲到GlobalAdvisorAdapterRegistry将IOC容器中的InterceptorNames对应的Bean封装为Advisor，后来，从Advisor拆出Advice并依据其类型创建对应的MethodInterceptor</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException &#123;</span><br><span class="line">		List&lt;MethodInterceptor&gt; interceptors = new ArrayList&lt;MethodInterceptor&gt;(3);</span><br><span class="line">		Advice advice = advisor.getAdvice();</span><br><span class="line">		//如果本身就是子类型MethodInterceptor，向下转型即可</span><br><span class="line">		if (advice instanceof MethodInterceptor) &#123;</span><br><span class="line">			interceptors.add((MethodInterceptor) advice);</span><br><span class="line">		&#125;</span><br><span class="line">		//如果只是Advice类型，通过各类AdvisorAdapter适配器来创建</span><br><span class="line">		for (AdvisorAdapter adapter : this.adapters) &#123;</span><br><span class="line">			if (adapter.supportsAdvice(advice)) &#123;</span><br><span class="line">				interceptors.add(adapter.getInterceptor(advisor));</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		if (interceptors.isEmpty()) &#123;</span><br><span class="line">			throw new UnknownAdviceTypeException(advisor.getAdvice());</span><br><span class="line">		&#125;</span><br><span class="line">		return interceptors.toArray(new MethodInterceptor[interceptors.size()]);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p>以MethodBeforeAdviceAdapter为例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public boolean supportsAdvice(Advice advice) &#123;</span><br><span class="line">		return (advice instanceof MethodBeforeAdvice);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public MethodInterceptor getInterceptor(Advisor advisor) &#123;</span><br><span class="line">		MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();</span><br><span class="line">		//从Advisor中拆出Advice后重新封装为MethodBeforeAdviceInterceptor</span><br><span class="line">		return new MethodBeforeAdviceInterceptor(advice);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>具体封装逻辑如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Serializable &#123;</span><br><span class="line"></span><br><span class="line">	private MethodBeforeAdvice advice;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * Create a new MethodBeforeAdviceInterceptor for the given advice.</span><br><span class="line">	 * @param advice the MethodBeforeAdvice to wrap</span><br><span class="line">	 */</span><br><span class="line">	public MethodBeforeAdviceInterceptor(MethodBeforeAdvice advice) &#123;</span><br><span class="line">		Assert.notNull(advice, &quot;Advice must not be null&quot;);</span><br><span class="line">		this.advice = advice;</span><br><span class="line">	&#125;</span><br><span class="line">//BeforeAdvice的执行逻辑封装在这里</span><br><span class="line">//MethodInvocation为一个Joinpoint，表示将要被调用的方法，这里先执行了</span><br><span class="line">//BeforeAdvice的before逻辑，再继续执行Joinpoint</span><br><span class="line">	@Override</span><br><span class="line">	public Object invoke(MethodInvocation mi) throws Throwable &#123;</span><br><span class="line">		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis() );</span><br><span class="line">		return mi.proceed();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h6 id="增强方法的调用"><a href="#增强方法的调用" class="headerlink" title="增强方法的调用"></a>增强方法的调用</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">if (chain.isEmpty()) &#123;</span><br><span class="line">	// We can skip creating a MethodInvocation: just invoke the target directly</span><br><span class="line">	// Note that the final invoker must be an InvokerInterceptor so we know it does</span><br><span class="line">	// nothing but a reflective operation on the target, and no hot swapping or fancy proxying.</span><br><span class="line">	retVal = AopUtils.invokeJoinpointUsingReflection(target, method, args);</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">	// We need to create a method invocation...</span><br><span class="line">	invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);</span><br><span class="line">	// Proceed to the joinpoint through the interceptor chain.</span><br><span class="line">	retVal = invocation.proceed();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException &#123;</span><br><span class="line">		List&lt;MethodInterceptor&gt; interceptors &#x3D; new ArrayList&lt;MethodInterceptor&gt;(3);</span><br><span class="line">		Advice advice &#x3D; advisor.getAdvice();</span><br><span class="line">		&#x2F;&#x2F;如果本身就是子类型MethodInterceptor，向下转型即可</span><br><span class="line">		if (advice instanceof MethodInterceptor) &#123;</span><br><span class="line">			interceptors.add((MethodInterceptor) advice);</span><br><span class="line">		&#125;</span><br><span class="line">		&#x2F;&#x2F;如果只是Advice类型，通过各类AdvisorAdapter适配器来创建</span><br><span class="line">		for (AdvisorAdapter adapter : this.adapters) &#123;</span><br><span class="line">			if (adapter.supportsAdvice(advice)) &#123;</span><br><span class="line">				interceptors.add(adapter.getInterceptor(advisor));</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		if (interceptors.isEmpty()) &#123;</span><br><span class="line">			throw new UnknownAdviceTypeException(advisor.getAdvice());</span><br><span class="line">		&#125;</span><br><span class="line">		return interceptors.toArray(new MethodInterceptor[interceptors.size()]);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>以MethodBeforeAdviceAdapter为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable &#123;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public boolean supportsAdvice(Advice advice) &#123;</span><br><span class="line">		return (advice instanceof MethodBeforeAdvice);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Override</span><br><span class="line">	public MethodInterceptor getInterceptor(Advisor advisor) &#123;</span><br><span class="line">		MethodBeforeAdvice advice &#x3D; (MethodBeforeAdvice) advisor.getAdvice();</span><br><span class="line">		&#x2F;&#x2F;从Advisor中拆出Advice后重新封装为MethodBeforeAdviceInterceptor</span><br><span class="line">		return new MethodBeforeAdviceInterceptor(advice);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>具体封装逻辑如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Serializable &#123;</span><br><span class="line"></span><br><span class="line">	private MethodBeforeAdvice advice;</span><br><span class="line"></span><br><span class="line">	&#x2F;**</span><br><span class="line">	 * Create a new MethodBeforeAdviceInterceptor for the given advice.</span><br><span class="line">	 * @param advice the MethodBeforeAdvice to wrap</span><br><span class="line">	 *&#x2F;</span><br><span class="line">	public MethodBeforeAdviceInterceptor(MethodBeforeAdvice advice) &#123;</span><br><span class="line">		Assert.notNull(advice, &quot;Advice must not be null&quot;);</span><br><span class="line">		this.advice &#x3D; advice;</span><br><span class="line">	&#125;</span><br><span class="line">&#x2F;&#x2F;BeforeAdvice的执行逻辑封装在这里</span><br><span class="line">&#x2F;&#x2F;MethodInvocation为一个Joinpoint，表示将要被调用的方法，这里先执行了</span><br><span class="line">&#x2F;&#x2F;BeforeAdvice的before逻辑，再继续执行Joinpoint</span><br><span class="line">	@Override</span><br><span class="line">	public Object invoke(MethodInvocation mi) throws Throwable &#123;</span><br><span class="line">		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis() );</span><br><span class="line">		return mi.proceed();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h6 id="增强方法的调用"><a href="#增强方法的调用" class="headerlink" title="增强方法的调用"></a>增强方法的调用</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">if (chain.isEmpty()) &#123;</span><br><span class="line">	&#x2F;&#x2F; We can skip creating a MethodInvocation: just invoke the target directly</span><br><span class="line">	&#x2F;&#x2F; Note that the final invoker must be an InvokerInterceptor so we know it does</span><br><span class="line">	&#x2F;&#x2F; nothing but a reflective operation on the target, and no hot swapping or fancy proxying.</span><br><span class="line">	retVal &#x3D; AopUtils.invokeJoinpointUsingReflection(target, method, args);</span><br><span class="line">&#125;</span><br><span class="line">else &#123;</span><br><span class="line">	&#x2F;&#x2F; We need to create a method invocation...</span><br><span class="line">	invocation &#x3D; new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);</span><br><span class="line">	&#x2F;&#x2F; Proceed to the joinpoint through the interceptor chain.</span><br><span class="line">	retVal &#x3D; invocation.proceed();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>这一步即实际的方法调用逻辑，当该方法的Advisor链为空时，直接通过反射调用该方法。如果不为空，通过ReflectiveMethodInvocation的proceed()方法调用。ReflectiveMethodInvocation重写了MethodInvacation的proceed()方法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public Object proceed() throws Throwable &#123;</span><br><span class="line">		//	We start with an index of -1 and increment early.</span><br><span class="line">		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) &#123;</span><br><span class="line">		//直到MethodInterceptor链都执行了，才直接调用当前MethodInvocation执行</span><br><span class="line">			return invokeJoinpoint();</span><br><span class="line">		&#125;</span><br><span class="line">//不然则进入MethodInterceptor的执行逻辑，这里是动态PointCut匹配</span><br><span class="line">		Object interceptorOrInterceptionAdvice =</span><br><span class="line">				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);</span><br><span class="line">		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) &#123;</span><br><span class="line">			// Evaluate dynamic method matcher here: static part will already have</span><br><span class="line">			// been evaluated and found to match.</span><br><span class="line">			InterceptorAndDynamicMethodMatcher dm =</span><br><span class="line">					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;</span><br><span class="line">			if (dm.methodMatcher.matches(this.method, this.targetClass, this.arguments)) &#123;</span><br><span class="line">				return dm.interceptor.invoke(this);</span><br><span class="line">			&#125;</span><br><span class="line">			else &#123;</span><br><span class="line">				// Dynamic matching failed.</span><br><span class="line">				// Skip this interceptor and invoke the next in the chain.</span><br><span class="line">				return proceed();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		else &#123;</span><br><span class="line">			// It&apos;s an interceptor, so we just invoke it: The pointcut will have</span><br><span class="line">			// been evaluated statically before this object was constructed.</span><br><span class="line">			//MethodInterceptor的执行逻辑</span><br><span class="line">			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">	public Object proceed() throws Throwable &#123;</span><br><span class="line">		&#x2F;&#x2F;	We start with an index of -1 and increment early.</span><br><span class="line">		if (this.currentInterceptorIndex &#x3D;&#x3D; this.interceptorsAndDynamicMethodMatchers.size() - 1) &#123;</span><br><span class="line">		&#x2F;&#x2F;直到MethodInterceptor链都执行了，才直接调用当前MethodInvocation执行</span><br><span class="line">			return invokeJoinpoint();</span><br><span class="line">		&#125;</span><br><span class="line">&#x2F;&#x2F;不然则进入MethodInterceptor的执行逻辑，这里是动态PointCut匹配</span><br><span class="line">		Object interceptorOrInterceptionAdvice &#x3D;</span><br><span class="line">				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);</span><br><span class="line">		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) &#123;</span><br><span class="line">			&#x2F;&#x2F; Evaluate dynamic method matcher here: static part will already have</span><br><span class="line">			&#x2F;&#x2F; been evaluated and found to match.</span><br><span class="line">			InterceptorAndDynamicMethodMatcher dm &#x3D;</span><br><span class="line">					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;</span><br><span class="line">			if (dm.methodMatcher.matches(this.method, this.targetClass, this.arguments)) &#123;</span><br><span class="line">				return dm.interceptor.invoke(this);</span><br><span class="line">			&#125;</span><br><span class="line">			else &#123;</span><br><span class="line">				&#x2F;&#x2F; Dynamic matching failed.</span><br><span class="line">				&#x2F;&#x2F; Skip this interceptor and invoke the next in the chain.</span><br><span class="line">				return proceed();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		else &#123;</span><br><span class="line">			&#x2F;&#x2F; It&#39;s an interceptor, so we just invoke it: The pointcut will have</span><br><span class="line">			&#x2F;&#x2F; been evaluated statically before this object was constructed.</span><br><span class="line">			&#x2F;&#x2F;MethodInterceptor的执行逻辑</span><br><span class="line">			return ((MethodInterceptor) interceptorOrInterceptionAdvice).invoke(this);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 <p>这里ReflectiveMethodInvocation实际上代表了一个Joinpoint的调用，但是其内部包含了一个MethodInterceptor链，即各类增强逻辑。各类增强逻辑有多个，有前也右后，其前后顺序封装在各MethodInterceptor的invoke方法里了（如前面所写的MethodBeforeAdviceInterceptor）,invoke方法里对MethodInvocation的递归调用使得多个MethodInterceptor的循环得以进行，非常巧妙。</p>
 <p>关于CGLIB的增强逻辑，是在CallBack中设置了默认的DynamicAdvisedInterceptor，其intercept方法中封装的逻辑与JDK代理的invoke方法封装的逻辑大同小异，不再赘述。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>spring aop首先从IOC容器中获取Advice或者MethodInterceptor等，将其封装为Advisor（这一步主要目的是将Advice与PointCut相结合），最后在JDK Proxy和CGLIB Proxy的回调方法中应用PointCut匹配具体方法，并将Advisor中的Advice按类型封装为MethodInterceptor应用到目标方法的调用MethodInvocation上去。</p>
@@ -491,264 +275,143 @@
 <p>Spring 技术内幕</p>
 </blockquote>
 
-      
     </div>
 
     
-
-    
-    
-    
-
-    
-
-    
-      
     
     
 
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/05/Spring%20IOC%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" rel="prev" title="Spring IOC实现原理解析">
+      <i class="fa fa-chevron-left"></i> Spring IOC实现原理解析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/10/Spring%20MVC%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90/" rel="next" title="Spring MVC实现原理解析">
+      Spring MVC实现原理解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
     
-
-    <footer class="post-footer">
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2018/07/05/Spring IOC实现原理解析/" rel="next" title="Spring IOC实现原理解析">
-                <i class="fa fa-chevron-left"></i> Spring IOC实现原理解析
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/07/10/Spring MVC实现原理解析/" rel="prev" title="Spring MVC实现原理解析">
-                Spring MVC实现原理解析 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
   </article>
+  
+  
+  
 
-
-  </div>
 
 
           </div>
           
-
-  
-
-
-
-        </div>
-        
-          
-  
-  <div class="sidebar-toggle">
-    <div class="sidebar-toggle-line-wrap">
-      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
-      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
-    </div>
-  </div>
-
-  <aside id="sidebar" class="sidebar">
-    
-    <div class="sidebar-inner">
-
-      
-
-      
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-overview">
-          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-            
-              <p class="site-author-name" itemprop="name">John</p>
-              <p class="site-description motion-element" itemprop="description"></p>
-          </div>
-
-          
-            <nav class="site-state motion-element">
-              
-                <div class="site-state-item site-state-posts">
-                
-                  <a href="/archives/">
-                
-                    <span class="site-state-item-count">28</span>
-                    <span class="site-state-item-name">posts</span>
-                  </a>
-                </div>
-              
-
-              
-                
-                
-                <div class="site-state-item site-state-categories">
-                  <a href="/categories/index.html">
-                    
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">8</span>
-                    <span class="site-state-item-name">categories</span>
-                  </a>
-                </div>
-              
-
-              
-            </nav>
-          
-
-          
-
-          
-
-          
-
-          
-          
-
-          
-            
-          
-          
-
-        </div>
-      </div>
-
-      
-      <!--noindex-->
-        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-            
-            
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-AOP"><span class="nav-number">1.</span> <span class="nav-text">Spring AOP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#相关概念"><span class="nav-number">1.0.1.</span> <span class="nav-text">相关概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支撑技术"><span class="nav-number">1.0.2.</span> <span class="nav-text">支撑技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现原理"><span class="nav-number">1.0.3.</span> <span class="nav-text">实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#配置信息获取与初始化"><span class="nav-number">1.0.3.0.1.</span> <span class="nav-text">配置信息获取与初始化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#生成代理对象"><span class="nav-number">1.0.3.0.2.</span> <span class="nav-text">生成代理对象</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#MethodInterceptor链的生成"><span class="nav-number">1.0.3.0.2.1.</span> <span class="nav-text">MethodInterceptor链的生成</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#增强方法的调用"><span class="nav-number">1.0.3.0.2.2.</span> <span class="nav-text">增强方法的调用</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.0.4.</span> <span class="nav-text">总结</span></a></li></ol></div>
-            
-
-          </div>
-        </div>
-      <!--/noindex-->
-      
-
-      
-
-    </div>
-  </aside>
-
-
-        
-      </div>
-    </main>
-
-    <footer id="footer" class="footer">
-      <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
-  <span class="with-love" id="animate">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">John</span>
-
-  
-
-  
-</div>
-
-
-  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> v3.8.0</div>
-
-
-
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">Theme – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.7.0</div>
-
-
-
-
-        
-
-
-
-
-
-
-
-
-        
-      </div>
-    </footer>
-
-    
-      <div class="back-to-top">
-        <i class="fa fa-arrow-up"></i>
-        
-      </div>
-    
-
-    
-
-    
-
-    
-  </div>
-
-  
 
 <script>
-  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
-    window.Promise = null;
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
   }
 </script>
 
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-AOP"><span class="nav-number">1.</span> <span class="nav-text">Spring AOP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="nav-number">1.0.1.</span> <span class="nav-text">相关概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%92%91%E6%8A%80%E6%9C%AF"><span class="nav-number">1.0.2.</span> <span class="nav-text">支撑技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.0.3.</span> <span class="nav-text">实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E8%8E%B7%E5%8F%96%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.0.3.0.1.</span> <span class="nav-text">配置信息获取与初始化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.0.3.0.2.</span> <span class="nav-text">生成代理对象</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#MethodInterceptor%E9%93%BE%E7%9A%84%E7%94%9F%E6%88%90"><span class="nav-number">1.0.3.0.2.1.</span> <span class="nav-text">MethodInterceptor链的生成</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%A2%9E%E5%BC%BA%E6%96%B9%E6%B3%95%E7%9A%84%E8%B0%83%E7%94%A8"><span class="nav-number">1.0.3.0.2.2.</span> <span class="nav-text">增强方法的调用</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.0.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
 
 
 
@@ -757,100 +420,43 @@
 
 
 
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
+<script src="/js/schemes/pisces.js"></script>
 
 
-
-
-
-
-
-
-
-
-
+<script src="/js/next-boot.js"></script>
 
 
 
 
   
-  <script src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-
-  
-
-
-  <script src="/js/src/utils.js?v=6.7.0"></script>
-
-  <script src="/js/src/motion.js?v=6.7.0"></script>
-
-
-
-  
-  
-
-
-  <script src="/js/src/affix.js?v=6.7.0"></script>
-
-  <script src="/js/src/schemes/pisces.js?v=6.7.0"></script>
-
-
-
-
-  
-  <script src="/js/src/scrollspy.js?v=6.7.0"></script>
-<script src="/js/src/post-details.js?v=6.7.0"></script>
-
-
-
-  
-
-
-  <script src="/js/src/bootstrap.js?v=6.7.0"></script>
-
-
-
-  
-  
 
 
 
 
 
-  
 
 
 
 
 
-  
 
-  
 
-  
 
-  
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
 
   
 
